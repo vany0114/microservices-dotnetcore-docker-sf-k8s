@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  duber.invoice.api:
+      image: duberinvoiceapi
+      build:
+        context: .
+        dockerfile: src/Application/Duber.Invoice.API/Dockerfile
+
+  duber.trip.api:
+    image: dubertripapi
+    build:
+      context: .
+      dockerfile: src/Application/Duber.Trip.API/Dockerfile
+
+  duber.website:
+    image: duberwebsite
+    build:
+      context: .
+      dockerfile: src/Web/Duber.WebSite/Dockerfile
+    depends_on:
+      - duber.invoice.api
+      - duber.trip.api

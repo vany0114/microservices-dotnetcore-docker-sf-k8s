@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  duber.invoice.api:
+    image: duberinvoiceapi:dev
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      #- NUGET_FALLBACK_PACKAGES=$container_paths_to_fallback_packages_duber.invoice.api$
+    volumes:
+      - C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Application\Duber.Invoice.API:/app
+      - C:\Users\vany0\vsdbg\vs2017u5:/remote_debugger:ro
+#$nuget_volume_mapping_duber.invoice.api$
+    entrypoint: tail -f /dev/null
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      #com.microsoft.visualstudio.debuggee.arguments: " $debuggee_arguments_probing_paths_duber.invoice.api$ bin/Debug/netcoreapp2.0/Duber.Invoice.API.dll"
+      com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      com.microsoft.visualstudio.debuggee.killprogram: "/bin/bash -c \"if PID=$$(pidof -x dotnet); then kill $$PID; fi\""
+
+  duber.trip.api:
+    image: dubertripapi:dev
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      #- NUGET_FALLBACK_PACKAGES=$container_paths_to_fallback_packages_duber.trip.api$
+    volumes:
+      - C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Application\Duber.Trip.API:/app
+      - C:\Users\vany0\vsdbg\vs2017u5:/remote_debugger:ro
+#$nuget_volume_mapping_duber.trip.api$
+    entrypoint: tail -f /dev/null
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      #com.microsoft.visualstudio.debuggee.arguments: " $debuggee_arguments_probing_paths_duber.trip.api$ bin/Debug/netcoreapp2.0/Duber.Trip.API.dll"
+      com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      com.microsoft.visualstudio.debuggee.killprogram: "/bin/bash -c \"if PID=$$(pidof -x dotnet); then kill $$PID; fi\""
+
+
+  duber.website:
+    image: duberwebsite:dev
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      #- NUGET_FALLBACK_PACKAGES=$container_paths_to_fallback_packages_duber.website$
+    volumes:
+      - C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Web\Duber.WebSite:/app
+      - C:\Users\vany0\vsdbg\vs2017u5:/remote_debugger:ro
+#$nuget_volume_mapping_duber.website$
+    entrypoint: tail -f /dev/null
+    labels:
+      com.microsoft.visualstudio.debuggee.program: "dotnet"
+      #com.microsoft.visualstudio.debuggee.arguments: " $debuggee_arguments_probing_paths_duber.website$ bin/Debug/netcoreapp2.0/Duber.WebSite.dll"
+      com.microsoft.visualstudio.debuggee.workingdirectory: "/app"
+      com.microsoft.visualstudio.debuggee.killprogram: "/bin/bash -c \"if PID=$$(pidof -x dotnet); then kill $$PID; fi\""
+

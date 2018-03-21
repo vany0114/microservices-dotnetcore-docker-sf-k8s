@@ -1,0 +1,13 @@
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip.UnitTest\bin\Debug\netcoreapp2.0\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip.UnitTest\bin\Debug\netcoreapp2.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip.UnitTest\bin\Debug\netcoreapp2.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip.UnitTest\bin\Debug\netcoreapp2.0\Duber.Domain.Trip.UnitTest.deps.json
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip.UnitTest\bin\Debug\netcoreapp2.0\Duber.Domain.Trip.UnitTest.runtimeconfig.json
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip.UnitTest\bin\Debug\netcoreapp2.0\Duber.Domain.Trip.UnitTest.runtimeconfig.dev.json
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip.UnitTest\bin\Debug\netcoreapp2.0\Duber.Domain.Trip.UnitTest.dll
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip.UnitTest\bin\Debug\netcoreapp2.0\Duber.Domain.Trip.UnitTest.pdb
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip.UnitTest\obj\Debug\netcoreapp2.0\Duber.Domain.Trip.UnitTest.csproj.CoreCompileInputs.cache
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip.UnitTest\obj\Debug\netcoreapp2.0\Duber.Domain.Trip.UnitTest.AssemblyInfoInputs.cache
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip.UnitTest\obj\Debug\netcoreapp2.0\Duber.Domain.Trip.UnitTest.AssemblyInfo.cs
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip.UnitTest\obj\Debug\netcoreapp2.0\Duber.Domain.Trip.UnitTest.dll
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip.UnitTest\obj\Debug\netcoreapp2.0\Duber.Domain.Trip.UnitTest.pdb

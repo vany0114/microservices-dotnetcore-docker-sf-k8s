@@ -1,0 +1,14 @@
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice.UnitTest\bin\Debug\netcoreapp2.0\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice.UnitTest\bin\Debug\netcoreapp2.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice.UnitTest\bin\Debug\netcoreapp2.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice.UnitTest\bin\Debug\netcoreapp2.0\Duber.Domain.Invoice.UnitTest.deps.json
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice.UnitTest\bin\Debug\netcoreapp2.0\Duber.Domain.Invoice.UnitTest.runtimeconfig.json
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice.UnitTest\bin\Debug\netcoreapp2.0\Duber.Domain.Invoice.UnitTest.runtimeconfig.dev.json
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice.UnitTest\bin\Debug\netcoreapp2.0\Duber.Domain.Invoice.UnitTest.dll
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice.UnitTest\bin\Debug\netcoreapp2.0\Duber.Domain.Invoice.UnitTest.pdb
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice.UnitTest\obj\Debug\netcoreapp2.0\Duber.Domain.Invoice.UnitTest.csprojResolveAssemblyReference.cache
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice.UnitTest\obj\Debug\netcoreapp2.0\Duber.Domain.Invoice.UnitTest.csproj.CoreCompileInputs.cache
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice.UnitTest\obj\Debug\netcoreapp2.0\Duber.Domain.Invoice.UnitTest.AssemblyInfoInputs.cache
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice.UnitTest\obj\Debug\netcoreapp2.0\Duber.Domain.Invoice.UnitTest.AssemblyInfo.cs
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice.UnitTest\obj\Debug\netcoreapp2.0\Duber.Domain.Invoice.UnitTest.dll
+C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice.UnitTest\obj\Debug\netcoreapp2.0\Duber.Domain.Invoice.UnitTest.pdb
