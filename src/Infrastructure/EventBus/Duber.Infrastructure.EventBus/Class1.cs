@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Duber.Domain.Trip
+namespace Duber.Infrastructure.EventBus
 {
     public class Class1
     {
