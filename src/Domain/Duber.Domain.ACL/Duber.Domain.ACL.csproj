@@ -4,4 +4,10 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Adapters\" />
+    <Folder Include="Contracts\" />
+    <Folder Include="Translators\" />
+  </ItemGroup>
+
 </Project>
