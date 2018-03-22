@@ -57,11 +57,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EventBus", "EventBus", "{FE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Duber.Infrastructure.EventBus", "src\Infrastructure\EventBus\Duber.Infrastructure.EventBus\Duber.Infrastructure.EventBus.csproj", "{28784EB0-08BB-400F-BC37-DCED3E18261E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duber.Domain.User", "src\Domain\User\Duber.Domain.User\Duber.Domain.User.csproj", "{8FBCBD46-6728-46CF-ACB9-0E5DFCB0105C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Duber.Domain.User", "src\Domain\User\Duber.Domain.User\Duber.Domain.User.csproj", "{8FBCBD46-6728-46CF-ACB9-0E5DFCB0105C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duber.Infrastructure.EventBus.RabbitMQ", "src\Infrastructure\EventBus\Duber.Infrastructure.EventBus.RabbitMQ\Duber.Infrastructure.EventBus.RabbitMQ.csproj", "{0559C080-53D5-44C7-8657-4F987F0FF8B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Duber.Infrastructure.EventBus.RabbitMQ", "src\Infrastructure\EventBus\Duber.Infrastructure.EventBus.RabbitMQ\Duber.Infrastructure.EventBus.RabbitMQ.csproj", "{0559C080-53D5-44C7-8657-4F987F0FF8B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duber.Infrastructure.EventBus.ServiceBus", "src\Infrastructure\EventBus\Duber.Infrastructure.EventBus.ServiceBus\Duber.Infrastructure.EventBus.ServiceBus.csproj", "{D3A735EA-FD07-4CDE-A785-DA39280509DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Duber.Infrastructure.EventBus.ServiceBus", "src\Infrastructure\EventBus\Duber.Infrastructure.EventBus.ServiceBus\Duber.Infrastructure.EventBus.ServiceBus.csproj", "{D3A735EA-FD07-4CDE-A785-DA39280509DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duber.Domain.SharedKernel", "src\Domain\Duber.Domain.SharedKernel\Duber.Domain.SharedKernel.csproj", "{AD8286AF-8F03-46F5-9583-620F4DBA73E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duber.Infrastructure", "src\Infrastructure\Duber.Infrastructure\Duber.Infrastructure.csproj", "{92D41C6D-E785-474A-BF69-876F7A8E6912}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -133,6 +137,14 @@ Global
 		{D3A735EA-FD07-4CDE-A785-DA39280509DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3A735EA-FD07-4CDE-A785-DA39280509DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3A735EA-FD07-4CDE-A785-DA39280509DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD8286AF-8F03-46F5-9583-620F4DBA73E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD8286AF-8F03-46F5-9583-620F4DBA73E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD8286AF-8F03-46F5-9583-620F4DBA73E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD8286AF-8F03-46F5-9583-620F4DBA73E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92D41C6D-E785-474A-BF69-876F7A8E6912}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92D41C6D-E785-474A-BF69-876F7A8E6912}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92D41C6D-E785-474A-BF69-876F7A8E6912}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92D41C6D-E785-474A-BF69-876F7A8E6912}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -165,6 +177,8 @@ Global
 		{8FBCBD46-6728-46CF-ACB9-0E5DFCB0105C} = {DA20FB57-1551-4A94-8EA4-4997F6E3B803}
 		{0559C080-53D5-44C7-8657-4F987F0FF8B1} = {FEDB83C2-C14A-4196-8973-2A5C68CE2CBA}
 		{D3A735EA-FD07-4CDE-A785-DA39280509DA} = {FEDB83C2-C14A-4196-8973-2A5C68CE2CBA}
+		{AD8286AF-8F03-46F5-9583-620F4DBA73E8} = {F8C00BB1-4812-4B16-9182-3269D88858CE}
+		{92D41C6D-E785-474A-BF69-876F7A8E6912} = {69B890C5-C137-4967-8E15-26D07F312907}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B8CD1A2-251A-4CE0-94BB-12805E3492A0}
