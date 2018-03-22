@@ -1,1 +1,0 @@
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\obj\Debug\docker-compose.dcproj.CoreCompileInputs.cache

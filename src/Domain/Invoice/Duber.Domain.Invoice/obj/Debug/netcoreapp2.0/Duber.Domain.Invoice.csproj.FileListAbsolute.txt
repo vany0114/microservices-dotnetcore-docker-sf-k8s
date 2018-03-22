@@ -1,8 +1,0 @@
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice\bin\Debug\netcoreapp2.0\Duber.Domain.Invoice.deps.json
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice\bin\Debug\netcoreapp2.0\Duber.Domain.Invoice.dll
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice\bin\Debug\netcoreapp2.0\Duber.Domain.Invoice.pdb
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice\obj\Debug\netcoreapp2.0\Duber.Domain.Invoice.csproj.CoreCompileInputs.cache
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice\obj\Debug\netcoreapp2.0\Duber.Domain.Invoice.AssemblyInfoInputs.cache
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice\obj\Debug\netcoreapp2.0\Duber.Domain.Invoice.AssemblyInfo.cs
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice\obj\Debug\netcoreapp2.0\Duber.Domain.Invoice.dll
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Invoice\Duber.Domain.Invoice\obj\Debug\netcoreapp2.0\Duber.Domain.Invoice.pdb

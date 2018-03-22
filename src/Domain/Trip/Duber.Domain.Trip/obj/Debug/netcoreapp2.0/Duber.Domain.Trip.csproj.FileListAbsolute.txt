@@ -1,9 +1,0 @@
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip\bin\Debug\netcoreapp2.0\Duber.Domain.Trip.deps.json
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip\bin\Debug\netcoreapp2.0\Duber.Domain.Trip.dll
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip\bin\Debug\netcoreapp2.0\Duber.Domain.Trip.pdb
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip\obj\Debug\netcoreapp2.0\Duber.Domain.Trip.csprojResolveAssemblyReference.cache
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip\obj\Debug\netcoreapp2.0\Duber.Domain.Trip.csproj.CoreCompileInputs.cache
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip\obj\Debug\netcoreapp2.0\Duber.Domain.Trip.AssemblyInfoInputs.cache
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip\obj\Debug\netcoreapp2.0\Duber.Domain.Trip.AssemblyInfo.cs
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip\obj\Debug\netcoreapp2.0\Duber.Domain.Trip.dll
-C:\Users\vany0\OneDrive\Documentos\GitHub\microservices-netcore-docker-servicefabric\src\Domain\Trip\Duber.Domain.Trip\obj\Debug\netcoreapp2.0\Duber.Domain.Trip.pdb
