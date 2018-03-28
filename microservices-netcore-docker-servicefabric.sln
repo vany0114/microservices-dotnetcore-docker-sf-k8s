@@ -67,6 +67,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duber.Domain.SharedKernel",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duber.Infrastructure", "src\Infrastructure\Duber.Infrastructure\Duber.Infrastructure.csproj", "{92D41C6D-E785-474A-BF69-876F7A8E6912}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duber.Infrastructure.WebHost", "src\Infrastructure\Duber.Infrastructure.WebHost\Duber.Infrastructure.WebHost.csproj", "{E6AB4478-0061-4DC7-8E13-DB68A72FC4DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,6 +147,10 @@ Global
 		{92D41C6D-E785-474A-BF69-876F7A8E6912}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92D41C6D-E785-474A-BF69-876F7A8E6912}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92D41C6D-E785-474A-BF69-876F7A8E6912}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6AB4478-0061-4DC7-8E13-DB68A72FC4DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6AB4478-0061-4DC7-8E13-DB68A72FC4DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6AB4478-0061-4DC7-8E13-DB68A72FC4DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6AB4478-0061-4DC7-8E13-DB68A72FC4DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -179,6 +185,7 @@ Global
 		{D3A735EA-FD07-4CDE-A785-DA39280509DA} = {FEDB83C2-C14A-4196-8973-2A5C68CE2CBA}
 		{AD8286AF-8F03-46F5-9583-620F4DBA73E8} = {F8C00BB1-4812-4B16-9182-3269D88858CE}
 		{92D41C6D-E785-474A-BF69-876F7A8E6912} = {69B890C5-C137-4967-8E15-26D07F312907}
+		{E6AB4478-0061-4DC7-8E13-DB68A72FC4DD} = {69B890C5-C137-4967-8E15-26D07F312907}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B8CD1A2-251A-4CE0-94BB-12805E3492A0}

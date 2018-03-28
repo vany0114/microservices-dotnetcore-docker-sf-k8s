@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Duber.Domain.User.Persistence;
+using Duber.Infrastructure.WebHost;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Duber.WebSite
@@ -14,7 +11,15 @@ namespace Duber.WebSite
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            BuildWebHost(args)
+                .MigrateDbContext<UserContext>((context, services) =>
+                {
+                    var logger = services.GetService<ILogger<UserContextSeed>>();
+                    new UserContextSeed()
+                        .SeedAsync(context, logger)
+                        .Wait();
+                })
+                .Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>

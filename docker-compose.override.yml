@@ -5,16 +5,29 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
-      - "80"
+      - "32776:80"
 
   duber.trip.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
-      - "80"
+      - "32775:80"
 
   duber.website:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionString=${AZURE_WEBSITE_DB:-Server=sql.data;Database=Duber.WebSiteDb;User Id=sa;Password=Pass@word}
     ports:
-      - "80"
+      - "32774:80"
+
+  sql.data:
+    environment:
+      - MSSQL_SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Developer
+    ports:
+      - "5433:1433"
+
+  nosql.data:
+    ports:
+      - "27017:27017"

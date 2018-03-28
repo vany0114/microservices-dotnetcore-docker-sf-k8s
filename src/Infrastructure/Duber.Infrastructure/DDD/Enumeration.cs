@@ -9,7 +9,7 @@ namespace Duber.Infrastructure.DDD
     {
         public string Name { get; private set; }
 
-        public int Id { get; }
+        public int Id { get; private set; }
 
         protected Enumeration()
         {
@@ -34,8 +34,9 @@ namespace Duber.Infrastructure.DDD
             foreach (var info in fields)
             {
                 var instance = new T();
+                var locatedValue = info.GetValue(instance) as T;
 
-                if (info.GetValue(instance) is T locatedValue)
+                if (locatedValue != null)
                 {
                     yield return locatedValue;
                 }
@@ -44,12 +45,14 @@ namespace Duber.Infrastructure.DDD
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Enumeration otherValue))
+            var otherValue = obj as Enumeration;
+
+            if (otherValue == null)
             {
                 return false;
             }
 
-            var typeMatches = GetType() == obj.GetType();
+            var typeMatches = GetType().Equals(obj.GetType());
             var valueMatches = Id.Equals(otherValue.Id);
 
             return typeMatches && valueMatches;

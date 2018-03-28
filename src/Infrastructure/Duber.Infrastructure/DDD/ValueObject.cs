@@ -14,12 +14,15 @@ namespace Duber.Infrastructure.DDD
             return ReferenceEquals(left, null) || left.Equals(right);
         }
 
+
         protected static bool NotEqualOperator(ValueObject left, ValueObject right)
         {
             return !(EqualOperator(left, right));
         }
 
+
         protected abstract IEnumerable<object> GetAtomicValues();
+
 
         public override bool Equals(object obj)
         {
@@ -27,9 +30,9 @@ namespace Duber.Infrastructure.DDD
             {
                 return false;
             }
-            var other = (ValueObject)obj;
-            var thisValues = GetAtomicValues().GetEnumerator();
-            var otherValues = other.GetAtomicValues().GetEnumerator();
+            ValueObject other = (ValueObject)obj;
+            IEnumerator<object> thisValues = GetAtomicValues().GetEnumerator();
+            IEnumerator<object> otherValues = other.GetAtomicValues().GetEnumerator();
             while (thisValues.MoveNext() && otherValues.MoveNext())
             {
                 if (ReferenceEquals(thisValues.Current, null) ^ ReferenceEquals(otherValues.Current, null))
@@ -44,16 +47,17 @@ namespace Duber.Infrastructure.DDD
             return !thisValues.MoveNext() && !otherValues.MoveNext();
         }
 
+
         public override int GetHashCode()
         {
             return GetAtomicValues()
-             .Select(x => x != null ? x.GetHashCode() : 0)
-             .Aggregate((x, y) => x ^ y);
+                .Select(x => x != null ? x.GetHashCode() : 0)
+                .Aggregate((x, y) => x ^ y);
         }
 
         public ValueObject GetCopy()
         {
-            return MemberwiseClone() as ValueObject;
+            return this.MemberwiseClone() as ValueObject;
         }
     }
 }
