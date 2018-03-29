@@ -1,4 +1,5 @@
-﻿using Duber.Domain.User.Persistence;
+﻿using Duber.Domain.Driver.Persistence;
+using Duber.Domain.User.Persistence;
 using Duber.Infrastructure.WebHost;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -16,6 +17,13 @@ namespace Duber.WebSite
                 {
                     var logger = services.GetService<ILogger<UserContextSeed>>();
                     new UserContextSeed()
+                        .SeedAsync(context, logger)
+                        .Wait();
+                })
+                .MigrateDbContext<DriverContext>((context, services) =>
+                {
+                    var logger = services.GetService<ILogger<DriverContextSeed>>();
+                    new DriverContextSeed()
                         .SeedAsync(context, logger)
                         .Wait();
                 })

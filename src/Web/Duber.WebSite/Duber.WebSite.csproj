@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Domain\Driver\Duber.Domain.Driver\Duber.Domain.Driver.csproj" />
     <ProjectReference Include="..\..\Domain\User\Duber.Domain.User\Duber.Domain.User.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Duber.Infrastructure.WebHost\Duber.Infrastructure.WebHost.csproj" />
   </ItemGroup>

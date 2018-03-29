@@ -8,6 +8,7 @@
     <Folder Include="Events\" />
     <Folder Include="Model\" />
     <Folder Include="Migrations\" />
+    <Folder Include="Exceptions\" />
     <Folder Include="Services\" />
     <Folder Include="Repository\" />
     <Folder Include="Persistence\" />
