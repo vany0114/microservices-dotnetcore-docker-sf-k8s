@@ -10,6 +10,7 @@ services:
   duber.trip.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - EventStoreConfiguration__ConnectionString=${AZURE_TRIP_DB:-mongodb://nosql.data}
     ports:
       - "32775:80"
 

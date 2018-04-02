@@ -5,13 +5,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Events\" />
-    <Folder Include="Migrations\" />
-    <Folder Include="Model\" />
-    <Folder Include="Exceptions\" />
+    <Compile Remove="Migrations\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <None Remove="Migrations\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Persistence\" />
     <Folder Include="Repository\" />
     <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Weapsy.Cqrs" Version="2.1.2" />
+    <PackageReference Include="Weapsy.Cqrs.EventStore.CosmosDB.MongoDB" Version="2.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Infrastructure\Duber.Infrastructure\Duber.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus.RabbitMQ\Duber.Infrastructure.EventBus.RabbitMQ.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus.ServiceBus\Duber.Infrastructure.EventBus.ServiceBus.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus\Duber.Infrastructure.EventBus.csproj" />
   </ItemGroup>
 
 </Project>
