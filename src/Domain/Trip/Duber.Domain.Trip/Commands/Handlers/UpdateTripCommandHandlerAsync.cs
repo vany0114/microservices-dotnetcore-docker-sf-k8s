@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Duber.Domain.Trip.Exceptions;
 using Weapsy.Cqrs.Commands;
@@ -8,23 +6,23 @@ using Weapsy.Cqrs.Domain;
 
 namespace Duber.Domain.Trip.Commands.Handlers
 {
-    public class UpdateTripHandlerAsync : ICommandHandlerWithAggregateAsync<UpdatedTrip>
+    public class UpdateTripCommandHandlerAsync : ICommandHandlerWithAggregateAsync<UpdateTripCommand>
     {
         private readonly IRepository<Model.Trip> _repository;
 
-        public UpdateTripHandlerAsync(IRepository<Model.Trip> repository)
+        public UpdateTripCommandHandlerAsync(IRepository<Model.Trip> repository)
         {
             _repository = repository;
         }
 
-        public async Task<IAggregateRoot> HandleAsync(UpdatedTrip command)
+        public async Task<IAggregateRoot> HandleAsync(UpdateTripCommand command)
         {
             var trip = await _repository.GetByIdAsync(command.AggregateRootId);
 
             if (trip == null)
                 throw new TripDomainInvalidOperationException("Trip not found.");
 
-            // TODO: consider create a separete command/handler for each action.
+            // TODO: consider create a separete command/handler for each action to avoid this code smell.
             switch (command.Action)
             {
                 case Action.Accept:

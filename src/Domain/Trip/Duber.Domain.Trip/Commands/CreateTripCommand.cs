@@ -3,7 +3,7 @@ using Weapsy.Cqrs.Domain;
 
 namespace Duber.Domain.Trip.Commands
 {
-    public class CreateTrip : DomainCommand
+    public class CreateTripCommand : DomainCommand
     {
         public int UserTripId { get; set; }
 

@@ -4,7 +4,7 @@ using Weapsy.Cqrs.Domain;
 
 namespace Duber.Domain.Trip.Events
 {
-    public class TripUpdated : DomainEvent
+    public class TripUpdatedDomainEvent : DomainEvent
     {
         public Action Action { get; set; }
 

@@ -4,9 +4,9 @@ using Weapsy.Cqrs.Domain;
 
 namespace Duber.Domain.Trip.Commands.Handlers
 {
-    public class CreateTripHandlerAsync : ICommandHandlerWithAggregateAsync<CreateTrip>
+    public class CreateTripCommandHandlerAsync : ICommandHandlerWithAggregateAsync<CreateTripCommand>
     {
-        public async Task<IAggregateRoot> HandleAsync(CreateTrip command)
+        public async Task<IAggregateRoot> HandleAsync(CreateTripCommand command)
         {
             var trip = new Model.Trip(
                 command.AggregateRootId,

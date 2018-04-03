@@ -23,6 +23,5 @@ namespace Duber.Domain.Trip.Model
             yield return Latitude;
             yield return Longitude;
         }
-
     }
 }

@@ -1,10 +1,9 @@
-﻿using System;
-using Duber.Domain.Trip.Model;
+﻿using Duber.Domain.Trip.Model;
 using Weapsy.Cqrs.Domain;
 
 namespace Duber.Domain.Trip.Events
 {
-    public class TripCreated : DomainEvent
+    public class TripCreatedDomainEvent : DomainEvent
     {
         public int UserTripId { get; set; }
 

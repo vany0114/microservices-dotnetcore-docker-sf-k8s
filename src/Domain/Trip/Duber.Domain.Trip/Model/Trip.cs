@@ -67,7 +67,7 @@ namespace Duber.Domain.Trip.Model
             _to = to ?? throw new TripDomainArgumentNullException(nameof(to));
             _vehicleInformation = new VehicleInformation(plate, brand, model);
 
-            AddEvent(new TripCreated
+            AddEvent(new TripCreatedDomainEvent
             {
                 AggregateRootId = Id,
                 VehicleInformation = _vehicleInformation,
@@ -81,7 +81,7 @@ namespace Duber.Domain.Trip.Model
         public void Accept()
         {
             _status = TripStatus.Accepted;
-            AddEvent(new TripUpdated
+            AddEvent(new TripUpdatedDomainEvent
             {
                 AggregateRootId = Id,
                 Action = Action.Accepted,
@@ -92,14 +92,14 @@ namespace Duber.Domain.Trip.Model
         public void Start()
         {
             if(!Equals(_status, TripStatus.Accepted))
-                throw new TripDomainInvalidOperationException("Before to start the trip, it should be accepted.");
+                throw new TripDomainInvalidOperationException($"Before to start the trip, it should be accepted. Current status: {_status.Name}");
 
             _start = DateTime.UtcNow;
 
             // we're assuming that the driver already picked up the user.
             _status = TripStatus.InCourse;
 
-            AddEvent(new TripUpdated
+            AddEvent(new TripUpdatedDomainEvent
             {
                 AggregateRootId = Id,
                 Action = Action.Started,
@@ -110,11 +110,14 @@ namespace Duber.Domain.Trip.Model
 
         public void FinishEarlier()
         {
+            if (!Equals(_status, TripStatus.InCourse))
+                throw new TripDomainInvalidOperationException($"Invalid trip status to finish the trip. Current status: {_status.Name}");
+
             _end = DateTime.UtcNow;
             _status = TripStatus.Finished;
             _to = _currentLocation;
 
-            AddEvent(new TripUpdated
+            AddEvent(new TripUpdatedDomainEvent
             {
                 AggregateRootId = Id,
                 Action = Action.FinishedEarlier,
@@ -135,7 +138,7 @@ namespace Duber.Domain.Trip.Model
             //let's say there is a business rule that says when cancelling the rating is 2 for both user an driver.
             _rating = new Rating(2, 2);
 
-            AddEvent(new TripUpdated
+            AddEvent(new TripUpdatedDomainEvent
             {
                 AggregateRootId = Id,
                 Action = Action.Cancelled,
@@ -150,7 +153,7 @@ namespace Duber.Domain.Trip.Model
             if (!Equals(_status, TripStatus.InCourse))
                 throw new TripDomainInvalidOperationException($"Invalid trip status to set the current location. Current status: {_status.Name}");
 
-            _currentLocation = currentLocation ?? throw new TripDomainInvalidOperationException(nameof(currentLocation));
+            _currentLocation = currentLocation ?? throw new TripDomainArgumentNullException(nameof(currentLocation));
 
             // TODO: handle a tolerance range to determine if current location is the destination
             if (Equals(currentLocation, _to))
@@ -159,7 +162,7 @@ namespace Duber.Domain.Trip.Model
                 _status = TripStatus.Finished;
             }
 
-            AddEvent(new TripUpdated
+            AddEvent(new TripUpdatedDomainEvent
             {
                 AggregateRootId = Id,
                 Action = Action.UpdatedCurrentLocation,
@@ -187,7 +190,7 @@ namespace Duber.Domain.Trip.Model
         }
 
         // Applies events after load an object from event store. (kinda memento pattern)
-        private void Apply(TripCreated @event)
+        private void Apply(TripCreatedDomainEvent @event)
         {
             Id = @event.AggregateRootId;
             _driverId = @event.DriverId;
@@ -197,7 +200,7 @@ namespace Duber.Domain.Trip.Model
             _vehicleInformation = @event.VehicleInformation;
         }
 
-        private void Apply(TripUpdated @event)
+        private void Apply(TripUpdatedDomainEvent @event)
         {
             Id = @event.AggregateRootId;
             _end = @event.Ended;

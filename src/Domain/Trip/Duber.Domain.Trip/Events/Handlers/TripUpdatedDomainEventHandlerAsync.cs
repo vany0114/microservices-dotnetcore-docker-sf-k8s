@@ -4,10 +4,11 @@ using Weapsy.Cqrs.Events;
 
 namespace Duber.Domain.Trip.Events.Handlers
 {
-    public class TripUpdatedHandlerAsync : IEventHandlerAsync<TripUpdated>
+    public class TripUpdatedDomainEventHandlerAsync : IEventHandlerAsync<TripUpdatedDomainEvent>
     {
-        public async Task HandleAsync(TripUpdated @event)
+        public async Task HandleAsync(TripUpdatedDomainEvent @event)
         {
+            // TODO: consider create a separete event/handler for each action to avoid this code smell.
             switch (@event.Action)
             {
                 case Action.Accepted:

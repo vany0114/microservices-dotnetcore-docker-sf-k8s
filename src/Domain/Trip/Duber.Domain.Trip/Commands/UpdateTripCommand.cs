@@ -3,7 +3,7 @@ using Weapsy.Cqrs.Domain;
 
 namespace Duber.Domain.Trip.Commands
 {
-    public class UpdatedTrip : DomainCommand
+    public class UpdateTripCommand : DomainCommand
     {
         public Action Action { get; set; }
 
