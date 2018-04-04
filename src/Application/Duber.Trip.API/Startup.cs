@@ -5,6 +5,7 @@ using AutoMapper;
 using Duber.Domain.Trip.Commands;
 using Duber.Trip.API.Application.Validations;
 using Duber.Trip.API.Infrastructure.Filters;
+using Duber.Trip.API.Infrastructure.Repository;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,6 +43,7 @@ namespace Duber.Trip.API
             // Weapsy.CQRS only needs a type per assembly, it automatically registers the rest of the commands, events, etc.
             services.AddWeapsyCqrs(typeof(CreateTripCommand));
             services.AddWeapsyCqrsEventStore(Configuration);
+            services.AddTransient<IEventStoreRepository, EventStoreRepository>();
 
             services.AddCors(options =>
             {

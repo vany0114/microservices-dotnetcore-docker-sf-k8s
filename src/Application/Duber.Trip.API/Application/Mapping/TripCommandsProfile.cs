@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Duber.Domain.Trip.Commands;
 using ViewModel = Duber.Trip.API.Application.Model;
 

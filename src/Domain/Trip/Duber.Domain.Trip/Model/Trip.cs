@@ -1,6 +1,7 @@
 ﻿using System;
 using Duber.Domain.Trip.Events;
 using Duber.Domain.Trip.Exceptions;
+using GeoCoordinatePortable;
 using Weapsy.Cqrs.Domain;
 using Action = Duber.Domain.Trip.Events.Action;
 // ReSharper disable ConvertToAutoProperty
@@ -44,7 +45,7 @@ namespace Duber.Domain.Trip.Model
 
         public TimeSpan? Duration => GetDuration();
 
-        public int Distance => GetDistance();
+        public double Distance => GetDistance();
 
         // public empty constructor is required for Weapsy.CQRS
         public Trip()
@@ -184,9 +185,14 @@ namespace Duber.Domain.Trip.Model
             return duration;
         }
 
-        private int GetDistance()
+        private double GetDistance()
         {
-            throw new NotImplementedException();
+            if (_from == null || _to == null)
+                return 0;
+
+            var from = new GeoCoordinate(_from.Latitude, _from.Longitude);
+            var to = new GeoCoordinate(_to.Latitude, _to.Longitude);
+            return from.GetDistanceTo(to);
         }
 
         // Applies events after load an object from event store. (kinda memento pattern)

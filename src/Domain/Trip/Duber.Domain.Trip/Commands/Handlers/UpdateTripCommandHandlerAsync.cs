@@ -22,7 +22,7 @@ namespace Duber.Domain.Trip.Commands.Handlers
             if (trip == null)
                 throw new TripDomainInvalidOperationException("Trip not found.");
 
-            // TODO: consider create a separete command/handler for each action to avoid this code smell.
+            // TODO: consider creating a separate command/handler for each action to avoid this code smell.
             switch (command.Action)
             {
                 case Action.Accept:

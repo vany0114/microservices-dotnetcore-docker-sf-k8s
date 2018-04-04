@@ -6,6 +6,7 @@ using Duber.Domain.Trip.Commands;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Weapsy.Cqrs;
+using Weapsy.Cqrs.Domain;
 using Action = Duber.Domain.Trip.Commands.Action;
 using ViewModel = Duber.Trip.API.Application.Model;
 
@@ -16,13 +17,38 @@ namespace Duber.Trip.API.Controllers
     {
         private readonly IDispatcher _dispatcher;
         private readonly IMapper _mapper;
+        private readonly IRepository<Domain.Trip.Model.Trip> _repository;
         private readonly Guid _fakeUser = Guid.NewGuid();
         private const string Source = "Duber.Trip.Api";
 
-        public TripController(IDispatcher dispatcher, IMapper mapper)
+        public TripController(IDispatcher dispatcher, IMapper mapper, IRepository<Domain.Trip.Model.Trip> repository)
         {
-            _dispatcher = dispatcher;
-            _mapper = mapper;
+            _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        }
+
+        /// <summary>
+        /// Returns a trip that matches with the specified id.
+        /// </summary>
+        /// <param name="tripId"></param>
+        /// <returns>Returns a trip that matches with the specified id.</returns>
+        /// <response code="200">Returns a Trip object that matches with the specified id.</response>
+        [Route("get")]
+        [HttpPost]
+        [ProducesResponseType(typeof(ViewModel.Trip), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetTrip(Guid tripId)
+        {
+            var trip = await _repository.GetByIdAsync(tripId);
+            var tripViewModel = _mapper.Map<ViewModel.Trip>(trip);
+
+            if (tripViewModel == null)
+                return NotFound();
+
+            return Ok(tripViewModel);
         }
 
         /// <summary>
