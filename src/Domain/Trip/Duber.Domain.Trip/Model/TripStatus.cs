@@ -8,6 +8,7 @@ namespace Duber.Domain.Trip.Model
 {
     public class TripStatus : Enumeration
     {
+        public static TripStatus Created = new TripStatus(0, nameof(Created));
         public static TripStatus Accepted = new TripStatus(1, nameof(Accepted));
         public static TripStatus Cancelled = new TripStatus(2, nameof(Cancelled));
         public static TripStatus OnTheWay = new TripStatus(3, nameof(OnTheWay));
@@ -23,7 +24,7 @@ namespace Duber.Domain.Trip.Model
 
         public static IEnumerable<TripStatus> List()
         {
-            return new[] { Accepted, Cancelled, OnTheWay, InCourse, Finished };
+            return new[] { Created, Accepted, Cancelled, OnTheWay, InCourse, Finished };
         }
 
         public static TripStatus FromName(string name)

@@ -15,6 +15,12 @@ namespace Duber.Domain.Trip.Events
         public DateTime? Ended { get; set; }
 
         public Location CurrentLocation { get; set; }
+
+        public double? Distance { get; set; }
+        
+        public TimeSpan? Duration { get; set; }
+
+        public PaymentMethod PaymentMethod { get; set; }
     }
 
     public enum Action

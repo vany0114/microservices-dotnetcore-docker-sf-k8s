@@ -22,6 +22,8 @@ namespace Duber.Trip.API.Application.DomainEventHandlers
         public async Task HandleAsync(TripCreatedDomainEvent @event)
         {
             var integrationEvent = _mapper.Map<TripCreatedIntegrationEvent>(@event);
+
+            // to update the query side (materialized view)
             _eventBus.Publish(integrationEvent); // TODO: make an async Publish method.
 
             await Task.CompletedTask;

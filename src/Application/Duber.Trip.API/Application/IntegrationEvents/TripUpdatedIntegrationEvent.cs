@@ -6,14 +6,17 @@ namespace Duber.Trip.API.Application.IntegrationEvents
 {
     public class TripUpdatedIntegrationEvent : IntegrationEvent
     {
-        public TripUpdatedIntegrationEvent(Action action, TripStatus status, DateTime? started, DateTime? ended, Location currentLocation)
+        public TripUpdatedIntegrationEvent(Guid tripId, Action action, TripStatus status, DateTime? started, DateTime? ended, Location currentLocation)
         {
             Action = action;
             Status = status;
             Started = started;
             Ended = ended;
             CurrentLocation = currentLocation;
+            TripId = tripId;
         }
+
+        public Guid TripId { get; }
 
         public Action Action { get; }
 

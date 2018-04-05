@@ -15,5 +15,7 @@
         public string Brand { get; set; }
 
         public string Model { get; set; }
+
+        public PaymentMethod PaymentMethod { get; set; }
     }
 }

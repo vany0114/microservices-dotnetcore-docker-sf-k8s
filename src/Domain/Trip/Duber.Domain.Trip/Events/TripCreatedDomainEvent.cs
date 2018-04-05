@@ -14,5 +14,9 @@ namespace Duber.Domain.Trip.Events
         public Location To { get; set; }
 
         public VehicleInformation VehicleInformation { get; set; }
+
+        public PaymentMethod PaymentMethod { get; set; }
+
+        public TripStatus Status { get; set; }
     }
 }

@@ -35,7 +35,7 @@ namespace Duber.Trip.API.Controllers
         /// <returns>Returns a trip that matches with the specified id.</returns>
         /// <response code="200">Returns a Trip object that matches with the specified id.</response>
         [Route("get")]
-        [HttpPost]
+        [HttpGet]
         [ProducesResponseType(typeof(ViewModel.Trip), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -64,6 +64,7 @@ namespace Duber.Trip.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> CreateTrip([FromBody]ViewModel.CreateTripCommand command)
         {
+            // TODO: make command immutable
             // BadRequest and InternalServerError could be throw in HttpGlobalExceptionFilter
             var tripId = Guid.NewGuid();
             var domainCommand = _mapper.Map<CreateTripCommand>(command);
@@ -87,6 +88,7 @@ namespace Duber.Trip.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> AcceptTrip([FromBody]ViewModel.UpdateTripCommand command)
         {
+            // TODO: make command immutable
             // BadRequest and InternalServerError could be throw in HttpGlobalExceptionFilter, and also by ValidatorActionFilter due to the UpdateTripCommandValidator.
             var domainCommand = _mapper.Map<UpdateTripCommand>(command);
             domainCommand.Action = Action.Accept;
@@ -109,9 +111,33 @@ namespace Duber.Trip.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> StartTrip([FromBody]ViewModel.UpdateTripCommand command)
         {
+            // TODO: make command immutable
             // BadRequest and InternalServerError could be throw in HttpGlobalExceptionFilter, and also by ValidatorActionFilter due to the UpdateTripCommandValidator.
             var domainCommand = _mapper.Map<UpdateTripCommand>(command);
             domainCommand.Action = Action.Start;
+            domainCommand.Source = Source;
+            domainCommand.UserId = _fakeUser;
+
+            await _dispatcher.SendAndPublishAsync<UpdateTripCommand, Domain.Trip.Model.Trip>(domainCommand);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Cancels the specified trip.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [Route("cancel")]
+        [HttpPut]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> CancelTrip([FromBody]ViewModel.UpdateTripCommand command)
+        {
+            // TODO: make command immutable
+            // BadRequest and InternalServerError could be throw in HttpGlobalExceptionFilter, and also by ValidatorActionFilter due to the UpdateTripCommandValidator.
+            var domainCommand = _mapper.Map<UpdateTripCommand>(command);
+            domainCommand.Action = Action.Cancel;
             domainCommand.Source = Source;
             domainCommand.UserId = _fakeUser;
 
@@ -131,6 +157,7 @@ namespace Duber.Trip.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> UpdateCurrentLocation([FromBody]ViewModel.UpdateCurrentLocationTripCommand command)
         {
+            // TODO: make command immutable
             // BadRequest and InternalServerError could be throw in HttpGlobalExceptionFilter, and also by ValidatorActionFilter due to the UpdateTripCommandValidator.
             var domainCommand = _mapper.Map<UpdateTripCommand>(command);
             domainCommand.Action = Action.UpdateCurrentLocation;

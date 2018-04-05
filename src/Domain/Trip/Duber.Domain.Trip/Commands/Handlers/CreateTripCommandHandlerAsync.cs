@@ -14,6 +14,7 @@ namespace Duber.Domain.Trip.Commands.Handlers
                 command.DriverId,
                 command.From,
                 command.To,
+                command.PaymentMethod,
                 command.Plate,
                 command.Brand,
                 command.Model);

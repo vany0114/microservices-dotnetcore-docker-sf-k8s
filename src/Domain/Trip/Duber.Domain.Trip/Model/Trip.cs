@@ -17,11 +17,13 @@ namespace Duber.Domain.Trip.Model
         private Location _from;
         private Location _to;
         private Location _currentLocation;
+        private DateTime _create;
         private DateTime? _start;
         private DateTime? _end;
         private TripStatus _status;
         private VehicleInformation _vehicleInformation;
         private Rating _rating;
+        private PaymentMethod _paymentMethod;
 
         public int UserId => _userId;
 
@@ -33,15 +35,19 @@ namespace Duber.Domain.Trip.Model
 
         public Location CurrentLocation => _currentLocation;
 
+        public DateTime? Created => _create;
+
         public DateTime? Started => _start;
 
         public DateTime? End => _end;
 
         public TripStatus Status => _status;
 
-        public VehicleInformation Information => _vehicleInformation;
+        public VehicleInformation VehicleInformation => _vehicleInformation;
 
         public Rating Rating => _rating;
+
+        public PaymentMethod PaymentMethod => _paymentMethod;
 
         public TimeSpan? Duration => GetDuration();
 
@@ -52,7 +58,7 @@ namespace Duber.Domain.Trip.Model
         {
         }
 
-        public Trip(Guid id, int userId, int driverId, Location from, Location to, string plate, string brand, string model) : base(id)
+        public Trip(Guid id, int userId, int driverId, Location from, Location to, PaymentMethod paymentMethod, string plate, string brand, string model) : base(id)
         {
             if (userId <= 0) throw new TripDomainArgumentNullException(nameof(userId));
             if (driverId <= 0) throw new TripDomainArgumentNullException(nameof(driverId));
@@ -62,10 +68,13 @@ namespace Duber.Domain.Trip.Model
 
             if (Equals(from, to)) throw new TripDomainInvalidOperationException("Destination and origin can't be the same.");
 
+            _create = DateTime.UtcNow;
+            _status = TripStatus.Created;
             _userId = userId;
             _driverId = driverId;
             _from = from ?? throw new TripDomainArgumentNullException(nameof(from));
             _to = to ?? throw new TripDomainArgumentNullException(nameof(to));
+            _paymentMethod = paymentMethod ?? throw new TripDomainArgumentNullException(nameof(paymentMethod));
             _vehicleInformation = new VehicleInformation(plate, brand, model);
 
             AddEvent(new TripCreatedDomainEvent
@@ -75,12 +84,18 @@ namespace Duber.Domain.Trip.Model
                 UserTripId = _userId,
                 DriverId = _driverId,
                 From = _from,
-                To = _to
+                To = _to,
+                PaymentMethod = _paymentMethod,
+                TimeStamp = _create,
+                Status = _status
             });
         }
 
         public void Accept()
         {
+            if (!Equals(_status, TripStatus.Created))
+                throw new TripDomainInvalidOperationException($"Invalid trip status to accept the trip. Current status: {_status.Name}");
+
             _status = TripStatus.Accepted;
             AddEvent(new TripUpdatedDomainEvent
             {
@@ -124,7 +139,10 @@ namespace Duber.Domain.Trip.Model
                 Action = Action.FinishedEarlier,
                 Status = _status,
                 Started = _start,
-                Ended = _end
+                Ended = _end,
+                Duration = GetDuration(),
+                Distance = GetDistance(),
+                PaymentMethod = _paymentMethod
             });
         }
 
@@ -145,7 +163,8 @@ namespace Duber.Domain.Trip.Model
                 Action = Action.Cancelled,
                 Status = _status,
                 Started = _start,
-                Ended = _end
+                Ended = _end,
+                PaymentMethod = _paymentMethod
             });
         }
 
@@ -170,7 +189,10 @@ namespace Duber.Domain.Trip.Model
                 Status = _status,
                 Started = _start,
                 Ended = _end,
-                CurrentLocation = currentLocation
+                CurrentLocation = currentLocation,
+                Duration = GetDuration(),
+                Distance = GetDistance(),
+                PaymentMethod = _paymentMethod
             });
         }
 
@@ -199,18 +221,20 @@ namespace Duber.Domain.Trip.Model
         private void Apply(TripCreatedDomainEvent @event)
         {
             Id = @event.AggregateRootId;
+            _status = @event.Status;
+            _create = @event.TimeStamp;
             _driverId = @event.DriverId;
             _from = @event.From;
             _to = @event.To;
             _userId = @event.UserTripId;
             _vehicleInformation = @event.VehicleInformation;
+            _paymentMethod = @event.PaymentMethod;
         }
 
         private void Apply(TripUpdatedDomainEvent @event)
         {
-            Id = @event.AggregateRootId;
-            _end = @event.Ended;
             _start = @event.Started;
+            _end = @event.Ended;
             _status = @event.Status;
             _currentLocation = @event.CurrentLocation;
         }

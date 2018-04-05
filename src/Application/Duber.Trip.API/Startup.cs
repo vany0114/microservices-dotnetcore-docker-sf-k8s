@@ -1,8 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Duber.Domain.Trip.Commands;
+using Duber.Infrastructure.EventBus;
+using Duber.Infrastructure.EventBus.Abstractions;
+using Duber.Infrastructure.EventBus.RabbitMQ;
+using Duber.Trip.API.Application.DomainEventHandlers;
 using Duber.Trip.API.Application.Validations;
 using Duber.Trip.API.Infrastructure.Filters;
 using Duber.Trip.API.Infrastructure.Repository;
@@ -12,8 +18,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 using Weapsy.Cqrs.EventStore.CosmosDB.MongoDB.Extensions;
 using Weapsy.Cqrs.Extensions;
+// ReSharper disable InconsistentNaming
 
 namespace Duber.Trip.API
 {
@@ -27,7 +35,7 @@ namespace Duber.Trip.API
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper();
             services.AddMvc(options =>
@@ -41,7 +49,7 @@ namespace Duber.Trip.API
 
             // Event store configuration:
             // Weapsy.CQRS only needs a type per assembly, it automatically registers the rest of the commands, events, etc.
-            services.AddWeapsyCqrs(typeof(CreateTripCommand));
+            services.AddWeapsyCqrs(typeof(CreateTripCommand), typeof(TripCreatedDomainEventHandlerAsync));
             services.AddWeapsyCqrsEventStore(Configuration);
             services.AddTransient<IEventStoreRepository, EventStoreRepository>();
 
@@ -54,6 +62,7 @@ namespace Duber.Trip.API
                         .AllowCredentials());
             });
 
+            // swagger configuration
             services.AddSwaggerGen(options =>
             {
                 options.DescribeAllEnumsAsStrings();
@@ -70,14 +79,37 @@ namespace Duber.Trip.API
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 options.IncludeXmlComments(xmlPath);
             });
+
+            // service bus configuration
+            services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
+                var factory = new ConnectionFactory()
+                {
+                    HostName = Configuration["EventBusConnection"]
+                };
+
+                var retryCount = 5;
+                if (!string.IsNullOrEmpty(Configuration["EventBusRetryCount"]))
+                {
+                    retryCount = int.Parse(Configuration["EventBusRetryCount"]);
+                }
+
+                return new DefaultRabbitMQPersistentConnection(factory, logger, retryCount);
+            });
+            RegisterEventBus(services);
+
+            var container = new ContainerBuilder();
+            container.Populate(services);
+            return new AutofacServiceProvider(container.Build());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
             loggerFactory.AddAzureWebAppDiagnostics();
+            loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Trace);
 
             if (env.IsDevelopment())
             {
@@ -93,6 +125,27 @@ namespace Duber.Trip.API
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Duber.Trip V1");
                     c.RoutePrefix = string.Empty;
                 });
+        }
+
+        private void RegisterEventBus(IServiceCollection services)
+        {
+            services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
+            {
+                var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQPersistentConnection>();
+                var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
+                var logger = sp.GetRequiredService<ILogger<EventBusRabbitMQ>>();
+                var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
+
+                var retryCount = 5;
+                if (!string.IsNullOrEmpty(Configuration["EventBusRetryCount"]))
+                {
+                    retryCount = int.Parse(Configuration["EventBusRetryCount"]);
+                }
+
+                return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, retryCount);
+            });
+
+            services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
         }
     }
 }

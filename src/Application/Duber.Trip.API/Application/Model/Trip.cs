@@ -14,19 +14,23 @@ namespace Duber.Trip.API.Application.Model
 
         public Location CurrentLocation { get; set; }
 
+        public DateTime Created { get; set; }
+
         public DateTime? Started { get; set; }
 
         public DateTime? End { get; set; }
 
         public TripStatus Status { get; set; }
 
-        public VehicleInformation Information { get; set; }
+        public VehicleInformation VehicleInformation { get; set; }
 
         public Rating Rating { get; set; }
 
         public TimeSpan? Duration { get; set; }
 
         public double Distance { get; set; }
+
+        public PaymentMethod PaymentMethod { get; set; }
     }
 
     public class VehicleInformation
@@ -39,6 +43,13 @@ namespace Duber.Trip.API.Application.Model
     }
 
     public class TripStatus
+    {
+        public string Name { get; set; }
+
+        public int Id { get; set; }
+    }
+
+    public class PaymentMethod
     {
         public string Name { get; set; }
 
