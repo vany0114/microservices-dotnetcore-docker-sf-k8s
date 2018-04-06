@@ -5,9 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Events\" />
+    <Compile Remove="Events\**" />
+    <Compile Remove="Services\**" />
+    <EmbeddedResource Remove="Events\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Events\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>

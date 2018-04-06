@@ -20,10 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Infrastructure\Duber.Infrastructure\Duber.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus.RabbitMQ\Duber.Infrastructure.EventBus.RabbitMQ.csproj" />
-    <ProjectReference Include="..\..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus.ServiceBus\Duber.Infrastructure.EventBus.ServiceBus.csproj" />
-    <ProjectReference Include="..\..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus\Duber.Infrastructure.EventBus.csproj" />
+    <ProjectReference Include="..\..\Duber.Domain.SharedKernel\Duber.Domain.SharedKernel.csproj" />
   </ItemGroup>
 
 </Project>

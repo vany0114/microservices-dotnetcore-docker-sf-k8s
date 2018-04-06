@@ -1,4 +1,5 @@
 ﻿using System;
+using Duber.Domain.SharedKernel.Model;
 using Duber.Domain.Trip.Events;
 using Duber.Domain.Trip.Exceptions;
 using GeoCoordinatePortable;

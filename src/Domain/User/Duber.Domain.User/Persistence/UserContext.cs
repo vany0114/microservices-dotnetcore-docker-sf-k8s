@@ -1,4 +1,4 @@
-﻿using Duber.Domain.User.Model;
+﻿using Duber.Domain.SharedKernel.Model;
 using Duber.Domain.User.Persistence.EntityConfigurations;
 using Duber.Infrastructure.Repository.Abstractions;
 using Microsoft.EntityFrameworkCore;

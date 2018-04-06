@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Duber.Domain.SharedKernel.Model;
 using Duber.Domain.User.Exceptions;
 using Duber.Infrastructure.DDD;
 // ReSharper disable FieldCanBeMadeReadOnly.Local

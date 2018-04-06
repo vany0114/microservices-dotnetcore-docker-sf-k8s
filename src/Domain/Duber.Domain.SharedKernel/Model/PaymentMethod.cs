@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Duber.Infrastructure.DDD;
 
-namespace Duber.Domain.Trip.Model
+namespace Duber.Domain.SharedKernel.Model
 {
     public class PaymentMethod : Enumeration
     {

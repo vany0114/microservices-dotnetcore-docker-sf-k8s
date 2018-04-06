@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Duber.Domain.Driver.Model;
+﻿using Duber.Domain.Driver.Model;
 using Duber.Domain.Driver.Persistence.EntityConfigurations;
 using Duber.Infrastructure.Repository.Abstractions;
 using Microsoft.EntityFrameworkCore;
