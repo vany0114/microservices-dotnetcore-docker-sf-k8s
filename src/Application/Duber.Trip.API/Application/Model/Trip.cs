@@ -4,6 +4,8 @@ namespace Duber.Trip.API.Application.Model
 {
     public class Trip
     {
+        public Guid Id { get; set; }
+
         public int UserId { get; set; }
 
         public int DriverId { get; set; }

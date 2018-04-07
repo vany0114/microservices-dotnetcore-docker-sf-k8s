@@ -1,4 +1,5 @@
-﻿using Duber.Domain.Invoice.Model;
+﻿using System;
+using Duber.Domain.Invoice.Model;
 
 namespace Duber.Domain.Invoice.Extensions
 {
@@ -9,9 +10,9 @@ namespace Duber.Domain.Invoice.Extensions
             return tripInformation.Distance / 1000;
         }
 
-        public static int DurationToMinutes(this TripInformation tripInformation)
+        public static double DurationToMinutes(this TripInformation tripInformation)
         {
-            return tripInformation.Duration.Minutes;
+            return tripInformation.Duration.TotalMinutes;
         }
     }
 }

@@ -6,7 +6,7 @@ using Duber.Infrastructure.EventBus.Abstractions;
 using Duber.Trip.API.Application.IntegrationEvents;
 using Duber.Trip.API.Application.Model;
 using Weapsy.Cqrs.Events;
-using TripStatus = Duber.Domain.Trip.Model.TripStatus;
+using TripStatus = Duber.Domain.SharedKernel.Model.TripStatus;
 
 namespace Duber.Trip.API.Application.DomainEventHandlers
 {
@@ -42,12 +42,12 @@ namespace Duber.Trip.API.Application.DomainEventHandlers
             }
             else if (@event.Status.Name == TripStatus.Cancelled.Name)
             {
-                if (!@event.Started.HasValue)
-                    throw new ArgumentException("Started trip time is required to trigger a TripCancelledIntegrationEvent");
+                if (!@event.Duration.HasValue)
+                    throw new ArgumentException("Duration is required to trigger a TripCancelledIntegrationEvent");
 
                 _eventBus.Publish(new TripCancelledIntegrationEvent(
                     @event.AggregateRootId,
-                    @event.Started.Value,
+                    @event.Duration.Value,
                     new PaymentMethod { Id = @event.PaymentMethod.Id, Name = @event.PaymentMethod.Name }));
             }
 

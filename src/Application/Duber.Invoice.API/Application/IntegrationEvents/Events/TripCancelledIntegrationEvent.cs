@@ -1,8 +1,8 @@
 ﻿using System;
 using Duber.Infrastructure.EventBus.Events;
-using Duber.Trip.API.Application.Model;
+using Duber.Invoice.API.Application.Model;
 
-namespace Duber.Trip.API.Application.IntegrationEvents
+namespace Duber.Invoice.API.Application.IntegrationEvents.Events
 {
     public class TripCancelledIntegrationEvent : IntegrationEvent
     {

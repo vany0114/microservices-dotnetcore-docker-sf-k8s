@@ -28,45 +28,83 @@ namespace Duber.Domain.Invoice.Model
 
         public Guid InvoiceId => _invoiceId;
 
-        public TripInformation Information => _tripInformation;
+        public TripInformation TripInformation => _tripInformation;
 
         public DateTime Created => _created;
 
-        public Invoice(PaymentMethod paymentMethod, TimeSpan duration, double distance)
+        // to Dapper mapping.
+        protected Invoice(Guid invoiceId, decimal fee, decimal total, int paymentMethodId, Guid tripId, double distance, TimeSpan duration, DateTime created, int tripStatusId)
         {
-            if (duration == default(TimeSpan)) throw new InvoiceDomainArgumentNullException(nameof(duration));
-            if (distance == default(double)) throw new InvoiceDomainArgumentNullException(nameof(distance));
+            _invoiceId = invoiceId;
+            _created = created;
+            _tripInformation = new TripInformation(tripId, duration, distance, tripStatusId);
+            _fee = fee;
+            _paymentMethod = PaymentMethod.From(paymentMethodId);
+            _total = total;
+        }
+
+        public Invoice(int paymentMethodId, Guid tripId, TimeSpan duration, double distance, int tripStatusId)
+        {
+            if (paymentMethodId == default(int)) throw new InvoiceDomainArgumentNullException(nameof(paymentMethodId));
 
             _invoiceId = Guid.NewGuid();
             _created = DateTime.UtcNow;
-            _paymentMethod = paymentMethod ?? throw new InvoiceDomainArgumentNullException(nameof(paymentMethod));
-            _tripInformation = new TripInformation(duration, distance);
+            _paymentMethod = PaymentMethod.From(paymentMethodId);
+            _tripInformation = new TripInformation(tripId, duration, distance, tripStatusId);
             GetFee();
             GetTotal();
 
-            AddDomainEvent(new InvoiceCreatedDomainEvent(_invoiceId, _fee, _total));
+            AddDomainEvent(new InvoiceCreatedDomainEvent(_invoiceId, _fee, _total, Equals(_paymentMethod, PaymentMethod.CreditCard)));
         }
 
         private void GetFee()
         {
             // let's say there is this bussines rule to get the fee.
-            if (Information.DistanceToKilometers() < 5)
+            if (Equals(_tripInformation.Status, TripStatus.Cancelled))
             {
-                _fee = 2;
+                _fee = 4;
             }
-            else if (Information.DurationToMinutes() < 15)
+            else if (_tripInformation.DistanceToKilometers() < 5)
             {
                 _fee = 3;
+            }
+            else if (_tripInformation.DurationToMinutes() < 15)
+            {
+                _fee = 2;
             }
         }
 
         private void GetTotal()
         {
             // let's say there is formula to get the total.
-            _total = (decimal)(Information.DistanceToKilometers() * Information.DurationToMinutes() * (double)_fee);
+            // a strategy pattern could be a good call to calculate de total based on the trip status.
+            if (Equals(_tripInformation.Status, TripStatus.Cancelled))
+            {
+                // if the user cancels the trip after 5 minutes, it charges a value proportional to the minutes.
+                if (_tripInformation.DurationToMinutes() > 5)
+                {
+                    _total = _fee * ((decimal)_tripInformation.DurationToMinutes() / 10);
+                }
+                else if (_tripInformation.DurationToMinutes() > 2 && _tripInformation.DurationToMinutes() <= 5)
+                {
+                    // if the user cancels the trip between the 2nd and 5th minute, it charges a fixed value.
+                    _fee = 0;
+                    _total = 2;
+                }
+                else
+                {
+                    // if the user cancels the trip before 2 minutes it doesn't charge anything
+                    _fee = 0;
+                    _total = 0;
+                }
+            }
+            else
+            {
+                _total = (decimal)(_tripInformation.DistanceToKilometers() * _tripInformation.DurationToMinutes() * (double)_fee);
 
-            if (_total <= 0)
-                throw new InvoiceDomainInvalidOperationException("There was an error calculating the invoice total");
+                if (_total <= 0)
+                    throw new InvoiceDomainInvalidOperationException("There was an error calculating the invoice total");
+            }
         }
     }
 }

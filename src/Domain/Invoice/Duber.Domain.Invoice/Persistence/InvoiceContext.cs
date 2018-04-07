@@ -23,29 +23,30 @@ namespace Duber.Domain.Invoice.Persistence
 
             _connectionString = connectionString;
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            _connection = GetOpenConnection();
         }
 
         public async Task<int> ExecuteAsync<T>(T entity, string sql, object parameters = null, int? timeOut = null, CommandType? commandType = null)
             where T : Entity, IAggregateRoot
         {
-            using (_connection = GetOpenConnection())
-            {
-                var result = await _connection.ExecuteAsync(sql, parameters, null, timeOut, commandType);
+            _connection = GetOpenConnection();
+            var result = await _connection.ExecuteAsync(sql, parameters, null, timeOut, commandType);
 
-                // ensures that all events are dispatched after the entity is saved successfully.
-                await _mediator.DispatchDomainEventsAsync(entity);
-                return result;
-            }
+            // ensures that all events are dispatched after the entity is saved successfully.
+            await _mediator.DispatchDomainEventsAsync(entity);
+            return result;
         }
 
         public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object parameters = null, int? timeOut = null, CommandType? commandType = null)
             where T : Entity, IAggregateRoot
         {
-            using (_connection = GetOpenConnection())
-            {
-                return await _connection.QueryAsync<T>(sql, parameters, null, timeOut, commandType);
-            }
+            _connection = GetOpenConnection();
+            return await _connection.QueryAsync<T>(sql, parameters, null, timeOut, commandType);
+        }
+
+        public async Task<T> QuerySingleAsync<T>(string sql, object parameters = null, int? timeOut = null, CommandType? commandType = null) where T : Entity, IAggregateRoot
+        {
+            _connection = GetOpenConnection();
+            return await _connection.QuerySingleOrDefaultAsync<T>(sql, parameters, null, timeOut, commandType);
         }
 
         private IDbConnection GetOpenConnection()

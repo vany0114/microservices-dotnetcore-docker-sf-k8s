@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Duber.Infrastructure.DDD;
 
-namespace Duber.Domain.Trip.Model
+namespace Duber.Domain.SharedKernel.Model
 {
     public class TripStatus : Enumeration
     {

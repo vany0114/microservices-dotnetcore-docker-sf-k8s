@@ -11,7 +11,7 @@ using System;
 namespace Duber.Domain.Invoice.Migrations
 {
     [DbContext(typeof(InvoiceMigrationContext))]
-    [Migration("20180406041810_InitialCreate")]
+    [Migration("20180407204749_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,6 +37,10 @@ namespace Duber.Domain.Invoice.Migrations
                     b.Property<int>("PaymentMethodId");
 
                     b.Property<decimal>("Total");
+
+                    b.Property<Guid>("TripId");
+
+                    b.Property<int>("TripStatusId");
 
                     b.HasKey("InvoiceId");
 

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Duber.Domain.Invoice.Persistence;
+using Duber.Infrastructure.WebHost;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace Duber.Invoice.API
 {
@@ -14,7 +9,9 @@ namespace Duber.Invoice.API
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            BuildWebHost(args)
+                .MigrateDbContext<InvoiceMigrationContext>((_, __) => { })
+                .Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>

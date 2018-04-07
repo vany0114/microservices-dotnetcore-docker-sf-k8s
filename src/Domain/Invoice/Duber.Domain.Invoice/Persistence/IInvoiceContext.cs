@@ -12,5 +12,8 @@ namespace Duber.Domain.Invoice.Persistence
 
         Task<IEnumerable<T>> QueryAsync<T>(string sql, object parameters = null, int? timeOut = null, CommandType? commandType = null)
             where T : Entity, IAggregateRoot;
+
+        Task<T> QuerySingleAsync<T>(string sql, object parameters = null, int? timeOut = null, CommandType? commandType = null)
+            where T : Entity, IAggregateRoot;
     }
 }

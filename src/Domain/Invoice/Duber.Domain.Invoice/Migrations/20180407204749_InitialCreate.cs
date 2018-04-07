@@ -18,7 +18,9 @@ namespace Duber.Domain.Invoice.Migrations
                     Duration = table.Column<TimeSpan>(nullable: false),
                     Fee = table.Column<decimal>(nullable: false),
                     PaymentMethodId = table.Column<int>(nullable: false),
-                    Total = table.Column<decimal>(nullable: false)
+                    Total = table.Column<decimal>(nullable: false),
+                    TripId = table.Column<Guid>(nullable: false),
+                    TripStatusId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

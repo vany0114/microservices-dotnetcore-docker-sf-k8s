@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="4.1.0" />
+    <PackageReference Include="MediatR" Version="3.0.1" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.4.0" />
   </ItemGroup>

@@ -165,7 +165,8 @@ namespace Duber.Domain.Trip.Model
                 Status = _status,
                 Started = _start,
                 Ended = _end,
-                PaymentMethod = _paymentMethod
+                PaymentMethod = _paymentMethod,
+                Duration = GetDuration()
             });
         }
 

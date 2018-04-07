@@ -56,6 +56,10 @@ namespace Duber.Domain.Invoice.Persistence
 
             builder.Property<int>("PaymentMethodId").IsRequired();
 
+            builder.Property<int>("TripStatusId").IsRequired();
+
+            builder.Property<Guid>("TripId").IsRequired();
+
             builder.Property<double>("Distance").IsRequired();
 
             builder.Property<TimeSpan>("Duration").IsRequired();

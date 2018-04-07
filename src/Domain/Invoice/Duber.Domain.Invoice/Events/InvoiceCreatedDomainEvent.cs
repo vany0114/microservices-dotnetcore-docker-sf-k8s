@@ -6,11 +6,12 @@ namespace Duber.Domain.Invoice.Events
 {
     public class InvoiceCreatedDomainEvent : INotification
     {
-        public InvoiceCreatedDomainEvent(Guid invoiceId, decimal fee, decimal total)
+        public InvoiceCreatedDomainEvent(Guid invoiceId, decimal fee, decimal total, bool paidWithCreditCard)
         {
             InvoiceId = invoiceId;
             Fee = fee;
             Total = total;
+            PaidWithCreditCard = paidWithCreditCard;
         }
 
         public Guid InvoiceId { get; }
@@ -18,5 +19,7 @@ namespace Duber.Domain.Invoice.Events
         public decimal Fee { get; }
 
         public decimal Total { get; }
+
+        public bool PaidWithCreditCard { get; }
     }
 }

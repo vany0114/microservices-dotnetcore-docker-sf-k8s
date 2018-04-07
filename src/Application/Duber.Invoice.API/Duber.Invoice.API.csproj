@@ -5,16 +5,33 @@
     <DockerComposeProjectPath>..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp2.0\Duber.Invoice.API.xml</DocumentationFile>
+    <NoWarn>1701;1702;1705;1591</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.2" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="7.5.2" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="2.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Domain\Invoice\Duber.Domain.Invoice\Duber.Domain.Invoice.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Duber.Infrastructure.WebHost\Duber.Infrastructure.WebHost.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus.RabbitMQ\Duber.Infrastructure.EventBus.RabbitMQ.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus.ServiceBus\Duber.Infrastructure.EventBus.ServiceBus.csproj" />
   </ItemGroup>
 
 </Project>

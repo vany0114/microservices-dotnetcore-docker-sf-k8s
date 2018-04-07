@@ -37,6 +37,10 @@ namespace Duber.Domain.Invoice.Migrations
 
                     b.Property<decimal>("Total");
 
+                    b.Property<Guid>("TripId");
+
+                    b.Property<int>("TripStatusId");
+
                     b.HasKey("InvoiceId");
 
                     b.ToTable("Invoices");
