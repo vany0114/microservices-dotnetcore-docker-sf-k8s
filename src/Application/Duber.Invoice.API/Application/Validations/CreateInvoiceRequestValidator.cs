@@ -8,6 +8,7 @@ namespace Duber.Invoice.API.Application.Validations
         public CreateInvoiceRequestValidator()
         {
             RuleFor(request => request.TripId).NotEmpty().WithMessage("Trip id is required.");
+            RuleFor(request => request.UserId).NotEmpty().WithMessage("User id is required.");
         }
     }
 }

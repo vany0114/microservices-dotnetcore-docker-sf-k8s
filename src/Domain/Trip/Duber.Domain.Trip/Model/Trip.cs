@@ -143,13 +143,14 @@ namespace Duber.Domain.Trip.Model
                 Ended = _end,
                 Duration = GetDuration(),
                 Distance = GetDistance(),
-                PaymentMethod = _paymentMethod
+                PaymentMethod = _paymentMethod,
+                UserTripId = _userId
             });
         }
 
         public void Cancel()
         {
-            if (!Equals(_status, TripStatus.InCourse))
+            if (!Equals(_status, TripStatus.Created) || !Equals(_status, TripStatus.Accepted))
                 throw new TripDomainInvalidOperationException($"Invalid trip status to cancel the trip. Current status: {_status.Name}");
 
             _end = DateTime.UtcNow;
@@ -166,7 +167,8 @@ namespace Duber.Domain.Trip.Model
                 Started = _start,
                 Ended = _end,
                 PaymentMethod = _paymentMethod,
-                Duration = GetDuration()
+                Duration = GetDuration(),
+                UserTripId = _userId
             });
         }
 
@@ -194,7 +196,8 @@ namespace Duber.Domain.Trip.Model
                 CurrentLocation = currentLocation,
                 Duration = GetDuration(),
                 Distance = GetDistance(),
-                PaymentMethod = _paymentMethod
+                PaymentMethod = _paymentMethod,
+                UserTripId = _userId
             });
         }
 

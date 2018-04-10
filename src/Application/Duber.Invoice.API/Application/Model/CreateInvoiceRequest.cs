@@ -13,5 +13,7 @@ namespace Duber.Invoice.API.Application.Model
         public double Distance { get; set; }
 
         public TripStatus TripStatus { get; set; }
+
+        public int UserId { get; set; }
     }
 }

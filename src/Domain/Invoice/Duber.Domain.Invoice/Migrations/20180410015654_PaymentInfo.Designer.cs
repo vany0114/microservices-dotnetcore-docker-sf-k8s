@@ -12,9 +12,10 @@ using System;
 namespace Duber.Domain.Invoice.Migrations
 {
     [DbContext(typeof(InvoiceMigrationContext))]
-    partial class InvoiceMigrationContextModelSnapshot : ModelSnapshot
+    [Migration("20180410015654_PaymentInfo")]
+    partial class PaymentInfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

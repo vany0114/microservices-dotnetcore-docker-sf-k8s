@@ -15,6 +15,8 @@ namespace Duber.Invoice.API.Application.Model
         public TripInformation TripInformation { get; set; }
 
         public DateTime Created { get; set; }
+
+        public PaymentInfo PaymentInfo { get; set; }
     }
 
     public class TripInformation
@@ -40,5 +42,22 @@ namespace Duber.Invoice.API.Application.Model
         public string Name { get; set; }
 
         public int Id { get; set; }
+    }
+
+    public class PaymentInfo
+    {
+        public int UserId { get; set; }
+
+        public PaymentStatus Status { get; set; }
+
+        public string CardNumber { get; set; }
+
+        public string CardType { get; set; }
+    }
+
+    public enum PaymentStatus
+    {
+        Accepted = 1,
+        Rejected = 2,
     }
 }

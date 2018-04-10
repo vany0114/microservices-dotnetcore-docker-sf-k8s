@@ -1,4 +1,5 @@
 ﻿using System;
+using Duber.Domain.Invoice.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -16,10 +17,13 @@ namespace Duber.Domain.Invoice.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new PaymentInfoEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new InvoiceEntityTypeConfiguration());
         }
 
         public DbSet<Model.Invoice> Invoices { get; set; }
+
+        public DbSet<Model.PaymentInfo> PaymentsInfo { get; set; }
     }
 
     public class UserContextDesignFactory : IDesignTimeDbContextFactory<InvoiceMigrationContext>
@@ -63,6 +67,35 @@ namespace Duber.Domain.Invoice.Persistence
             builder.Property<double>("Distance").IsRequired();
 
             builder.Property<TimeSpan>("Duration").IsRequired();
+
+            builder.HasOne(a => a.PaymentInfo)
+                .WithOne()
+                .HasForeignKey<PaymentInfo>(b => b.InvoiceId);
+        }
+    }
+
+    internal class PaymentInfoEntityTypeConfiguration : IEntityTypeConfiguration<PaymentInfo>
+    {
+        public void Configure(EntityTypeBuilder<PaymentInfo> builder)
+        {
+            builder.ToTable("PaymentsInfo");
+
+            builder.HasKey(o => new { o.Status, o.CardNumber, o.CardType, o.InvoiceId, o.UserId });
+
+            builder.Property(x => x.Status)
+                .IsRequired();
+
+            builder.Property(x => x.CardNumber)
+                .IsRequired();
+
+            builder.Property(x => x.CardType)
+                .IsRequired();
+
+            builder.Property(x => x.InvoiceId)
+                .IsRequired();
+
+            builder.Property(x => x.UserId)
+                .IsRequired();
         }
     }
 }

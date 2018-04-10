@@ -19,6 +19,7 @@ namespace Duber.Domain.Invoice.Model
         private TripInformation _tripInformation;
         private PaymentMethod _paymentMethod;
         private DateTime _created;
+        private PaymentInfo _paymentInfo;
 
         public decimal Fee => _fee;
 
@@ -32,8 +33,11 @@ namespace Duber.Domain.Invoice.Model
 
         public DateTime Created => _created;
 
+        public PaymentInfo PaymentInfo => _paymentInfo;
+
         // to Dapper mapping.
-        protected Invoice(Guid invoiceId, decimal fee, decimal total, int paymentMethodId, Guid tripId, double distance, TimeSpan duration, DateTime created, int tripStatusId)
+        protected Invoice(Guid invoiceId, decimal fee, decimal total, int paymentMethodId, Guid tripId, double distance,
+            TimeSpan duration, DateTime created, int tripStatusId, int status, string cardNumber, string cardType, int userId)
         {
             _invoiceId = invoiceId;
             _created = created;
@@ -41,6 +45,9 @@ namespace Duber.Domain.Invoice.Model
             _fee = fee;
             _paymentMethod = PaymentMethod.From(paymentMethodId);
             _total = total;
+
+            if (userId != default(int))
+                _paymentInfo = new PaymentInfo(userId, (PaymentStatus)status, cardNumber, cardType);
         }
 
         public Invoice(int paymentMethodId, Guid tripId, TimeSpan duration, double distance, int tripStatusId)
@@ -55,6 +62,17 @@ namespace Duber.Domain.Invoice.Model
             GetTotal();
 
             AddDomainEvent(new InvoiceCreatedDomainEvent(_invoiceId, _fee, _total, Equals(_paymentMethod, PaymentMethod.CreditCard)));
+        }
+
+        public void ProcessPayment(PaymentInfo paymentInfo)
+        {
+            if (!Equals(_paymentMethod, PaymentMethod.CreditCard))
+                throw new InvoiceDomainInvalidOperationException("Invalid payment method to process.");
+
+            if (_total == 0)
+                throw new InvoiceDomainInvalidOperationException("This invoice doesn't have any charges.");
+
+            _paymentInfo = paymentInfo;
         }
 
         private void GetFee()

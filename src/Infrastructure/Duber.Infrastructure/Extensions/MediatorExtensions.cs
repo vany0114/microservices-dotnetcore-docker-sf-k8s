@@ -9,9 +9,9 @@ namespace Duber.Infrastructure.Extensions
     {
         public static async Task DispatchDomainEventsAsync(this IMediator mediator, Entity entity)
         {
-            var domainEvents = entity.DomainEvents.ToList();
-            if (domainEvents.Count == 0)
-                await Task.CompletedTask;
+            var domainEvents = entity.DomainEvents?.ToList();
+            if (domainEvents == null || domainEvents.Count == 0)
+                return;
 
             entity.DomainEvents.Clear();
             var tasks = domainEvents

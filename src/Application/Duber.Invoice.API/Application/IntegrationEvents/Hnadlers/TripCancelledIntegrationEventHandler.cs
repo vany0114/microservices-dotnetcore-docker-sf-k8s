@@ -31,7 +31,7 @@ namespace Duber.Invoice.API.Application.IntegrationEvents.Hnadlers
             await _invoiceRepository.AddInvoiceAsync(invoice);
 
             // integration with external payment system.
-            if (Equals(invoice.PaymentMethod, PaymentMethod.CreditCard))
+            if (Equals(invoice.PaymentMethod, PaymentMethod.CreditCard) && invoice.Total > 0)
             {
 
             }

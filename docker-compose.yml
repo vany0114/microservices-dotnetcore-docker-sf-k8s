@@ -41,3 +41,10 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
+
+  externalsystem.payment:
+    image: externalsystem/paymentservice:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: ExternalSystem/PaymentService/Dockerfile
+

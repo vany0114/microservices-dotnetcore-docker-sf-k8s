@@ -31,24 +31,26 @@ namespace Duber.Trip.API.Application.DomainEventHandlers
             // events for invoice microservice
             if (@event.Status.Name == TripStatus.Finished.Name)
             {
-                if (!@event.Distance.HasValue || !@event.Duration.HasValue)
-                    throw new ArgumentException("Distance and duration are required to trigger a TripFinishedIntegrationEvent");
+                if (!@event.Distance.HasValue || !@event.Duration.HasValue || !@event.UserTripId.HasValue)
+                    throw new ArgumentException("Distance, duration and user id are required to trigger a TripFinishedIntegrationEvent");
 
                 _eventBus.Publish(new TripFinishedIntegrationEvent(
                     @event.AggregateRootId,
                     @event.Distance.Value,
                     @event.Duration.Value,
-                    new PaymentMethod { Id = @event.PaymentMethod.Id, Name = @event.PaymentMethod.Name }));
+                    new PaymentMethod { Id = @event.PaymentMethod.Id, Name = @event.PaymentMethod.Name },
+                    @event.UserTripId.Value));
             }
             else if (@event.Status.Name == TripStatus.Cancelled.Name)
             {
-                if (!@event.Duration.HasValue)
-                    throw new ArgumentException("Duration is required to trigger a TripCancelledIntegrationEvent");
+                if (!@event.Duration.HasValue || !@event.UserTripId.HasValue)
+                    throw new ArgumentException("Duration and user id are required to trigger a TripCancelledIntegrationEvent");
 
                 _eventBus.Publish(new TripCancelledIntegrationEvent(
                     @event.AggregateRootId,
                     @event.Duration.Value,
-                    new PaymentMethod { Id = @event.PaymentMethod.Id, Name = @event.PaymentMethod.Name }));
+                    new PaymentMethod { Id = @event.PaymentMethod.Id, Name = @event.PaymentMethod.Name },
+                    @event.UserTripId.Value));
             }
 
             await Task.CompletedTask;

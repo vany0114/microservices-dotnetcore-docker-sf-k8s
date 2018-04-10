@@ -13,5 +13,7 @@ namespace Duber.Domain.Invoice.Repository
         Task<IEnumerable<Model.Invoice>> GetInvoicesAsync();
 
         Task<int> AddInvoiceAsync(Model.Invoice invoice);
+
+        Task<int> AddPaymentInfo(Model.Invoice invoice);
     }
 }

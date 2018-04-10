@@ -22,6 +22,8 @@ namespace Duber.Domain.Trip.Events
         public TimeSpan? Duration { get; set; }
 
         public PaymentMethod PaymentMethod { get; set; }
+
+        public int? UserTripId { get; set; }
     }
 
     public enum Action

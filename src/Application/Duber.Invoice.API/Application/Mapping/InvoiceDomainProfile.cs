@@ -13,6 +13,7 @@ namespace Duber.Invoice.API.Application.Mapping
             CreateMap<PaymentMethod, ViewModel.PaymentMethod>();
             CreateMap<TripStatus, ViewModel.TripStatus>();
             CreateMap<TripInformation, ViewModel.TripInformation>();
+            CreateMap<PaymentInfo, ViewModel.PaymentInfo>();
         }
     }
 }
