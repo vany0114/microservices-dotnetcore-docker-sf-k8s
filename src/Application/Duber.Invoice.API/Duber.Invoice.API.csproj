@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\Invoice\Duber.Domain.Invoice\Duber.Domain.Invoice.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Duber.Infrastructure.Resilience\Duber.Infrastructure.Resilience.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Duber.Infrastructure.WebHost\Duber.Infrastructure.WebHost.csproj" />
     <ProjectReference Include="..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus.RabbitMQ\Duber.Infrastructure.EventBus.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus.ServiceBus\Duber.Infrastructure.EventBus.ServiceBus.csproj" />

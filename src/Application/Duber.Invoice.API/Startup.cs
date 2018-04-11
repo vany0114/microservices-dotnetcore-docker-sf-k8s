@@ -4,11 +4,15 @@ using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
+using Duber.Domain.ACL.Adapters;
+using Duber.Domain.ACL.Contracts;
 using Duber.Domain.Invoice.Persistence;
 using Duber.Domain.Invoice.Repository;
+using Duber.Domain.Invoice.Services;
 using Duber.Infrastructure.EventBus;
 using Duber.Infrastructure.EventBus.Abstractions;
 using Duber.Infrastructure.EventBus.RabbitMQ;
+using Duber.Infrastructure.Resilience.Http;
 using Duber.Invoice.API.Application.IntegrationEvents.Events;
 using Duber.Invoice.API.Application.IntegrationEvents.Hnadlers;
 using Duber.Invoice.API.Application.Validations;
@@ -90,6 +94,7 @@ namespace Duber.Invoice.API
                 options.IncludeXmlComments(xmlPath);
             });
 
+            // Invoice repository and context Context configuration
             services.AddTransient<IInvoiceContext, InvoiceContext>(provider =>
             {
                 var mediator = provider.GetService<IMediator>();
@@ -97,6 +102,36 @@ namespace Duber.Invoice.API
                 return new InvoiceContext(connectionString, mediator);
             });
             services.AddTransient<IInvoiceRepository, InvoiceRepository>();
+
+            // payment service configuration
+            services.AddTransient<IPaymentService, PaymentService>();
+            services.AddTransient<IPaymentServiceAdapter, PaymentServiceAdapter>(provider =>
+            {
+                var httpInvoker = provider.GetRequiredService<ResilientHttpInvoker>();
+                var paymentServiceBaseUrl = Configuration["PaymentServiceBaseUrl"];
+                return new PaymentServiceAdapter(httpInvoker, paymentServiceBaseUrl);
+            });
+
+            // Resilient Http Invoker onfiguration.
+            services.AddSingleton(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<ResilientHttpInvoker>>();
+
+                var retryCount = 6;
+                if (!string.IsNullOrEmpty(Configuration["HttpClientRetryCount"]))
+                {
+                    retryCount = int.Parse(Configuration["HttpClientRetryCount"]);
+                }
+
+                var exceptionsAllowedBeforeBreaking = 5;
+                if (!string.IsNullOrEmpty(Configuration["HttpClientExceptionsAllowedBeforeBreaking"]))
+                {
+                    exceptionsAllowedBeforeBreaking = int.Parse(Configuration["HttpClientExceptionsAllowedBeforeBreaking"]);
+                }
+
+                return new ResilientHttpInvokerFactory(logger, exceptionsAllowedBeforeBreaking, retryCount);
+            });
+            services.AddTransient(sp => sp.GetService<ResilientHttpInvokerFactory>().CreateResilientHttpClient());
 
             // service bus configuration
             services.AddSingleton<IRabbitMQPersistentConnection>(sp =>

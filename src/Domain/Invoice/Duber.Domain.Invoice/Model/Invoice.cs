@@ -73,6 +73,7 @@ namespace Duber.Domain.Invoice.Model
                 throw new InvoiceDomainInvalidOperationException("This invoice doesn't have any charges.");
 
             _paymentInfo = paymentInfo;
+            AddDomainEvent(new InvoicePaidDomainEvent(_invoiceId, _paymentInfo.Status, _paymentInfo.CardNumber, _paymentInfo.CardType));
         }
 
         private void GetFee()

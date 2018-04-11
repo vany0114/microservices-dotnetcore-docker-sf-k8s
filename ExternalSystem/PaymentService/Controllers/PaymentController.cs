@@ -15,13 +15,14 @@ namespace PaymentService.Controllers
         public IEnumerable<string> PerformPayment(int userId, string reference)
         {
             // let's say that based on the user identification the payment system is able to retrieve the user payment information.
-
-            // the payment system returns the response in a list of string like this: payment status, card type and card number.
+            // the payment system returns the response in a list of string like this: payment status, card type, card number, user and reference
             return new[]
             {
                 _paymentStatuses[new Random().Next(0, 2)],
                 _cardTypes[new Random().Next(0, 3)],
-                Guid.NewGuid().ToString()
+                Guid.NewGuid().ToString(),
+                userId.ToString(),
+                reference
             };
         }
     }

@@ -4,6 +4,8 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Duber.Domain.Invoice.Repository;
+using Duber.Domain.Invoice.Services;
+using Duber.Domain.SharedKernel.Model;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using ViewModel = Duber.Invoice.API.Application.Model;
@@ -14,12 +16,14 @@ namespace Duber.Invoice.API.Controllers
     public class InvoiceController : Controller
     {
         private readonly IMapper _mapper;
+        private readonly IPaymentService _paymentService;
         private readonly IInvoiceRepository _invoiceRepository;
 
-        public InvoiceController(IInvoiceRepository invoiceRepository, IMapper mapper)
+        public InvoiceController(IInvoiceRepository invoiceRepository, IMapper mapper, IPaymentService paymentService)
         {
             _invoiceRepository = invoiceRepository ?? throw new ArgumentNullException(nameof(invoiceRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _paymentService = paymentService ?? throw new ArgumentNullException(nameof(paymentService));
         }
 
         /// <summary>
@@ -115,6 +119,13 @@ namespace Duber.Invoice.API.Controllers
                 request.TripStatus.Id);
 
             await _invoiceRepository.AddInvoiceAsync(invoice);
+
+            // integration with external payment system.
+            if (Equals(invoice.PaymentMethod, PaymentMethod.CreditCard) && invoice.Total > 0)
+            {
+                await _paymentService.PerformPayment(invoice, request.UserId);
+            }
+
             return Created(HttpContext.Request.GetUri().AbsoluteUri, invoice.InvoiceId);
         }
     }

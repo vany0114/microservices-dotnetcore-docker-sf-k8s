@@ -5,9 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Adapters\" />
-    <Folder Include="Contracts\" />
-    <Folder Include="Translators\" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\Duber.Infrastructure.Resilience\Duber.Infrastructure.Resilience.csproj" />
+    <ProjectReference Include="..\Duber.Domain.SharedKernel\Duber.Domain.SharedKernel.csproj" />
   </ItemGroup>
 
 </Project>

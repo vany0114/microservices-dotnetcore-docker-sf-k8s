@@ -1,5 +1,5 @@
 ﻿using System;
-using Duber.Domain.Invoice.Model;
+using Duber.Domain.SharedKernel.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -23,7 +23,7 @@ namespace Duber.Domain.Invoice.Persistence
 
         public DbSet<Model.Invoice> Invoices { get; set; }
 
-        public DbSet<Model.PaymentInfo> PaymentsInfo { get; set; }
+        public DbSet<PaymentInfo> PaymentsInfo { get; set; }
     }
 
     public class UserContextDesignFactory : IDesignTimeDbContextFactory<InvoiceMigrationContext>

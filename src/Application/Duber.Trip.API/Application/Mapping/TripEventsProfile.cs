@@ -16,7 +16,9 @@ namespace Duber.Trip.API.Application.Mapping
                     new TripStatus { Id = x.Status.Id, Name = x.Status.Name },
                     x.Started,
                     x.Ended,
-                    x.CurrentLocation == null ? null : new Location { Latitude = x.CurrentLocation.Latitude, Longitude = x.CurrentLocation.Longitude }
+                    x.CurrentLocation == null ? null : new Location { Latitude = x.CurrentLocation.Latitude, Longitude = x.CurrentLocation.Longitude },
+                    x.Distance,
+                    x.Duration
                 ));
 
             CreateMap<TripCreatedDomainEvent, TripCreatedIntegrationEvent>()
