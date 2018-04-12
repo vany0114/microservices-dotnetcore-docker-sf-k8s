@@ -8,6 +8,8 @@ namespace Duber.Domain.Driver.Repository
     {
         Task<IList<Model.Driver>> GetDriversAsync();
 
+        Task<Model.Driver> GetDriverAsync(int driverId);
+
         void Update(Model.Driver driver);
     }
 }

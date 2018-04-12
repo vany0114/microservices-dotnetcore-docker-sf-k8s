@@ -1,8 +1,7 @@
 ﻿using System;
 using Duber.Infrastructure.EventBus.Events;
-using Duber.Trip.API.Application.Model;
 
-namespace Duber.Trip.API.Application.IntegrationEvents
+namespace Duber.WebSite.Application.IntegrationEvents.Events
 {
     public class TripCreatedIntegrationEvent : IntegrationEvent
     {
@@ -30,5 +29,30 @@ namespace Duber.Trip.API.Application.IntegrationEvents
         public VehicleInformation VehicleInformation { get; }
 
         public PaymentMethod PaymentMethod { get; }
+    }
+
+    public class VehicleInformation
+    {
+        public string Plate { get; set; }
+
+        public string Brand { get; set; }
+
+        public string Model { get; set; }
+    }
+
+    public class PaymentMethod
+    {
+        public string Name { get; set; }
+
+        public int Id { get; set; }
+    }
+
+    public class Location
+    {
+        public double Latitude { get; set; }
+
+        public double Longitude { get; set; }
+
+        public string Description { get; set; }
     }
 }

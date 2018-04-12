@@ -94,7 +94,7 @@ namespace Duber.Invoice.API
                 options.IncludeXmlComments(xmlPath);
             });
 
-            // Invoice repository and context Context configuration
+            // Invoice repository and context configuration
             services.AddTransient<IInvoiceContext, InvoiceContext>(provider =>
             {
                 var mediator = provider.GetService<IMediator>();

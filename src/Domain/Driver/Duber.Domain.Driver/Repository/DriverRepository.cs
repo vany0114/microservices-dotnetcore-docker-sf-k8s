@@ -26,6 +26,11 @@ namespace Duber.Domain.Driver.Repository
                 .ToListAsync();
         }
 
+        public async Task<Model.Driver> GetDriverAsync(int driverId)
+        {
+            return await _context.Drivers.SingleOrDefaultAsync(x => x.Id == driverId);
+        }
+
         public void Update(Model.Driver driver)
         {
             _context.Entry(driver).State = EntityState.Modified;

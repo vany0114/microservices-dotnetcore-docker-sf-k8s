@@ -1,12 +1,11 @@
 ﻿using System;
-using Duber.Domain.SharedKernel.Model;
-using MediatR;
+using Duber.Infrastructure.EventBus.Events;
 
-namespace Duber.Domain.Invoice.Events
+namespace Duber.WebSite.Application.IntegrationEvents.Events
 {
-    public class InvoicePaidDomainEvent : INotification
+    public class InvoicePaidIntegrationEvent : IntegrationEvent
     {
-        public InvoicePaidDomainEvent(Guid invoiceId, PaymentStatus status, string cardNumber, string cardType, Guid tripId)
+        public InvoicePaidIntegrationEvent(Guid invoiceId, PaymentStatus status, string cardNumber, string cardType, Guid tripId)
         {
             InvoiceId = invoiceId;
             Status = status;
@@ -24,5 +23,11 @@ namespace Duber.Domain.Invoice.Events
         public string CardNumber { get; }
 
         public string CardType { get; }
+    }
+
+    public enum PaymentStatus
+    {
+        Accepted = 1,
+        Rejected = 2,
     }
 }

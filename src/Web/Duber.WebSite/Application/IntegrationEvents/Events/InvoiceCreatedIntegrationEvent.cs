@@ -1,7 +1,7 @@
 ﻿using System;
 using Duber.Infrastructure.EventBus.Events;
 
-namespace Duber.Invoice.API.Application.IntegrationEvents.Events
+namespace Duber.WebSite.Application.IntegrationEvents.Events
 {
     public class InvoiceCreatedIntegrationEvent : IntegrationEvent
     {
@@ -13,9 +13,9 @@ namespace Duber.Invoice.API.Application.IntegrationEvents.Events
             TripId = tripId;
         }
 
-        public Guid InvoiceId { get; }
-
         public Guid TripId { get; }
+
+        public Guid InvoiceId { get; }
 
         public decimal Fee { get; }
 

@@ -61,7 +61,7 @@ namespace Duber.Domain.Invoice.Model
             GetFee();
             GetTotal();
 
-            AddDomainEvent(new InvoiceCreatedDomainEvent(_invoiceId, _fee, _total, Equals(_paymentMethod, PaymentMethod.CreditCard)));
+            AddDomainEvent(new InvoiceCreatedDomainEvent(_invoiceId, _fee, _total, Equals(_paymentMethod, PaymentMethod.CreditCard), _tripInformation.Id));
         }
 
         public void ProcessPayment(PaymentInfo paymentInfo)
@@ -73,7 +73,7 @@ namespace Duber.Domain.Invoice.Model
                 throw new InvoiceDomainInvalidOperationException("This invoice doesn't have any charges.");
 
             _paymentInfo = paymentInfo;
-            AddDomainEvent(new InvoicePaidDomainEvent(_invoiceId, _paymentInfo.Status, _paymentInfo.CardNumber, _paymentInfo.CardType));
+            AddDomainEvent(new InvoicePaidDomainEvent(_invoiceId, _paymentInfo.Status, _paymentInfo.CardNumber, _paymentInfo.CardType, _tripInformation.Id));
         }
 
         private void GetFee()
@@ -102,7 +102,7 @@ namespace Duber.Domain.Invoice.Model
                 // if the user cancels the trip after 5 minutes, it charges a value proportional to the minutes.
                 if (_tripInformation.DurationToMinutes() > 5)
                 {
-                    _total = _fee * ((decimal)_tripInformation.DurationToMinutes() / 10);
+                    _total = _fee + (decimal)_tripInformation.DurationToMinutes();
                 }
                 else if (_tripInformation.DurationToMinutes() > 2 && _tripInformation.DurationToMinutes() <= 5)
                 {
@@ -119,7 +119,7 @@ namespace Duber.Domain.Invoice.Model
             }
             else
             {
-                _total = (decimal)(_tripInformation.DistanceToKilometers() * _tripInformation.DurationToMinutes() * (double)_fee);
+                _total = (decimal)(_tripInformation.DistanceToKilometers() * _tripInformation.DurationToMinutes() + (double)_fee);
 
                 if (_total <= 0)
                     throw new InvoiceDomainInvalidOperationException("There was an error calculating the invoice total");

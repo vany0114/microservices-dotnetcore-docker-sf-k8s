@@ -1,6 +1,7 @@
 ﻿using Duber.Domain.Driver.Persistence;
 using Duber.Domain.User.Persistence;
 using Duber.Infrastructure.WebHost;
+using Duber.WebSite.Infrastructure.Persistence;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,7 @@ namespace Duber.WebSite
                         .SeedAsync(context, logger)
                         .Wait();
                 })
+                .MigrateDbContext<ReportingContext>((_, __) => { })
                 .Run();
         }
 

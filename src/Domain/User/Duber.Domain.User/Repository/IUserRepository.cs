@@ -8,6 +8,8 @@ namespace Duber.Domain.User.Repository
     {
         Task<IList<Model.User>> GetUsersAsync();
 
+        Task<Model.User> GetUserAsync(int userId);
+
         void Update(Model.User user);
     }
 }

@@ -26,8 +26,8 @@ namespace Duber.Trip.API.Application.Mapping
                     x.AggregateRootId,
                     x.UserTripId,
                     x.DriverId,
-                    new Location { Latitude = x.From.Latitude, Longitude = x.From.Longitude },
-                    new Location { Latitude = x.To.Latitude, Longitude = x.To.Longitude },
+                    new Location { Latitude = x.From.Latitude, Longitude = x.From.Longitude, Description = x.From.Description},
+                    new Location { Latitude = x.To.Latitude, Longitude = x.To.Longitude, Description = x.To.Description},
                     new VehicleInformation
                     {
                         Brand = x.VehicleInformation.Brand,

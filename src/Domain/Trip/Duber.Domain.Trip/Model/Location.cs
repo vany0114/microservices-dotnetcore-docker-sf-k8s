@@ -10,12 +10,13 @@ namespace Duber.Domain.Trip.Model
 
         public double Longitude { get; private set; }
 
-        private Location() { }
+        public string Description { get; private set; }
 
-        public Location(double latitude, double longitude)
+        public Location(double latitude, double longitude, string description)
         {
             Latitude = latitude;
             Longitude = longitude;
+            Description = description;
         }
 
         protected override IEnumerable<object> GetAtomicValues()

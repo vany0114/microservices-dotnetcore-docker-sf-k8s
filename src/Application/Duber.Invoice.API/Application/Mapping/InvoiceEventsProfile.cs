@@ -13,7 +13,8 @@ namespace Duber.Invoice.API.Application.Mapping
                 .ConstructUsing(x => new InvoiceCreatedIntegrationEvent(
                     x.InvoiceId,
                     x.Fee,
-                    x.Total
+                    x.Total,
+                    x.TripId
                 ));
 
             CreateMap<InvoicePaidDomainEvent, InvoicePaidIntegrationEvent>()
@@ -21,7 +22,8 @@ namespace Duber.Invoice.API.Application.Mapping
                     x.InvoiceId,
                     (PaymentStatus)(int)x.Status,
                     x.CardNumber,
-                    x.CardType
+                    x.CardType,
+                    x.TripId
                 ));
         }
     }

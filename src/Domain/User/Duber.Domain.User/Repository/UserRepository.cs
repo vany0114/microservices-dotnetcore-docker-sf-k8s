@@ -25,6 +25,11 @@ namespace Duber.Domain.User.Repository
                 .ToListAsync();
         }
 
+        public async Task<Model.User> GetUserAsync(int userId)
+        {
+            return await _context.Users.SingleOrDefaultAsync(x => x.Id == userId);
+        }
+
         public void Update(Model.User user)
         {
             _context.Entry(user).State = EntityState.Modified;
