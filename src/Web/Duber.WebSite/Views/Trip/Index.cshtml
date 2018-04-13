@@ -1,0 +1,77 @@
+﻿@model TripRequestModel
+
+@{
+    ViewBag.Title = "Simulate a Trip";
+}
+
+<h2>Simulate a Trip</h2>
+
+<form asp-controller="Trip" asp-action="SimulateTrip" method="post">
+    
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <strong>Check out the following errors to continue:</strong>
+            <div asp-validation-summary="All"></div>
+        </div>
+    }
+    
+    <div class="panel panel-default">
+        <div class="panel-heading">Configure your trip</div>
+        <div class="panel-body">
+
+            <div class="row">
+                <div class="col-md-6">
+                    <label asp-for="User"></label>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Driver"></label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <select style="width: 100%" asp-for="User" asp-items="Model.Users"></select>
+                </div>
+                <div class="col-md-6">
+                    <select style="width: 100%" asp-for="Driver" asp-items="Model.Drivers"></select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <label asp-for="From"></label>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="To"></label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <select style="width: 100%" asp-for="From" asp-items="Model.Origins"></select>
+                </div>
+                <div class="col-md-6">
+                    <select style="width: 100%" asp-for="To" asp-items="Model.Destinations"></select>
+                </div>
+            </div>
+
+            <br/>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">Simulate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="panel panel-default">
+        <div class="panel-heading">Track your trip</div>
+        <div class="panel-body">
+            @{
+                await Html.RenderPartialAsync("_Map");
+            }
+        </div>
+    </div>
+</form>
