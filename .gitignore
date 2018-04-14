@@ -36,3 +36,5 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+
+src/Web/Duber.WebSite/wwwroot/lib

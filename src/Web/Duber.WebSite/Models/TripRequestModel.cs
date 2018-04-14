@@ -20,6 +20,8 @@ namespace Duber.WebSite.Models
 
         public List<SelectListItem> Destinations { get; set; }
 
+        public List<LocationModel> Places { get; set; }
+
         [Required]
         public string From { get; set; }
 

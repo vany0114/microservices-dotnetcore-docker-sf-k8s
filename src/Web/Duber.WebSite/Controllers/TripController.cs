@@ -62,7 +62,8 @@ namespace Duber.WebSite.Controllers
                 Origins = _originsAndDestinations.Keys.Select(x => x).ToList(),
                 Destinations = _originsAndDestinations.Keys.Select(x => x).ToList(),
                 From = _originsAndDestinations.Keys.Select(x => x).ToList().FirstOrDefault()?.Text,
-                To = _originsAndDestinations.Keys.Select(x => x).ToList().LastOrDefault()?.Text
+                To = _originsAndDestinations.Keys.Select(x => x).ToList().LastOrDefault()?.Text,
+                Places = _originsAndDestinations.Values.Select(x => x).ToList()
             };
 
             return View(model);
@@ -76,6 +77,7 @@ namespace Duber.WebSite.Controllers
             model.Users = users.ToSelectList();
             model.Origins = _originsAndDestinations.Keys.Select(x => x).ToList();
             model.Destinations = _originsAndDestinations.Keys.Select(x => x).ToList();
+            model.Places = _originsAndDestinations.Values.Select(x => x).ToList();
 
             if (ModelState.IsValid)
             {
