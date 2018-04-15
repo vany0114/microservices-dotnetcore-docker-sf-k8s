@@ -6,6 +6,8 @@ namespace Duber.Domain.User.Repository
 {
     public interface IUserRepository : IRepository<Model.User>
     {
+        Model.User GetUser(int userId);
+
         Task<IList<Model.User>> GetUsersAsync();
 
         Task<Model.User> GetUserAsync(int userId);

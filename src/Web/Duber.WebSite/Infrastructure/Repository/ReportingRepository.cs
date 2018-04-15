@@ -23,10 +23,16 @@ namespace Duber.WebSite.Infrastructure.Repository
             await _reportingContext.SaveChangesAsync();
         }
 
+        public void AddTrip(Trip trip)
+        {
+            _reportingContext.Trips.Add(trip);
+            _reportingContext.SaveChanges(true);
+        }
+
         public async Task UpdateTripAsync(Trip trip)
         {
             _reportingContext.Entry(trip).State = EntityState.Modified;
-            await _reportingContext.SaveChangesAsync();
+            await _reportingContext.SaveChangesAsync(true);
         }
 
         public async Task<IList<Trip>> GetTripsAsync()
@@ -37,6 +43,11 @@ namespace Duber.WebSite.Infrastructure.Repository
         public async Task<Trip> GetTripAsync(Guid tripId)
         {
             return await _reportingContext.Trips.SingleOrDefaultAsync(x => x.Id == tripId);
+        }
+
+        public Trip GetTrip(Guid tripId)
+        {
+            return _reportingContext.Trips.SingleOrDefault(x => x.Id == tripId);
         }
 
         public async Task<IList<Trip>> GetTripsByUserAsync(int userId)

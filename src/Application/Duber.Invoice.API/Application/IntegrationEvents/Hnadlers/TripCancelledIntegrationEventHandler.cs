@@ -24,19 +24,26 @@ namespace Duber.Invoice.API.Application.IntegrationEvents.Hnadlers
             var invoice = await _invoiceRepository.GetInvoiceByTripAsync(@event.TripId);
             if (invoice != null) return;
 
-            invoice = new Domain.Invoice.Model.Invoice(
-                @event.PaymentMethod.Id,
-                @event.TripId,
-                @event.Duration,
-                0,
-                TripStatus.Cancelled.Id);
-
-            await _invoiceRepository.AddInvoiceAsync(invoice);
-
-            // integration with external payment system.
-            if (Equals(invoice.PaymentMethod, PaymentMethod.CreditCard) && invoice.Total > 0)
+            try
             {
-                await _paymentService.PerformPayment(invoice, @event.UserId);
+                invoice = new Domain.Invoice.Model.Invoice(
+                    @event.PaymentMethod.Id,
+                    @event.TripId,
+                    @event.Duration,
+                    0,
+                    TripStatus.Cancelled.Id);
+
+                await _invoiceRepository.AddInvoiceAsync(invoice);
+
+                // integration with external payment system.
+                if (Equals(invoice.PaymentMethod, PaymentMethod.CreditCard) && invoice.Total > 0)
+                {
+                    await _paymentService.PerformPayment(invoice, @event.UserId);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Error trying to perform tge payment the Trip: {@event.TripId}", ex);
             }
         }
     }

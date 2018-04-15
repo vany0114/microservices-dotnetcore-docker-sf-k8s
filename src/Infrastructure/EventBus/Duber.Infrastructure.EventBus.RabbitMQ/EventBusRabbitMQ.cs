@@ -87,11 +87,15 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
                 var message = JsonConvert.SerializeObject(@event);
                 var body = Encoding.UTF8.GetBytes(message);
 
+                // to avoid lossing messages
+                var properties = channel.CreateBasicProperties();
+                properties.Persistent = true;
+
                 policy.Execute(() =>
                 {
                     channel.BasicPublish(exchange: BROKER_NAME,
                                      routingKey: eventName,
-                                     basicProperties: null,
+                                     basicProperties: properties,
                                      body: body);
                 });
             }
@@ -171,7 +175,24 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
                 var eventName = ea.RoutingKey;
                 var message = Encoding.UTF8.GetString(ea.Body);
 
-                await ProcessEvent(eventName, message);
+                try
+                {
+                    await ProcessEvent(eventName, message);
+
+                    // to avoid losing messages
+                    channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+                }
+                catch
+                {
+                    // try to process the message again.
+
+                    var policy = Policy.Handle<InvalidOperationException>()
+                        .Or<Exception>()
+                        .WaitAndRetryAsync(_retryCount, retryAttempt => TimeSpan.FromSeconds(1),
+                            (ex, time) => { _logger.LogWarning(ex.ToString()); });
+
+                    await policy.ExecuteAsync(() => ProcessEvent(eventName, message));
+                }
             };
 
             channel.BasicConsume(queue: _queueName,

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Duber.Domain.User.Persistence;
 using Duber.Infrastructure.Repository.Abstractions;
@@ -28,6 +29,11 @@ namespace Duber.Domain.User.Repository
         public async Task<Model.User> GetUserAsync(int userId)
         {
             return await _context.Users.SingleOrDefaultAsync(x => x.Id == userId);
+        }
+
+        public Model.User GetUser(int userId)
+        {
+            return _context.Users.SingleOrDefault(x => x.Id == userId);
         }
 
         public void Update(Model.User user)

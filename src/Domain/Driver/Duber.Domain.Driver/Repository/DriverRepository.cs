@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Duber.Domain.Driver.Persistence;
 using Duber.Infrastructure.Repository.Abstractions;
@@ -29,6 +30,11 @@ namespace Duber.Domain.Driver.Repository
         public async Task<Model.Driver> GetDriverAsync(int driverId)
         {
             return await _context.Drivers.SingleOrDefaultAsync(x => x.Id == driverId);
+        }
+
+        public Model.Driver GetDriver(int driverId)
+        {
+            return _context.Drivers.SingleOrDefault(x => x.Id == driverId);
         }
 
         public void Update(Model.Driver driver)

@@ -9,12 +9,16 @@ using Duber.Domain.User.Repository;
 using Duber.Infrastructure.EventBus;
 using Duber.Infrastructure.EventBus.Abstractions;
 using Duber.Infrastructure.EventBus.RabbitMQ;
+using Duber.Infrastructure.Resilience.Http;
 using Duber.WebSite.Application.IntegrationEvents.Events;
 using Duber.WebSite.Application.IntegrationEvents.Handlers;
+using Duber.WebSite.Hubs;
 using Duber.WebSite.Infrastructure.Persistence;
 using Duber.WebSite.Infrastructure.Repository;
+using Duber.WebSite.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +44,11 @@ namespace Duber.WebSite
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
+            services.Configure<FormOptions>(x => x.ValueCountLimit = 2048);
             services.AddMvc();
+            services.AddSignalR();
+
+            services.Configure<TripApiSettings>(Configuration.GetSection("TripApiSettings"));
 
             services.AddDbContext<UserContext>(options =>
             {
@@ -79,6 +87,27 @@ namespace Duber.WebSite
             services.AddTransient<IDriverRepository, DriverRepository>();
             services.AddTransient<IReportingRepository, ReportingRepository>();
 
+            // Resilient Http Invoker onfiguration.
+            services.AddSingleton(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<ResilientHttpInvoker>>();
+
+                var retryCount = 5;
+                if (!string.IsNullOrEmpty(Configuration["HttpClientRetryCount"]))
+                {
+                    retryCount = int.Parse(Configuration["HttpClientRetryCount"]);
+                }
+
+                var exceptionsAllowedBeforeBreaking = 4;
+                if (!string.IsNullOrEmpty(Configuration["HttpClientExceptionsAllowedBeforeBreaking"]))
+                {
+                    exceptionsAllowedBeforeBreaking = int.Parse(Configuration["HttpClientExceptionsAllowedBeforeBreaking"]);
+                }
+
+                return new ResilientHttpInvokerFactory(logger, exceptionsAllowedBeforeBreaking, retryCount);
+            });
+            services.AddTransient(sp => sp.GetService<ResilientHttpInvokerFactory>().CreateResilientHttpClient());
+
             // service bus configuration
             services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
             {
@@ -115,6 +144,11 @@ namespace Duber.WebSite
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<TripHub>("/triphub");
+            });
 
             ConfigureEventBus(app);
             app.UseStaticFiles();

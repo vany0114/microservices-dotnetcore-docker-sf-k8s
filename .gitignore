@@ -38,3 +38,4 @@ msbuild.wrn
 .vs/
 
 src/Web/Duber.WebSite/wwwroot/lib
+node_modules

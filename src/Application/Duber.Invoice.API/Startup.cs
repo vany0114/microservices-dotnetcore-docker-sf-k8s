@@ -117,13 +117,13 @@ namespace Duber.Invoice.API
             {
                 var logger = sp.GetRequiredService<ILogger<ResilientHttpInvoker>>();
 
-                var retryCount = 6;
+                var retryCount = 5;
                 if (!string.IsNullOrEmpty(Configuration["HttpClientRetryCount"]))
                 {
                     retryCount = int.Parse(Configuration["HttpClientRetryCount"]);
                 }
 
-                var exceptionsAllowedBeforeBreaking = 5;
+                var exceptionsAllowedBeforeBreaking = 4;
                 if (!string.IsNullOrEmpty(Configuration["HttpClientExceptionsAllowedBeforeBreaking"]))
                 {
                     exceptionsAllowedBeforeBreaking = int.Parse(Configuration["HttpClientExceptionsAllowedBeforeBreaking"]);

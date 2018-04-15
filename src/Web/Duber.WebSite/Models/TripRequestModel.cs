@@ -22,6 +22,8 @@ namespace Duber.WebSite.Models
 
         public List<LocationModel> Places { get; set; }
 
+        public List<LocationModel> Directions { get; set; }
+
         [Required]
         public string From { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PaymentService.Controllers
@@ -14,6 +15,9 @@ namespace PaymentService.Controllers
         [Route("performpayment")]
         public IEnumerable<string> PerformPayment(int userId, string reference)
         {
+            // just to add some latency
+            Thread.Sleep(500);
+
             // let's say that based on the user identification the payment system is able to retrieve the user payment information.
             // the payment system returns the response in a list of string like this: payment status, card type, card number, user and reference
             return new[]

@@ -1,4 +1,5 @@
-﻿var DuberWebSite = (function () {
+﻿// sorry for this ugly JS.
+var DuberWebSite = (function () {
 
     var _directionsDisplay, _directionsService;
     var _map, _currentPointIndex = 0;
@@ -6,27 +7,7 @@
     var _route, _directions = new Array();
     var _places = [];
     var _from, _to;
-
-    var _updateCurrentPosition = (position) => {
-        var currentPosition = new google.maps.LatLng(position.Latitude, position.Longitude);
-
-        _currentPositionMarker.setMap(null);
-        _currentPositionMarker = new google.maps.Marker({
-            position: currentPosition,
-            map: _map,
-            title: "Current posistion",
-            animation: google.maps.Animation.BOUNCE,
-            icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-        });
-    };
-
-    var _test = () => {
-        _currentPointIndex = _currentPointIndex + 5;
-        var lat = _directions[_currentPointIndex].lat();
-        var long = _directions[_currentPointIndex].lng();
-
-        _updateCurrentPosition({ Latitude: lat, Longitude: long });
-    };
+    var _simulateTripUrl;
 
     var _getDirections = () => {
         _route = _route.routes[0];
@@ -36,7 +17,7 @@
             for (j = 0; j < steps.length; j++) {
                 var nextSegment = steps[j].path;
                 for (k = 0; k < nextSegment.length; k++) {
-                    _directions.push(nextSegment[k]);
+                    _directions.push({ Latitude: nextSegment[k].lat(), Longitude: nextSegment[k].lng(), Description: "" });
                 }
             }
         }
@@ -49,7 +30,7 @@
 
         var start = new google.maps.LatLng(fromPoint.Latitude, fromPoint.Longitude);
         var end = new google.maps.LatLng(toPoint.Latitude, toPoint.Longitude);
-        
+
         var request = {
             origin: start,
             destination: end,
@@ -80,19 +61,43 @@
         _calcRoute();
     }
 
-    var _init = () => {
-        $(".test-button").click(() => { _test(); return; });
-        $(".trip-from").change(_fromChanged);
-        $(".trip-to").change(_toChanged);
+    var _simulate = () => {
 
-        _from = $(".trip-from").val();
-        _to = $(".trip-to").val();
-    }
+        $("#errors").addClass("hidden");
+        $("#message").addClass("hidden");
+        $('#errors-body').empty();
 
-    var initMap = (places) => {
-        _init();
-        _places = places;
+        $.post(_simulateTripUrl,
+            {
+                User: $("#User").val(),
+                Driver: $("#User").val(),
+                From: $("#From").val(),
+                To: $("#To").val(),
+                Directions: _directions
+            },
+            () => {
+                console.log("Simulation request sent succesfully.");
+            })
+            .fail((response) => {
+                console.log("Simulation request returned a bad request");
+                console.log(response);
 
+                $("#errors").removeClass("hidden");
+                if (response.responseJSON) {
+                    response.responseJSON.forEach((name) => {
+                        var li = document.createElement('li');
+                        li.innerHTML += name;
+                        $('#errors-body').append(li);
+                    });
+                } else {
+                    var li = document.createElement('li');
+                    li.innerHTML += response.statusText;
+                    $('#errors-body').append(li);
+                }
+            });
+    };
+
+    var _initMap = () => {
         _directionsDisplay = new google.maps.DirectionsRenderer();
         _directionsService = new google.maps.DirectionsService();
         _currentPositionMarker = new google.maps.Marker({});
@@ -100,13 +105,48 @@
         var mapOptions = {
             zoom: 7
         }
-        
+
         _map = new google.maps.Map(document.getElementById('map'), mapOptions);
         _directionsDisplay.setMap(_map);
         _calcRoute();
     };
 
+    var updateCurrentPosition = (position) => {
+        var currentPosition = new google.maps.LatLng(position.latitude, position.longitude);
+
+        _currentPositionMarker.setMap(null);
+        _currentPositionMarker = new google.maps.Marker({
+            position: currentPosition,
+            map: _map,
+            title: "Current posistion",
+            animation: google.maps.Animation.BOUNCE,
+            icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+        });
+    };
+
+    var tripFinished = () => {
+        $("#message").removeClass("hidden");
+    };
+
+    var init = (places, simulateTripUrl) => {
+        $(".trip-from").change(_fromChanged);
+        $(".trip-to").change(_toChanged);
+        $("#simulate").click(() => {
+            _simulate();
+            return;
+        });
+
+        _from = $(".trip-from").val();
+        _to = $(".trip-to").val();
+
+        _places = places;
+        _simulateTripUrl = simulateTripUrl;
+        _initMap();
+    };
+
     return {
-        initMap: initMap
+        init: init,
+        updateTripPosition: updateCurrentPosition,
+        tripFinished: tripFinished
     };
 })();

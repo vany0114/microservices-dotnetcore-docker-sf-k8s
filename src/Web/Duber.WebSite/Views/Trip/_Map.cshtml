@@ -8,18 +8,6 @@
 </style>
 
 <div id="map"></div>
-<button type="button" class="test-button">Update current position</button>
 
-<script>
-
-    @{
-      var placesJson = new HtmlString(JsonConvert.SerializeObject(Model.Places));
-    }
-
-    window.onload = function () {
-        DuberWebSite.initMap(@placesJson);
-    };
-
-</script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAQQcYW1z-T_TirZEcyXOU1AK-i_vGw-SE">
 </script>

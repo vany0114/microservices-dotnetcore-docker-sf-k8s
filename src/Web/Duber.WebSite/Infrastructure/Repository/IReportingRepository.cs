@@ -7,6 +7,10 @@ namespace Duber.WebSite.Infrastructure.Repository
 {
     public interface IReportingRepository
     {
+        Trip GetTrip(Guid tripId);
+
+        void AddTrip(Trip trip);
+
         Task AddTripAsync(Trip trip);
 
         Task UpdateTripAsync(Trip trip);

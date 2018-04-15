@@ -1,0 +1,70 @@
+{
+  "_from": "@aspnet/signalr",
+  "_id": "@aspnet/signalr@1.0.0-preview3-32228",
+  "_inBundle": false,
+  "_integrity": "sha1-49NaFjBQV7caSdMNMz/Ckyzqeqo=",
+  "_location": "/@aspnet/signalr",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "@aspnet/signalr",
+    "name": "@aspnet/signalr",
+    "escapedName": "@aspnet%2fsignalr",
+    "scope": "@aspnet",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://dotnet.myget.org/F/aspnetcore-dev/npm/@aspnet/signalr/-/@aspnet/signalr-1.0.0-preview3-32228.tgz",
+  "_shasum": "e3d35a16305057b71a49d30d333fc2932cea7aaa",
+  "_spec": "@aspnet/signalr",
+  "_where": "C:\\Users\\vany0\\OneDrive\\Documentos\\GitHub\\microservices",
+  "author": {
+    "name": "Microsoft"
+  },
+  "bugs": {
+    "url": "https://github.com/aspnet/SignalR/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "ASP.NET Core SignalR Client",
+  "devDependencies": {
+    "es6-promise": "^4.2.2"
+  },
+  "directories": {
+    "test": "spec"
+  },
+  "files": [
+    "dist/**/*",
+    "src/**/*"
+  ],
+  "homepage": "https://github.com/aspnet/SignalR#readme",
+  "license": "Apache-2.0",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "name": "@aspnet/signalr",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aspnet/SignalR.git"
+  },
+  "scripts": {
+    "build": "npm run clean && npm run build:lint && npm run build:esm && npm run build:cjs && npm run build:browser && npm run build:uglify",
+    "build:browser": "node ../node_modules/rollup/bin/rollup -c",
+    "build:cjs": "node ../node_modules/typescript/bin/tsc --project ./tsconfig.json --module commonjs --outDir ./dist/cjs --target ES5",
+    "build:esm": "node ../node_modules/typescript/bin/tsc --project ./tsconfig.json --module es2015 --outDir ./dist/esm --target ES5 -d && node ./build/process-dts.js",
+    "build:lint": "node ../node_modules/tslint/bin/tslint -c ../tslint.json -p ./tsconfig.json",
+    "build:uglify": "node ../node_modules/uglify-js/bin/uglifyjs --source-map \"url='signalr.min.js.map',content='./dist/browser/signalr.js.map'\" --comments -o ./dist/browser/signalr.min.js ./dist/browser/signalr.js",
+    "clean": "node ../node_modules/rimraf/bin.js ./dist ./.rpt2_cache",
+    "pretest": "node ../node_modules/rimraf/bin.js ./spec/obj && node ../node_modules/typescript/bin/tsc --project ./spec/tsconfig.json",
+    "test": "node ../node_modules/jasmine/bin/jasmine.js ./spec/obj/spec/**/*.spec.js"
+  },
+  "typings": "./dist/esm/index.d.ts",
+  "umd": "./dist/browser/signalr.js",
+  "umd_name": "signalR",
+  "version": "1.0.0-preview3-32228"
+}

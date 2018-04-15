@@ -1,16 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Duber.Domain.Driver.Model;
 using Duber.Domain.Driver.Repository;
 using Duber.Domain.User.Model;
 using Duber.Domain.User.Repository;
+using Duber.Infrastructure.Resilience.Http;
 using Duber.WebSite.Extensions;
+using Duber.WebSite.Hubs;
 using Duber.WebSite.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using RestSharp;
+// ReSharper disable ForCanBeConvertedToForeach
 
 namespace Duber.WebSite.Controllers
 {
@@ -18,14 +26,24 @@ namespace Duber.WebSite.Controllers
     {
         private readonly IMemoryCache _cache;
         private readonly IUserRepository _userRepository;
+        private readonly ResilientHttpInvoker _httpInvoker;
+        private readonly IHubContext<TripHub> _hubContext;
         private readonly IDriverRepository _driverRepository;
+        private readonly IOptions<TripApiSettings> _tripApiSettings;
         private readonly Dictionary<SelectListItem, LocationModel> _originsAndDestinations;
 
-        public TripController(IUserRepository userRepository, IDriverRepository driverRepository, IMemoryCache cache)
+        public TripController(IUserRepository userRepository,
+            IDriverRepository driverRepository, IMemoryCache cache,
+            ResilientHttpInvoker httpInvoker,
+            IOptions<TripApiSettings> tripApiSettings, 
+            IHubContext<TripHub> hubContext)
         {
             _userRepository = userRepository;
             _driverRepository = driverRepository;
             _cache = cache;
+            _httpInvoker = httpInvoker;
+            _tripApiSettings = tripApiSettings;
+            _hubContext = hubContext;
 
             _originsAndDestinations = new Dictionary<SelectListItem, LocationModel>
             {
@@ -69,22 +87,28 @@ namespace Duber.WebSite.Controllers
             return View(model);
         }
 
+        [HttpPost]
         public async Task<IActionResult> SimulateTrip(TripRequestModel model)
         {
-            var drivers = await GetDrivers();
-            var users = await GetUsers();
-            model.Drivers = drivers.ToSelectList();
-            model.Users = users.ToSelectList();
-            model.Origins = _originsAndDestinations.Keys.Select(x => x).ToList();
-            model.Destinations = _originsAndDestinations.Keys.Select(x => x).ToList();
-            model.Places = _originsAndDestinations.Values.Select(x => x).ToList();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.AllErrors());
 
-            if (ModelState.IsValid)
+            var tripID = await CreateTrip(model);
+            await AcceptOrStartTrip(_tripApiSettings.Value.AcceptUrl, tripID);
+            await AcceptOrStartTrip(_tripApiSettings.Value.StartUrl, tripID);
+
+            for (var index = 0; index < model.Directions.Count; index = index + 5)
             {
-                await Task.Delay(1);
+                var direction = model.Directions[index];
+                if (index + 5 > model.Directions.Count)
+                    direction = _originsAndDestinations.Values.SingleOrDefault(x => x.Description == model.To);
+
+                await UpdateTripLocation(tripID, direction);
+                await _hubContext.Clients.All.SendAsync("UpdateCurrentPosition", direction);
             }
 
-            return View("Index", model);
+            await _hubContext.Clients.All.SendAsync("NotifyTripFinished");
+            return Ok();
         }
 
         public IActionResult TripsByUser()
@@ -122,6 +146,73 @@ namespace Duber.WebSite.Controllers
             }
 
             return result;
+        }
+
+        private async Task<Guid> CreateTrip(TripRequestModel model)
+        {
+            var drivers = await GetDrivers();
+            var users = await GetUsers();
+            var driverInfo = drivers.SingleOrDefault(x => x.Id == int.Parse(model.Driver));
+            var userInfo = users.SingleOrDefault(x => x.Id == int.Parse(model.User));
+
+            var createRequestRresponse = await _httpInvoker.InvokeAsync(async () =>
+            {
+                var client = new RestClient(_tripApiSettings.Value.BaseUrl);
+                var request = new RestRequest(_tripApiSettings.Value.CreateUrl, Method.POST);
+                request.AddJsonBody(new
+                {
+                    userId = int.Parse(model.User),
+                    driverId = int.Parse(model.Driver),
+                    from = _originsAndDestinations.Values.SingleOrDefault(x => x.Description == model.From),
+                    to = _originsAndDestinations.Values.SingleOrDefault(x => x.Description == model.To),
+                    plate = driverInfo?.CurrentVehicle.Plate,
+                    brand = driverInfo?.CurrentVehicle.Brand,
+                    model = driverInfo?.CurrentVehicle.Model,
+                    paymentMethod = userInfo?.PaymentMethod
+                });
+
+                return await client.ExecuteTaskAsync(request);
+            });
+
+            if (createRequestRresponse.StatusCode != HttpStatusCode.Created)
+                throw new InvalidOperationException("There was an error with Trip service", createRequestRresponse.ErrorException);
+
+
+            return JsonConvert.DeserializeObject<Guid>(createRequestRresponse.Content);
+        }
+
+        private async Task AcceptOrStartTrip(string action, Guid tripId)
+        {
+            var createRequestRresponse = await _httpInvoker.InvokeAsync(async () =>
+            {
+                var client = new RestClient(_tripApiSettings.Value.BaseUrl);
+                var request = new RestRequest(action, Method.PUT);
+                request.AddJsonBody(new { id = tripId.ToString() });
+
+                return await client.ExecuteTaskAsync(request);
+            });
+
+            if (createRequestRresponse.StatusCode != HttpStatusCode.OK)
+                throw new InvalidOperationException("There was an error with Trip service", createRequestRresponse.ErrorException);
+        }
+
+        private async Task UpdateTripLocation(Guid tripId, LocationModel location)
+        {
+            var createRequestRresponse = await _httpInvoker.InvokeAsync(async () =>
+            {
+                var client = new RestClient(_tripApiSettings.Value.BaseUrl);
+                var request = new RestRequest(_tripApiSettings.Value.UpdateCurrentLocationUrl, Method.PUT);
+                request.AddJsonBody(new
+                {
+                    id = tripId,
+                    currentLocation = new { latitude = location.Latitude, longitude = location.Longitude }
+                });
+
+                return await client.ExecuteTaskAsync(request);
+            });
+
+            if (createRequestRresponse.StatusCode != HttpStatusCode.OK)
+                throw new InvalidOperationException("There was an error with Trip service", createRequestRresponse.ErrorException);
         }
     }
 }
