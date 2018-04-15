@@ -90,6 +90,7 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
                 // to avoid lossing messages
                 var properties = channel.CreateBasicProperties();
                 properties.Persistent = true;
+                properties.Expiration = "60000";
 
                 policy.Execute(() =>
                 {

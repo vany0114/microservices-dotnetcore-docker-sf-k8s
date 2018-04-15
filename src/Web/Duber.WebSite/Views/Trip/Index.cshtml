@@ -83,7 +83,7 @@
         }
 
         window.onload = function () {
-            DuberWebSite.init(@placesJson, '@Url.Action("SimulateTrip")');
+            DuberWebSite.init(@placesJson, '@Url.Action("SimulateTrip")', "@Url.Content("~/images/car-icon4.png")");
         };
 
         let logger = new signalR.ConsoleLogger(signalR.LogLevel.Information);

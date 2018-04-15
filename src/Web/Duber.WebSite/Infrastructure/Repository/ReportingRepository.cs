@@ -26,13 +26,19 @@ namespace Duber.WebSite.Infrastructure.Repository
         public void AddTrip(Trip trip)
         {
             _reportingContext.Trips.Add(trip);
-            _reportingContext.SaveChanges(true);
+            _reportingContext.SaveChanges();
+        }
+
+        public void UpdateTrip(Trip trip)
+        {
+            _reportingContext.Attach(trip);
+            _reportingContext.SaveChanges();
         }
 
         public async Task UpdateTripAsync(Trip trip)
         {
-            _reportingContext.Entry(trip).State = EntityState.Modified;
-            await _reportingContext.SaveChangesAsync(true);
+            _reportingContext.Attach(trip);
+            await _reportingContext.SaveChangesAsync();
         }
 
         public async Task<IList<Trip>> GetTripsAsync()

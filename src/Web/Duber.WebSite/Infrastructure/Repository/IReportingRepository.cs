@@ -11,6 +11,8 @@ namespace Duber.WebSite.Infrastructure.Repository
 
         void AddTrip(Trip trip);
 
+        void UpdateTrip(Trip trip);
+
         Task AddTripAsync(Trip trip);
 
         Task UpdateTripAsync(Trip trip);

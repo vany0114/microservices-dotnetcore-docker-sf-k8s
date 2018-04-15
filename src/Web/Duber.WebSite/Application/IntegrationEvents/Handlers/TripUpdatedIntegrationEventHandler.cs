@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Duber.Infrastructure.EventBus.Abstractions;
 using Duber.WebSite.Application.IntegrationEvents.Events;
 using Duber.WebSite.Infrastructure.Repository;
-using TripStatus = Duber.Domain.SharedKernel.Model.TripStatus;
 
 namespace Duber.WebSite.Application.IntegrationEvents.Handlers
 {
@@ -25,12 +24,9 @@ namespace Duber.WebSite.Application.IntegrationEvents.Handlers
             if (trip == null)
                 throw new InvalidOperationException($"The trip {@event.TripId} doesn't exist. Error trying to update the materialized view.");
 
-            // since it could be read first the finished message and then read an earlier message and set null again this information.
-            // consider a separate handler for TripFinishedIntegrationEvent/TripCancelledIntegrationEvent to avoid this
-            trip.Distance = trip.Distance ?? @event.Distance; 
-            trip.Duration = trip.Duration ?? @event.Duration;
-            trip.Status = trip.Status == TripStatus.Finished.Name ? trip.Status : @event.Status.Name;
-            
+            trip.Distance = @event.Distance;
+            trip.Duration = @event.Duration;
+            trip.Status = @event.Status.Name;
             trip.Started = @event.Started;
             trip.Ended = @event.Ended;
 

@@ -7,7 +7,7 @@ var DuberWebSite = (function () {
     var _route, _directions = new Array();
     var _places = [];
     var _from, _to;
-    var _simulateTripUrl;
+    var _simulateTripUrl, _iconUrl;
 
     var _getDirections = () => {
         _route = _route.routes[0];
@@ -120,7 +120,8 @@ var DuberWebSite = (function () {
             map: _map,
             title: "Current posistion",
             animation: google.maps.Animation.BOUNCE,
-            icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+            //icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+            icon: _iconUrl
         });
     };
 
@@ -128,7 +129,7 @@ var DuberWebSite = (function () {
         $("#message").removeClass("hidden");
     };
 
-    var init = (places, simulateTripUrl) => {
+    var init = (places, simulateTripUrl, iconUrl) => {
         $(".trip-from").change(_fromChanged);
         $(".trip-to").change(_toChanged);
         $("#simulate").click(() => {
@@ -141,6 +142,7 @@ var DuberWebSite = (function () {
 
         _places = places;
         _simulateTripUrl = simulateTripUrl;
+        _iconUrl = iconUrl;
         _initMap();
     };
 

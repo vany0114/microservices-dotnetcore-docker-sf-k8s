@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Duber.Infrastructure.EventBus.Abstractions;
 using Duber.WebSite.Application.IntegrationEvents.Events;
 using Duber.WebSite.Infrastructure.Repository;
-using TripStatus = Duber.Domain.SharedKernel.Model.TripStatus;
 
 namespace Duber.WebSite.Application.IntegrationEvents.Handlers
 {
