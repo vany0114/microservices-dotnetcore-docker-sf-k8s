@@ -11,9 +11,9 @@ namespace Duber.WebSite.Hubs
             return Clients.All.SendAsync("UpdateCurrentPosition", position);
         }
 
-        public Task NotifyTripFinished(LocationModel position)
+        public Task NotifyTrip(string message)
         {
-            return Clients.All.SendAsync("NotifyTripFinished");
+            return Clients.All.SendAsync("NotifyTrip", message);
         }
     }
 }

@@ -13,8 +13,8 @@
     <ul id="errors-body"></ul>
 </div>
 
-<div id="message" class="alert alert-success hidden">
-    <strong>The trip has finished!</strong>
+<div id="info" class="alert alert-info hidden">
+    <strong id="info-text"></strong>
 </div>
 
 <div class="panel panel-default">
@@ -103,8 +103,8 @@
             DuberWebSite.updateTripPosition(location);
         });
 
-        connection.on('NotifyTripFinished', () => {
-            DuberWebSite.tripFinished();
+        connection.on('NotifyTrip', (message) => {
+            DuberWebSite.notifyTripStatus(message);
         });
     </script>
 }

@@ -64,13 +64,14 @@ var DuberWebSite = (function () {
     var _simulate = () => {
 
         $("#errors").addClass("hidden");
-        $("#message").addClass("hidden");
+        $("#info").addClass("hidden");
         $('#errors-body').empty();
+        $("#simulate").prop("disabled", true);
 
         $.post(_simulateTripUrl,
             {
                 User: $("#User").val(),
-                Driver: $("#User").val(),
+                Driver: $("#Driver").val(),
                 From: $("#From").val(),
                 To: $("#To").val(),
                 Directions: _directions
@@ -82,6 +83,7 @@ var DuberWebSite = (function () {
                 console.log("Simulation request returned a bad request");
                 console.log(response);
 
+                $("#simulate").prop("disabled", false);
                 $("#errors").removeClass("hidden");
                 if (response.responseJSON) {
                     response.responseJSON.forEach((name) => {
@@ -125,8 +127,18 @@ var DuberWebSite = (function () {
         });
     };
 
-    var tripFinished = () => {
-        $("#message").removeClass("hidden");
+    var notifyTripStatus = (message) => {
+        let className = "alert-info";
+        if (message === "Finished") {
+            className = "alert-success";
+            $("#simulate").prop("disabled", false);
+        }
+
+        $("#info").removeClass("alert-success");
+        $("#info").removeClass("alert-info");
+        $("#info").addClass(className);
+        $("#info").removeClass("hidden");
+        $("#info").html(`The trip has been ${message}!`);
     };
 
     var init = (places, simulateTripUrl, iconUrl) => {
@@ -149,6 +161,6 @@ var DuberWebSite = (function () {
     return {
         init: init,
         updateTripPosition: updateCurrentPosition,
-        tripFinished: tripFinished
+        notifyTripStatus: notifyTripStatus
     };
 })();

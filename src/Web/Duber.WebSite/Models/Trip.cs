@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,11 +33,13 @@ namespace Duber.WebSite.Models
         // user information
         public int UserId { get; set; }
 
+        [Display(Name = "User")]
         public string UserName { get; set; }
 
         // driver information
         public int DriverId { get; set; }
 
+        [Display(Name = "Driver")]
         public string DriverName { get; set; }
 
         // vehicle information
@@ -49,18 +52,23 @@ namespace Duber.WebSite.Models
         // invoice information
         public Guid? InvoiceId { get; set; }
 
+        [Display(Name = "Booking Fee")]
         public decimal? Fee { get; set; }
 
+        [Display(Name = "Trip Fare")]
         public decimal? Fare { get; set; }
 
         [NotMapped]
         public decimal? Total => Fee + Fare;
 
         // payment information
+        [Display(Name = "Status")]
         public string PaymentStatus { get; set; }
 
+        [Display(Name = "Credit Card Number")]
         public string CardNumber { get; set; }
 
+        [Display(Name = "Type")]
         public string CardType { get; set; }
     }
 }

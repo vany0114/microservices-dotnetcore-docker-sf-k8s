@@ -1,0 +1,64 @@
+﻿@model List<Trip>
+
+@{
+    ViewData["Title"] = "Driver Trips";
+}
+
+<h2>Driver Trips</h2>
+<h3>@Model.FirstOrDefault()?.DriverName</h3>
+
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    Date
+                </th>
+                <th>
+                    From
+                </th>
+                <th>
+                    To
+                </th>
+                <th>
+                    User
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Total
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.Count(); i++)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(m => m[i].Created)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => m[i].From)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => m[i].To)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => m[i].UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => m[i].Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => m[i].Total)
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "TripById", new { id = Model[i].Id })
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

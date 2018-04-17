@@ -1,0 +1,144 @@
+﻿@model Trip
+@{
+    ViewData["Title"] = "Trip Details";
+}
+
+<h2>Trip Details</h2>
+
+@if (@Model.Status == "Cancelled")
+{
+    <div class="alert alert-danger">
+        The Trip was <strong>@Model.Status</strong>
+    </div>
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h4>Trip Information</h4></div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-2">
+                <label asp-for="UserName"></label>
+            </div>
+            <div class="col-md-4">
+                <span>@Model.UserName</span>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="DriverName"></label>
+            </div>
+            <div class="col-md-4">
+                <span>@Model.DriverName</span>
+                (<span>@string.Format("{0}-{1} {2}", Model.Brand, Model.Model, Model.Plate)</span>)
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <label asp-for="Started"></label>
+            </div>
+            <div class="col-md-4">
+                <span>@Model.Started</span>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="Ended"></label>
+            </div>
+            <div class="col-md-4">
+                <span>@Model.Ended</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <label asp-for="From"></label>
+            </div>
+            <div class="col-md-4">
+                <span>@Model.From</span>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="To"></label>
+            </div>
+            <div class="col-md-4">
+                <span>@Model.To</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <label asp-for="Distance"></label>
+            </div>
+            <div class="col-md-4">
+                <span>@string.Format("{0}Km", Math.Round((decimal)(Model.Distance / 1000), 2))</span>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="Duration"></label>
+            </div>
+            <div class="col-md-4">
+                <span>@string.Format("{0:%h} hours, {0:%m} min, {0:%s} secs", Model.Duration.Value)</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h4>Invoice Information</h4></div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-2">
+                <label asp-for="Fare"></label>
+            </div>
+            <div class="col-md-10 text-right">
+                <span>@Model.Fare.Value.ToString("N2")</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <label>Subtotal</label>
+            </div>
+            <div class="col-md-10 text-right">
+                <span>@Model.Fare.Value.ToString("N2")</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <label asp-for="Fee"></label>
+            </div>
+            <div class="col-md-10 text-right">
+                <span>@Model.Fee.Value.ToString("N2")</span>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-2">
+                <label asp-for="Total"></label>
+            </div>
+            <div class="col-md-10 text-right">
+                <span>@Model.Total.Value.ToString("N2")</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.PaymentMethod == "Credit Card")
+{
+    <div class="panel panel-default">
+        <div class="panel-heading"><h4>Payment Information</h4></div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <label asp-for="PaymentStatus"></label>
+                </div>
+                <div class="col-md-2">
+                    <span>@Model.PaymentStatus</span>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="CardNumber"></label>
+                </div>
+                <div class="col-md-2">
+                    <span>@string.Concat(new string('*', 10), Model.CardNumber.Substring(Model.CardNumber.Length - 4))</span>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="CardType"></label>
+                </div>
+                <div class="col-md-2">
+                    <span>@Model.CardType</span>
+                </div>
+            </div>
+        </div>
+    </div>
+}

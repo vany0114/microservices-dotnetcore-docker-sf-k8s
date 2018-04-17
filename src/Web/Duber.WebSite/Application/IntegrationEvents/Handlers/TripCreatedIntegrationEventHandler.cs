@@ -24,11 +24,11 @@ namespace Duber.WebSite.Application.IntegrationEvents.Handlers
 
         public async Task Handle(TripCreatedIntegrationEvent @event)
         {
-            var existingTrip = await _reportingRepository.GetTripAsync(@event.TripId);
+            var existingTrip = _reportingRepository.GetTrip(@event.TripId);
             if (existingTrip != null) return;
 
-            var driver = await _driverRepository.GetDriverAsync(@event.DriverId);
-            var user = await _userRepository.GetUserAsync(@event.UserTripId);
+            var driver = _driverRepository.GetDriver(@event.DriverId);
+            var user = _userRepository.GetUser(@event.UserTripId);
 
             var newTrip = new Trip
             {
@@ -49,7 +49,8 @@ namespace Duber.WebSite.Application.IntegrationEvents.Handlers
 
             try
             {
-                await _reportingRepository.AddTripAsync(newTrip);
+                _reportingRepository.AddTrip(newTrip);
+                await Task.CompletedTask;
             }
             catch (Exception ex)
             {

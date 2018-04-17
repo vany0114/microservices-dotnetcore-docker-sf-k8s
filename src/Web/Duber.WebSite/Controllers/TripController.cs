@@ -10,6 +10,7 @@ using Duber.Domain.User.Repository;
 using Duber.Infrastructure.Resilience.Http;
 using Duber.WebSite.Extensions;
 using Duber.WebSite.Hubs;
+using Duber.WebSite.Infrastructure.Repository;
 using Duber.WebSite.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -29,6 +30,7 @@ namespace Duber.WebSite.Controllers
         private readonly ResilientHttpInvoker _httpInvoker;
         private readonly IHubContext<TripHub> _hubContext;
         private readonly IDriverRepository _driverRepository;
+        private readonly IReportingRepository _reportingRepository;
         private readonly IOptions<TripApiSettings> _tripApiSettings;
         private readonly Dictionary<SelectListItem, LocationModel> _originsAndDestinations;
 
@@ -36,7 +38,8 @@ namespace Duber.WebSite.Controllers
             IDriverRepository driverRepository, IMemoryCache cache,
             ResilientHttpInvoker httpInvoker,
             IOptions<TripApiSettings> tripApiSettings, 
-            IHubContext<TripHub> hubContext)
+            IHubContext<TripHub> hubContext, 
+            IReportingRepository reportingRepository)
         {
             _userRepository = userRepository;
             _driverRepository = driverRepository;
@@ -44,6 +47,7 @@ namespace Duber.WebSite.Controllers
             _httpInvoker = httpInvoker;
             _tripApiSettings = tripApiSettings;
             _hubContext = hubContext;
+            _reportingRepository = reportingRepository;
 
             _originsAndDestinations = new Dictionary<SelectListItem, LocationModel>
             {
@@ -94,8 +98,13 @@ namespace Duber.WebSite.Controllers
                 return BadRequest(ModelState.AllErrors());
 
             var tripID = await CreateTrip(model);
+            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Created");
+
             await AcceptOrStartTrip(_tripApiSettings.Value.AcceptUrl, tripID);
+            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Accepted");
+
             await AcceptOrStartTrip(_tripApiSettings.Value.StartUrl, tripID);
+            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Started");
 
             for (var index = 0; index < model.Directions.Count; index = index + 5)
             {
@@ -107,18 +116,54 @@ namespace Duber.WebSite.Controllers
                 await _hubContext.Clients.All.SendAsync("UpdateCurrentPosition", direction);
             }
 
-            await _hubContext.Clients.All.SendAsync("NotifyTripFinished");
+            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Finished");
             return Ok();
         }
 
-        public IActionResult TripsByUser()
+        public async Task<IActionResult> TripsByUser()
         {
-            return View();
+            var users = await GetUsers();
+            var usersModel = users.Select(x => new UserModel
+            {
+                Id = x.Id,
+                Email = x.Email,
+                Name = x.Name,
+                NumberPhone = x.NumberPhone
+            });
+
+            return View(usersModel.ToList());
         }
 
-        public IActionResult TripsByDriver()
+        public async Task<IActionResult> TripsByUserId(int id)
         {
-            return View();
+            var trips = await _reportingRepository.GetTripsByUserAsync(id);
+            return View("UserTrips", trips.ToList());
+        }
+
+        public async Task<IActionResult> TripById(Guid id)
+        {
+            var trip = await _reportingRepository.GetTripAsync(id);
+            return View("TripDetails", trip);
+        }
+
+        public async Task<IActionResult> TripsByDriver()
+        {
+            var drivers = await GetDrivers();
+            var driversModel = drivers.Select(x => new DriverModel()
+            {
+                Id = x.Id,
+                Email = x.Email,
+                Name = x.Name,
+                NumberPhone = x.PhoneNumber
+            });
+
+            return View(driversModel.ToList());
+        }
+
+        public async Task<IActionResult> TripsByDriverId(int id)
+        {
+            var trips = await _reportingRepository.GetTripsByDriverAsync(id);
+            return View("DriverTrips", trips.ToList());
         }
 
         private async Task<IList<Driver>> GetDrivers()
