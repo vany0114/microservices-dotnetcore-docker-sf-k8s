@@ -1,4 +1,4 @@
-# Microservices with .Net Core, Docker and Service Fabric
+# Microservices with .Net Core, Docker and Azure Service Fabric
 
 ## Prerequisites and Installation Requirements
 
