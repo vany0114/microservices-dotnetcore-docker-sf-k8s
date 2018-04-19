@@ -12,4 +12,4 @@
 
 > Note: The first time you hit F5 it'll take a few minutes, because in addition to compile the solution, it needs to pull/download the base images (SQL for Linux Docker, ASPNET, MongoDb and RabbitMQ images) and register them in the local image repo of your PC. The next time you hit F5 it'll be much faster.
 
-Visit my blog <http://elvanydev.com/Microservices-part1/> to view the the posts and to know all the datails about this project.
+Visit my blog <http://elvanydev.com/Microservices-part1/> to view all the posts and to know all the details about this project.
