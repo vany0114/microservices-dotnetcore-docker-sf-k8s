@@ -18,8 +18,8 @@ namespace Duber.Domain.Invoice.Services
 
         public async Task PerformPayment(Model.Invoice invoice, int userId)
         {
-            var paymentMethod = await _paymentServiceAdapter.ProcessPaymentAsync(userId, invoice.InvoiceId.ToString());
-            invoice.ProcessPayment(paymentMethod);
+            var paymentInfo = await _paymentServiceAdapter.ProcessPaymentAsync(userId, invoice.InvoiceId.ToString());
+            invoice.ProcessPayment(paymentInfo);
             await _invoiceRepository.AddPaymentInfo(invoice);
         }
     }
