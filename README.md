@@ -16,4 +16,10 @@
 
 > Note: The first time you hit F5 it'll take a few minutes, because in addition to compile the solution, it needs to pull/download the base images (SQL for Linux Docker, ASPNET, MongoDb and RabbitMQ images) and register them in the local image repo of your PC. The next time you hit F5 it'll be much faster.
 
+### Tuning Docker for better performance
+
+It is important to set Docker up properly with enough memory RAM and CPU assigned to it in order to improve the performance, or you will get errors when starting the containers with VS 2017 or "docker-compose up". Once Docker for Windows is installed in your machine, enter into its Settings and the Advanced menu option so you are able to adjust it to the minimum amount of memory and CPU (Memory: Around 4096MB and CPU:3) as shown in the image.
+
+![](https://github.com/vany0114/vany0114.github.io/blob/master/images/docker_settings.png)
+
 Visit my blog <http://elvanydev.com/Microservices-part1/> to view all the posts and to know all the details about this project.
