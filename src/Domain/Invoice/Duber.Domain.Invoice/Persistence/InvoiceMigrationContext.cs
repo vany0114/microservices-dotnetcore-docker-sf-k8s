@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Duber.Domain.Invoice.Persistence
 {
     /// <summary>
-    /// This context is only to creates and runs the migrations. Just to example purposes and avoid that you have to deal running script before to execute the solution.
+    /// This context is only to creates and runs the migrations. Just to example purposes and, avoids that you have to deal running scripts before to execute the solution.
     /// You must use <see cref="IInvoiceContext"/>
     /// </summary>
-    [Obsolete("This context is only to creates and runs the migrations. Just to example purposes and avoid that you have to deal running script before to execute the solution.")]
+    [Obsolete("This context is only to creates and runs the migrations. Just to example purposes and, avoids that you have to deal running scripts before to execute the solution.")]
     public class InvoiceMigrationContext : DbContext
     {
         public InvoiceMigrationContext(DbContextOptions<InvoiceMigrationContext> options) : base(options) { }
