@@ -66,16 +66,18 @@ namespace Duber.Domain.Trip.Model
             if (string.IsNullOrWhiteSpace(plate)) throw new TripDomainArgumentNullException(nameof(plate));
             if (string.IsNullOrWhiteSpace(brand)) throw new TripDomainArgumentNullException(nameof(brand));
             if (string.IsNullOrWhiteSpace(model)) throw new TripDomainArgumentNullException(nameof(model));
+            if (from == null) throw new TripDomainArgumentNullException(nameof(from));
+            if (to == null) throw new TripDomainArgumentNullException(nameof(to));
 
             if (Equals(from, to)) throw new TripDomainInvalidOperationException("Destination and origin can't be the same.");
 
+            _paymentMethod = paymentMethod ?? throw new TripDomainArgumentNullException(nameof(paymentMethod));
             _create = DateTime.UtcNow;
             _status = TripStatus.Created;
             _userId = userId;
             _driverId = driverId;
-            _from = from ?? throw new TripDomainArgumentNullException(nameof(from));
-            _to = to ?? throw new TripDomainArgumentNullException(nameof(to));
-            _paymentMethod = paymentMethod ?? throw new TripDomainArgumentNullException(nameof(paymentMethod));
+            _from = from;
+            _to = to;
             _vehicleInformation = new VehicleInformation(plate, brand, model);
 
             AddEvent(new TripCreatedDomainEvent
@@ -108,7 +110,7 @@ namespace Duber.Domain.Trip.Model
 
         public void Start()
         {
-            if(!Equals(_status, TripStatus.Accepted))
+            if (!Equals(_status, TripStatus.Accepted))
                 throw new TripDomainInvalidOperationException($"Before to start the trip, it should be accepted. Current status: {_status.Name}");
 
             _start = DateTime.UtcNow;
