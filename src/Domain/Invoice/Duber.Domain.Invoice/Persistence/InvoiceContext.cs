@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Dapper;
 using Duber.Infrastructure.DDD;
 using Duber.Infrastructure.Extensions;
+using Duber.Infrastructure.Resilience;
+using Duber.Infrastructure.Resilience.SqlServer;
 using MediatR;
 
 namespace Duber.Domain.Invoice.Persistence
@@ -15,21 +17,23 @@ namespace Duber.Domain.Invoice.Persistence
         private readonly string _connectionString;
         private IDbConnection _connection;
         private readonly IMediator _mediator;
+        private readonly ResilientExecutor<ISqlExecutor> _resilientSqlExecutor;
 
-        public InvoiceContext(string connectionString, IMediator mediator)
+        public InvoiceContext(string connectionString, IMediator mediator, ResilientExecutor<ISqlExecutor> resilientSqlExecutor)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
                 throw new ArgumentException(nameof(connectionString));
 
             _connectionString = connectionString;
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            _resilientSqlExecutor = resilientSqlExecutor ?? throw new ArgumentNullException(nameof(resilientSqlExecutor));
         }
 
         public async Task<int> ExecuteAsync<T>(T entity, string sql, object parameters = null, int? timeOut = null, CommandType? commandType = null)
             where T : Entity, IAggregateRoot
         {
             _connection = GetOpenConnection();
-            var result = await _connection.ExecuteAsync(sql, parameters, null, timeOut, commandType);
+            var result = await _resilientSqlExecutor.ExecuteAsync(async () => await _connection.ExecuteAsync(sql, parameters, null, timeOut, commandType));
 
             // ensures that all events are dispatched after the entity is saved successfully.
             await _mediator.DispatchDomainEventsAsync(entity);
@@ -40,13 +44,13 @@ namespace Duber.Domain.Invoice.Persistence
             where T : Entity, IAggregateRoot
         {
             _connection = GetOpenConnection();
-            return await _connection.QueryAsync<T>(sql, parameters, null, timeOut, commandType);
+            return await _resilientSqlExecutor.ExecuteAsync(async () => await _connection.QueryAsync<T>(sql, parameters, null, timeOut, commandType));
         }
 
         public async Task<T> QuerySingleAsync<T>(string sql, object parameters = null, int? timeOut = null, CommandType? commandType = null) where T : Entity, IAggregateRoot
         {
             _connection = GetOpenConnection();
-            return await _connection.QuerySingleOrDefaultAsync<T>(sql, parameters, null, timeOut, commandType);
+            return await _resilientSqlExecutor.ExecuteAsync(async () => await _connection.QuerySingleOrDefaultAsync<T>(sql, parameters, null, timeOut, commandType));
         }
 
         private IDbConnection GetOpenConnection()

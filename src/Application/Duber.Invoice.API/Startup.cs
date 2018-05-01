@@ -12,7 +12,9 @@ using Duber.Domain.Invoice.Services;
 using Duber.Infrastructure.EventBus;
 using Duber.Infrastructure.EventBus.Abstractions;
 using Duber.Infrastructure.EventBus.RabbitMQ;
+using Duber.Infrastructure.Resilience;
 using Duber.Infrastructure.Resilience.Http;
+using Duber.Infrastructure.Resilience.SqlServer;
 using Duber.Invoice.API.Application.IntegrationEvents.Events;
 using Duber.Invoice.API.Application.IntegrationEvents.Hnadlers;
 using Duber.Invoice.API.Application.Validations;
@@ -94,12 +96,34 @@ namespace Duber.Invoice.API
                 options.IncludeXmlComments(xmlPath);
             });
 
+            // Resilient SQL Executor configuration.
+            services.AddSingleton(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<ResilientExecutor<ISqlExecutor>>>();
+
+                var retryCount = 5;
+                if (!string.IsNullOrEmpty(Configuration["SqlClientRetryCount"]))
+                {
+                    retryCount = int.Parse(Configuration["SqlClientRetryCount"]);
+                }
+
+                var exceptionsAllowedBeforeBreaking = 4;
+                if (!string.IsNullOrEmpty(Configuration["SqlClientExceptionsAllowedBeforeBreaking"]))
+                {
+                    exceptionsAllowedBeforeBreaking = int.Parse(Configuration["SqlClientExceptionsAllowedBeforeBreaking"]);
+                }
+
+                return new ResilientSqlExecutorFactory(logger, exceptionsAllowedBeforeBreaking, retryCount);
+            });
+            services.AddTransient(sp => sp.GetService<ResilientSqlExecutorFactory>().CreateResilientSqlClient());
+
             // Invoice repository and context configuration
             services.AddTransient<IInvoiceContext, InvoiceContext>(provider =>
             {
                 var mediator = provider.GetService<IMediator>();
+                var sqlExecutor = provider.GetService<ResilientExecutor<ISqlExecutor>>();
                 var connectionString = Configuration["ConnectionString"];
-                return new InvoiceContext(connectionString, mediator);
+                return new InvoiceContext(connectionString, mediator, sqlExecutor);
             });
             services.AddTransient<IInvoiceRepository, InvoiceRepository>();
 
