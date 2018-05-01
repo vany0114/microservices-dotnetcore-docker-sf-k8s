@@ -222,7 +222,6 @@ namespace Duber.WebSite.Controllers
             if (createRequestRresponse.StatusCode != HttpStatusCode.Created)
                 throw new InvalidOperationException("There was an error with Trip service", createRequestRresponse.ErrorException);
 
-
             return JsonConvert.DeserializeObject<Guid>(createRequestRresponse.Content);
         }
 
