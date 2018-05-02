@@ -34,7 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Validation\" />
     <Folder Include="Infrastructure\Filters\" />
   </ItemGroup>
 
