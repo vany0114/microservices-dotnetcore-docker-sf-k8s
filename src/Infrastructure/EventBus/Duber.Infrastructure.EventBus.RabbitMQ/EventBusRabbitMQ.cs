@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Polly;
-using Polly.Retry;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
@@ -78,11 +77,8 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
 
             using (var channel = _persistentConnection.CreateModel())
             {
-                var eventName = @event.GetType()
-                    .Name;
-
-                channel.ExchangeDeclare(exchange: BROKER_NAME,
-                                    type: "direct");
+                var eventName = @event.GetType().Name;
+                channel.ExchangeDeclare(exchange: BROKER_NAME, type: "direct");
 
                 var message = JsonConvert.SerializeObject(@event);
                 var body = Encoding.UTF8.GetBytes(message);
@@ -164,10 +160,7 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
             }
 
             var channel = _persistentConnection.CreateModel();
-
-            channel.ExchangeDeclare(exchange: BROKER_NAME,
-                                 type: "direct");
-
+            channel.ExchangeDeclare(exchange: BROKER_NAME, type: "direct");
             _queueName = channel.QueueDeclare().QueueName;
 
             var consumer = new EventingBasicConsumer(channel);
@@ -186,7 +179,6 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
                 catch
                 {
                     // try to process the message again.
-
                     var policy = Policy.Handle<InvalidOperationException>()
                         .Or<Exception>()
                         .WaitAndRetryAsync(_retryCount, retryAttempt => TimeSpan.FromSeconds(1),
@@ -196,10 +188,7 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
                 }
             };
 
-            channel.BasicConsume(queue: _queueName,
-                                 autoAck: false,
-                                 consumer: consumer);
-
+            channel.BasicConsume(queue: _queueName, autoAck: false, consumer: consumer);
             channel.CallbackException += (sender, ea) =>
             {
                 _consumerChannel.Dispose();
