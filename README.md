@@ -20,4 +20,12 @@ It is important to set Docker up properly with enough memory RAM and CPU assigne
 
 ![](https://github.com/vany0114/vany0114.github.io/blob/master/images/docker_settings.png)
 
+### Demo Screenshots
+#### Website
+![](https://github.com/vany0114/vany0114.github.io/blob/master/images/duber-in-action.gif)
+#### Trip API
+![](https://github.com/vany0114/vany0114.github.io/blob/master/images/duber-trip-api.png)
+#### Invoice API
+![](https://github.com/vany0114/vany0114.github.io/blob/master/images/duber-invoice-api.png)
+
 Visit my blog <http://elvanydev.com/Microservices-part1/> to view all the posts and to know all the details about this project.
