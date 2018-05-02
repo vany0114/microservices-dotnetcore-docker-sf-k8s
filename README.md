@@ -1,7 +1,5 @@
 # Microservices with .Net Core, Docker and Azure Service Fabric
 
-> ***Still working on this project...***
-
 ## Prerequisites and Installation Requirements
 
 1. Install [Docker for Windows](https://docs.docker.com/docker-for-windows/install/).
