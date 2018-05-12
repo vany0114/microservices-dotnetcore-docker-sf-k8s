@@ -4,7 +4,7 @@
 
 1. Install [Docker for Windows](https://docs.docker.com/docker-for-windows/install/).
 2. Install [.NET Core SDK](https://www.microsoft.com/net/download/windows)
-3. Install [Visual Studio 2017](https://www.visualstudio.com/downloads/) 15.5 or later.
+3. Install [Visual Studio 2017](https://www.visualstudio.com/downloads/) 15.7 or later.
 4. Share drives in Docker settings, in order to deploy and debug with Visual Studio 2017 (See the below image)
 5. Clone this Repo
 6. Set `docker-compose` project as startup project.
