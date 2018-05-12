@@ -13,6 +13,7 @@
 		"serviceBusTopicName": "duber_event_bus",
 		"TripSubscriptionName": "Trip",
 		"InvoiceSubscriptionName": "Invoice",
+		"WebSiteSubscriptionName": "WebSite",
         "location": "[resourceGroup().location]",
         "sbVersion": "2015-08-01",
         "defaultSASKeyName": "Root",
@@ -93,6 +94,26 @@
 						{
                             "apiVersion": "[variables('sbVersion')]",
                             "name": "[variables('InvoiceSubscriptionName')]",
+                            "type": "Subscriptions",
+                            "dependsOn": [
+                                "[variables('serviceBusTopicName')]"
+                            ],
+                            "properties": {
+								"lockDuration": "00:00:30",
+								"requiresSession": false,
+								"defaultMessageTimeToLive": "14.00:00:00",
+								"deadLetteringOnMessageExpiration": true,
+								"deadLetteringOnFilterEvaluationExceptions": true,
+								"maxDeliveryCount": 10,
+								"enableBatchedOperations": false,
+								"status": "Active",
+								"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+								"entityAvailabilityStatus": "Available"
+							}
+                        },
+						{
+                            "apiVersion": "[variables('sbVersion')]",
+                            "name": "[variables('WebSiteSubscriptionName')]",
                             "type": "Subscriptions",
                             "dependsOn": [
                                 "[variables('serviceBusTopicName')]"
