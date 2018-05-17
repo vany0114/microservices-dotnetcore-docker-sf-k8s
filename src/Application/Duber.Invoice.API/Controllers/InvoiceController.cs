@@ -40,13 +40,20 @@ namespace Duber.Invoice.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetInvoice(Guid invoiceId)
         {
-            var invoice = await _invoiceRepository.GetInvoiceAsync(invoiceId);
-            var invoiceViewModel = _mapper.Map<ViewModel.Invoice>(invoice);
+            try
+            {
+                var invoice = await _invoiceRepository.GetInvoiceAsync(invoiceId);
+                var invoiceViewModel = _mapper.Map<ViewModel.Invoice>(invoice);
 
-            if (invoiceViewModel == null)
-                return NotFound();
+                if (invoiceViewModel == null)
+                    return NotFound();
 
-            return Ok(invoiceViewModel);
+                return Ok(invoiceViewModel);
+            }
+            finally
+            {
+                _invoiceRepository.Dispose();
+            }
         }
 
         /// <summary>
@@ -63,13 +70,20 @@ namespace Duber.Invoice.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetInvoiceByTrip(Guid tripId)
         {
-            var invoice = await _invoiceRepository.GetInvoiceByTripAsync(tripId);
-            var invoiceViewModel = _mapper.Map<ViewModel.Invoice>(invoice);
+            try
+            {
+                var invoice = await _invoiceRepository.GetInvoiceByTripAsync(tripId);
+                var invoiceViewModel = _mapper.Map<ViewModel.Invoice>(invoice);
 
-            if (invoiceViewModel == null)
-                return NotFound();
+                if (invoiceViewModel == null)
+                    return NotFound();
 
-            return Ok(invoiceViewModel);
+                return Ok(invoiceViewModel);
+            }
+            finally
+            {
+                _invoiceRepository.Dispose();
+            }
         }
 
         /// <summary>
@@ -85,13 +99,20 @@ namespace Duber.Invoice.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetInvoices()
         {
-            var invoices = await _invoiceRepository.GetInvoicesAsync();
-            var invoicesViewModel = _mapper.Map<IEnumerable<ViewModel.Invoice>>(invoices);
-            
-            if (invoicesViewModel == null)
-                return NotFound();
+            try
+            {
+                var invoices = await _invoiceRepository.GetInvoicesAsync();
+                var invoicesViewModel = _mapper.Map<IEnumerable<ViewModel.Invoice>>(invoices);
 
-            return Ok(invoicesViewModel);
+                if (invoicesViewModel == null)
+                    return NotFound();
+
+                return Ok(invoicesViewModel);
+            }
+            finally
+            {
+                _invoiceRepository.Dispose();
+            }
         }
 
         /// <summary>
@@ -107,26 +128,33 @@ namespace Duber.Invoice.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> CreateTrip([FromBody]ViewModel.CreateInvoiceRequest request)
         {
-            // to enable idempotency.
-            var invoice = await _invoiceRepository.GetInvoiceByTripAsync(request.TripId);
-            if (invoice != null) return Created(HttpContext.Request.GetUri().AbsoluteUri, invoice.InvoiceId);
-
-            invoice = new Domain.Invoice.Model.Invoice(
-                request.PaymentMethod.Id, 
-                request.TripId, 
-                request.Duration,
-                request.Distance,
-                request.TripStatus.Id);
-
-            await _invoiceRepository.AddInvoiceAsync(invoice);
-
-            // integration with external payment system.
-            if (Equals(invoice.PaymentMethod, PaymentMethod.CreditCard) && invoice.Total > 0)
+            try
             {
-                await _paymentService.PerformPayment(invoice, request.UserId);
-            }
+                // to enable idempotency.
+                var invoice = await _invoiceRepository.GetInvoiceByTripAsync(request.TripId);
+                if (invoice != null) return Created(HttpContext.Request.GetUri().AbsoluteUri, invoice.InvoiceId);
 
-            return Created(HttpContext.Request.GetUri().AbsoluteUri, invoice.InvoiceId);
+                invoice = new Domain.Invoice.Model.Invoice(
+                    request.PaymentMethod.Id,
+                    request.TripId,
+                    request.Duration,
+                    request.Distance,
+                    request.TripStatus.Id);
+
+                await _invoiceRepository.AddInvoiceAsync(invoice);
+
+                // integration with external payment system.
+                if (Equals(invoice.PaymentMethod, PaymentMethod.CreditCard) && invoice.Total > 0)
+                {
+                    await _paymentService.PerformPayment(invoice, request.UserId);
+                }
+
+                return Created(HttpContext.Request.GetUri().AbsoluteUri, invoice.InvoiceId);
+            }
+            finally
+            {
+                _invoiceRepository.Dispose();
+            }
         }
     }
 }

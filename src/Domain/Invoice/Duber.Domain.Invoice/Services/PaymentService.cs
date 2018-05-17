@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Duber.Domain.ACL.Contracts;
 using Duber.Domain.Invoice.Exceptions;
 using Duber.Domain.Invoice.Repository;
@@ -18,9 +19,16 @@ namespace Duber.Domain.Invoice.Services
 
         public async Task PerformPayment(Model.Invoice invoice, int userId)
         {
-            var paymentInfo = await _paymentServiceAdapter.ProcessPaymentAsync(userId, invoice.InvoiceId.ToString());
-            invoice.ProcessPayment(paymentInfo);
-            await _invoiceRepository.AddPaymentInfo(invoice);
+            try
+            {
+                var paymentInfo = await _paymentServiceAdapter.ProcessPaymentAsync(userId, invoice.InvoiceId.ToString());
+                invoice.ProcessPayment(paymentInfo);
+                await _invoiceRepository.AddPaymentInfo(invoice);
+            }
+            finally 
+            {
+                _invoiceRepository.Dispose();
+            }
         }
     }
 }

@@ -60,6 +60,7 @@ namespace Duber.WebSite.Infrastructure.Repository
         {
             return await _reportingContext.Trips
                 .Where(x => x.UserId == userId)
+                .OrderByDescending(x => x.Created)
                 .ToListAsync();
         }
 
@@ -67,7 +68,13 @@ namespace Duber.WebSite.Infrastructure.Repository
         {
             return await _reportingContext.Trips
                 .Where(x => x.DriverId == driverid)
+                .OrderByDescending(x => x.Created)
                 .ToListAsync();
+        }
+
+        public void Dispose()
+        {
+            _reportingContext?.Dispose();
         }
     }
 }

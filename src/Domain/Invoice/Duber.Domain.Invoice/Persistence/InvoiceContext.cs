@@ -65,5 +65,10 @@ namespace Duber.Domain.Invoice.Persistence
 
             return _connection;
         }
+
+        public void Dispose()
+        {
+            _connection?.Dispose();
+        }
     }
 }

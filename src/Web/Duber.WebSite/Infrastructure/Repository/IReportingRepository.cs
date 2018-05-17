@@ -5,7 +5,7 @@ using Duber.WebSite.Models;
 
 namespace Duber.WebSite.Infrastructure.Repository
 {
-    public interface IReportingRepository
+    public interface IReportingRepository : IDisposable
     {
         Trip GetTrip(Guid tripId);
 

@@ -36,6 +36,10 @@ namespace Duber.WebSite.Application.IntegrationEvents.Handlers
             {
                 throw new InvalidOperationException($"Error trying to update the Trip: {@event.TripId}", ex);
             }
+            finally
+            {
+                _reportingRepository.Dispose();
+            }
         }
     }
 }

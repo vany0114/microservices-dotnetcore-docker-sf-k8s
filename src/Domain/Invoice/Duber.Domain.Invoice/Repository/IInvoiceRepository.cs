@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Duber.Domain.Invoice.Repository
 {
-    public interface IInvoiceRepository
+    public interface IInvoiceRepository : IDisposable
     {
         Task<Model.Invoice> GetInvoiceAsync(Guid id);
 

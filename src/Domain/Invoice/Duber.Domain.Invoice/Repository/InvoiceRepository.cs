@@ -75,5 +75,10 @@ namespace Duber.Domain.Invoice.Repository
                     invoice.PaymentInfo.UserId,
                 });
         }
+
+        public void Dispose()
+        {
+            _context?.Dispose();
+        }
     }
 }
