@@ -23,7 +23,7 @@
       <EnvironmentVariable Name="ASPNETCORE_ENVIRONMENT" Value="Production"/>
       <EnvironmentVariable Name="ASPNETCORE_URLS" Value="http://0.0.0.0:80"/>
       <EnvironmentVariable Name="ConnectionString" Value="Server=tcp:dubersql.database.windows.net,1433;Initial Catalog=Duber.InvoiceDb;Persist Security Info=False;User ID=duber_user;Password=lahostiaestepass123*;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"/>
-      <EnvironmentVariable Name="EventBusConnection" Value="Endpoint=sb://dubersb.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=TVAK2GyVKgkKbWK5J2Djw+T+nmMUFnrWvdWIMsZRkxE=;EntityPath=duber_event_bus"/>
+      <EnvironmentVariable Name="EventBusConnection" Value="Endpoint=sb://dubersb.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=tM2nmf3mooYFUjsVNrXds2Ki4mnGC8B7bxz8hWSsfoM=;EntityPath=duber_event_bus"/>
       <EnvironmentVariable Name="AzureServiceBusEnabled" Value="True"/>
       <EnvironmentVariable Name="PaymentServiceBaseUrl" Value="http://paymentappservice.azurewebsites.net"/>
     </EnvironmentVariables>

@@ -49,7 +49,7 @@ namespace Duber.Domain.User.Persistence
             PaymentMethod.Cash,
         };
 
-        private static Policy CreatePolicy(ILogger<UserContextSeed> logger, string prefix, int retries = 3)
+        private static AsyncPolicy CreatePolicy(ILogger<UserContextSeed> logger, string prefix, int retries = 3)
         {
             return Policy.Handle<SqlException>().
                 WaitAndRetryAsync(

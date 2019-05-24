@@ -169,23 +169,15 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
                 var eventName = ea.RoutingKey;
                 var message = Encoding.UTF8.GetString(ea.Body);
 
-                try
-                {
-                    await ProcessEvent(eventName, message);
+                var policy = Policy.Handle<InvalidOperationException>()
+                    .Or<Exception>()
+                    .WaitAndRetryAsync(_retryCount, retryAttempt => TimeSpan.FromSeconds(1),
+                        (ex, time) => { _logger.LogWarning(ex.ToString()); });
 
-                    // to avoid losing messages
-                    channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
-                }
-                catch
-                {
-                    // try to process the message again.
-                    var policy = Policy.Handle<InvalidOperationException>()
-                        .Or<Exception>()
-                        .WaitAndRetryAsync(_retryCount, retryAttempt => TimeSpan.FromSeconds(1),
-                            (ex, time) => { _logger.LogWarning(ex.ToString()); });
+                await policy.ExecuteAsync(async () => await ProcessEvent(eventName, message));
 
-                    await policy.ExecuteAsync(() => ProcessEvent(eventName, message));
-                }
+                // to avoid losing messages
+                channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             };
 
             channel.BasicConsume(queue: _queueName, autoAck: false, consumer: consumer);

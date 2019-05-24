@@ -98,26 +98,33 @@ namespace Duber.WebSite.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.AllErrors());
 
-            var tripID = await CreateTrip(model);
-            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Created");
+            var createdTask = CreateTrip(model);
+            var createdNotificationTask = _hubContext.Clients.All.SendAsync("NotifyTrip", "Created");
+            await Task.WhenAll(createdTask, createdNotificationTask);
+            var tripID = await createdTask;
 
-            await AcceptOrStartTrip(_tripApiSettings.Value.AcceptUrl, tripID);
-            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Accepted");
+            var acceptedTask = AcceptOrStartTrip(_tripApiSettings.Value.AcceptUrl, tripID);
+            var acceptedNotificationTask = _hubContext.Clients.All.SendAsync("NotifyTrip", "Accepted");
+            await Task.WhenAll(acceptedTask, acceptedNotificationTask);
 
-            await AcceptOrStartTrip(_tripApiSettings.Value.StartUrl, tripID);
-            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Started");
+            var startedTask = AcceptOrStartTrip(_tripApiSettings.Value.StartUrl, tripID);
+            var startedNotificationTask = _hubContext.Clients.All.SendAsync("NotifyTrip", "Started");
+            await Task.WhenAll(startedTask, startedNotificationTask);
 
-            for (var index = 0; index < model.Directions.Count; index = index + 5)
+            var updatedPositionTasks = new List<Task>();
+            for (var index = 0; index < model.Directions.Count; index += 5)
             {
                 var direction = model.Directions[index];
-                if (index + 5 > model.Directions.Count)
+                if (index + 5 >= model.Directions.Count)
                     direction = _originsAndDestinations.Values.SingleOrDefault(x => x.Description == model.To);
 
-                await UpdateTripLocation(tripID, direction);
-                await _hubContext.Clients.All.SendAsync("UpdateCurrentPosition", direction);
+                updatedPositionTasks.Add(UpdateTripLocation(tripID, direction));
+                updatedPositionTasks.Add(_hubContext.Clients.All.SendAsync("UpdateCurrentPosition", direction));
             }
 
-            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Finished");
+            updatedPositionTasks.Add(_hubContext.Clients.All.SendAsync("NotifyTrip", "Finished"));
+            await Task.WhenAll(updatedPositionTasks);
+
             return Ok();
         }
 

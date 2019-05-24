@@ -29,7 +29,7 @@ namespace Duber.Infrastructure.Resilience
         {
             // Executes the action applying all the policies defined in the wrapper
             var policyWrap = Policy.WrapAsync(_policies.ToArray());
-            return await policyWrap.ExecuteAsync(action);
+            return await policyWrap.ExecuteAsync(async () => await action());
         }
     }
 }

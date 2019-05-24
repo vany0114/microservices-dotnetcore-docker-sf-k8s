@@ -1,15 +1,13 @@
-FROM microsoft/aspnetcore:2.0 AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM microsoft/aspnetcore-build:2.0 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
-COPY microservices-netcore-docker-servicefabric.sln ./
-COPY src/Application/Duber.Trip.API/Duber.Trip.API.csproj src/Application/Duber.Trip.API/
-RUN dotnet restore -nowarn:msb3202,nu1503
 COPY . .
-WORKDIR /src/src/Application/Duber.Trip.API
-RUN dotnet build -c Release -o /app
+WORKDIR "/src/src/Application/Duber.Trip.API"
+RUN dotnet restore
+RUN dotnet build --no-restore -c Release -o /app
 
 FROM build AS publish
 RUN dotnet publish -c Release -o /app

@@ -22,8 +22,8 @@
     <EnvironmentVariables>
       <EnvironmentVariable Name="ASPNETCORE_ENVIRONMENT" Value="Production"/>
       <EnvironmentVariable Name="ASPNETCORE_URLS" Value="http://0.0.0.0:80"/>
-      <EnvironmentVariable Name="EventStoreConfiguration__ConnectionString" Value="mongodb://duber-tripdb:5t5A0kzLvC4jbVOO1DHYqJNA5NyVV5kngFbNrFhKuxIfByBbUX95tPOkaRapyJCp9cYITSewO3L3qbbZnyHPEg==@duber-tripdb.documents.azure.com:10255/?ssl=true&amp;replicaSet=globaldb"/>
-      <EnvironmentVariable Name="EventBusConnection" Value="Endpoint=sb://dubersb.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=TVAK2GyVKgkKbWK5J2Djw+T+nmMUFnrWvdWIMsZRkxE=;EntityPath=duber_event_bus"/>
+      <EnvironmentVariable Name="EventStoreConfiguration__ConnectionString" Value="mongodb://duber-tripdb:KCHAqzT6Zez4GR1CODY4460wXvrg4xOv53r6FQ5vdCIj1TGGBJFLPEfWQvHgIuXR9B57UyfFXQM3KegJfRrW2Q==@duber-tripdb.documents.azure.com:10255/?ssl=true&amp;replicaSet=globaldb"/>
+      <EnvironmentVariable Name="EventBusConnection" Value="Endpoint=sb://dubersb.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=tM2nmf3mooYFUjsVNrXds2Ki4mnGC8B7bxz8hWSsfoM=;EntityPath=duber_event_bus"/>
       <EnvironmentVariable Name="AzureServiceBusEnabled" Value="True"/>
     </EnvironmentVariables>
   </CodePackage>

@@ -64,7 +64,7 @@ namespace Duber.Domain.Driver.Persistence
             DriverStatus.Active
         };
 
-        private static Policy CreatePolicy(ILogger<DriverContextSeed> logger, string prefix, int retries = 3)
+        private static AsyncPolicy CreatePolicy(ILogger<DriverContextSeed> logger, string prefix, int retries = 3)
         {
             return Policy.Handle<SqlException>().
                 WaitAndRetryAsync(

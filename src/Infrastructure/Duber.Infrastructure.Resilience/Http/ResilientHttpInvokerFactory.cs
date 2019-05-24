@@ -21,8 +21,8 @@ namespace Duber.Infrastructure.Resilience.Http
         public ResilientHttpInvoker CreateResilientHttpClient()
             => new ResilientHttpInvoker(CreatePolicies());
 
-        private Policy[] CreatePolicies()
-            => new Policy[]
+        private AsyncPolicy[] CreatePolicies()
+            => new AsyncPolicy[]
             {
                 Policy.Handle<HttpRequestException>()
                     .WaitAndRetryAsync(

@@ -25,6 +25,7 @@ namespace Duber.WebSite.Application.IntegrationEvents.Handlers
                 throw new InvalidOperationException($"The trip {@event.TripId} doesn't exist. Error trying to update the materialized view.");
 
             if (trip.Status == "Finished") return;
+
             trip.Distance = @event.Distance;
             trip.Duration = @event.Duration;
             trip.Status = @event.Status.Name;
@@ -37,7 +38,7 @@ namespace Duber.WebSite.Application.IntegrationEvents.Handlers
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Error trying to update the Trip: {@event.TripId}", ex);
+                throw new InvalidOperationException($"Error trying to update the Trip: {@event.TripId} Trip status: {trip.Status}", ex);
             }
             finally
             {

@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Polly;
+using Polly.Retry;
 
 namespace Duber.Infrastructure.Resilience.SqlServer
 {
@@ -25,8 +26,8 @@ namespace Duber.Infrastructure.Resilience.SqlServer
         /// Consider include in your policies all exceptions as you needed.
         /// https://docs.microsoft.com/en-us/azure/sql-database/sql-database-develop-error-messages
         /// </summary>
-        private Policy[] CreatePolicies()
-            => new Policy[]
+        private AsyncPolicy[] CreatePolicies()
+            => new AsyncPolicy[]
             {
                 Policy.Handle<SqlException>(ex => ex.Number == 40613)
                     .Or<SqlException>(ex => ex.Number == 40197)

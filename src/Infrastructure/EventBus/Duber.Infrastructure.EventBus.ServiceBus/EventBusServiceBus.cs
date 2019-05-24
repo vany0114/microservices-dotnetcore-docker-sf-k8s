@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Autofac;
@@ -8,6 +9,7 @@ using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Polly;
 
 namespace Duber.Infrastructure.EventBus.ServiceBus
 {
@@ -20,10 +22,11 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
         private readonly ILifetimeScope _autofac;
         private readonly string AUTOFAC_SCOPE_NAME = "duber_event_bus";
         private const string INTEGRATION_EVENT_SUFIX = "IntegrationEvent";
+        private readonly int _retryCount;
 
         public EventBusServiceBus(IServiceBusPersisterConnection serviceBusPersisterConnection, 
             ILogger<EventBusServiceBus> logger, IEventBusSubscriptionsManager subsManager, string subscriptionClientName,
-            ILifetimeScope autofac)
+            ILifetimeScope autofac, int retryCount = 5)
         {
             _serviceBusPersisterConnection = serviceBusPersisterConnection;
             _logger = logger;
@@ -32,6 +35,7 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
             _subscriptionClient = new SubscriptionClient(serviceBusPersisterConnection.ServiceBusConnectionStringBuilder, 
                 subscriptionClientName);
             _autofac = autofac;
+            _retryCount = retryCount;
 
             RemoveDefaultRule();
             RegisterSubscriptionClientMessageHandler();
@@ -52,9 +56,18 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
 
             var topicClient = _serviceBusPersisterConnection.CreateModel();
 
-            topicClient.SendAsync(message)
-                .GetAwaiter()
-                .GetResult();
+            var policy = Policy.Handle<Exception>()
+                .WaitAndRetry(_retryCount, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (ex, time) =>
+                {
+                    _logger.LogWarning(ex.ToString());
+                });
+
+            policy.Execute(() =>
+            {
+                topicClient.SendAsync(message)
+                    .GetAwaiter()
+                    .GetResult();
+            });
         }
 
         public void SubscribeDynamic<TH>(string eventName)
@@ -128,8 +141,14 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
                 {
                     var eventName = $"{message.Label}{INTEGRATION_EVENT_SUFIX}";
                     var messageData = Encoding.UTF8.GetString(message.Body);
-                    await ProcessEvent(eventName, messageData);
-                    
+
+                    var policy = Policy.Handle<InvalidOperationException>()
+                        .Or<Exception>()
+                        .WaitAndRetryAsync(_retryCount, retryAttempt => TimeSpan.FromSeconds(1),
+                            (ex, time) => { _logger.LogWarning(ex.ToString()); });
+
+                    await policy.ExecuteAsync(async () => await ProcessEvent(eventName, messageData));
+
                     // Complete the message so that it is not received again.
                     await _subscriptionClient.CompleteAsync(message.SystemProperties.LockToken);
                 },

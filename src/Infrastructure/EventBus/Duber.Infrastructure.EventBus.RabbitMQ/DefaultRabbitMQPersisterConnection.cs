@@ -71,8 +71,7 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
 
                 policy.Execute(() =>
                 {
-                    _connection = _connectionFactory
-                          .CreateConnection();
+                    _connection = _connectionFactory.CreateConnection();
                 });
 
                 if (IsConnected)

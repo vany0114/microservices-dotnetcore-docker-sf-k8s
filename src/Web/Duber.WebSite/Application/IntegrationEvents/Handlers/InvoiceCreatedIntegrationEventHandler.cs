@@ -19,7 +19,7 @@ namespace Duber.WebSite.Application.IntegrationEvents.Handlers
         {
             var trip = await _reportingRepository.GetTripAsync(@event.TripId);
 
-            // we throw an exception in order to don't send the Acknowledgement to the service bus, probably the consumer read the 
+            // we throw an exception in order to don't send the Acknowledgement to the service bus, probably the consumer read 
             // this message before that the created one.
             if (trip == null)
                 throw new InvalidOperationException($"The trip {@event.TripId} doesn't exist. Error trying to update the materialized view.");
