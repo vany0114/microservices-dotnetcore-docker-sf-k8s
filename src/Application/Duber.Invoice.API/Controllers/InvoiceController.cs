@@ -126,7 +126,7 @@ namespace Duber.Invoice.API.Controllers
         [ProducesResponseType(typeof(Guid), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> CreateTrip([FromBody]ViewModel.CreateInvoiceRequest request)
+        public async Task<IActionResult> CreateInvoice([FromBody]ViewModel.CreateInvoiceRequest request)
         {
             try
             {
