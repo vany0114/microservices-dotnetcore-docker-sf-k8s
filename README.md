@@ -20,6 +20,9 @@ It is important to set Docker up properly with enough memory RAM and CPU assigne
 
 ![](https://github.com/vany0114/vany0114.github.io/blob/master/images/docker_settings.png)
 
+### Architecture
+![](https://github.com/vany0114/vany0114.github.io/blob/master/images/Duber_Production_Environment_Architecture.png)
+
 ### Demo Screenshots
 #### Website
 ![](https://github.com/vany0114/vany0114.github.io/blob/master/images/duber-in-action.gif)
