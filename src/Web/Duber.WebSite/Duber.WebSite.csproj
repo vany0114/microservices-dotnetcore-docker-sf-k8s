@@ -37,4 +37,8 @@
     <Folder Include="Infrastructure\Filters\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
 </Project>

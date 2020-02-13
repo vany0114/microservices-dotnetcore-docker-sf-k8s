@@ -19,8 +19,7 @@ namespace Duber.Domain.Trip.Commands.Handlers
                 command.Brand,
                 command.Model);
             
-            await Task.CompletedTask;
-            return trip;
+            return await Task.FromResult(trip);
         }
     }
 }

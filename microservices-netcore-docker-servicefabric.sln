@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2011
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{750E2FD5-5728-4F39-AA06-7FAB071FBE51}"
 EndProject
@@ -76,6 +76,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Duber.Infrastructure.Resilience", "src\Infrastructure\Duber.Infrastructure.Resilience\Duber.Infrastructure.Resilience.csproj", "{E609890D-4A5F-4FDE-87B0-BF90E7519C57}"
 EndProject
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "DuberMicroservices", "ServiceFabric\Linux\DuberMicroservices\DuberMicroservices.sfproj", "{D8A868B6-7D03-4368-A52E-64F1E1B357DB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B0A3B2AF-77E2-4255-84AF-AAC4A459BF88}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

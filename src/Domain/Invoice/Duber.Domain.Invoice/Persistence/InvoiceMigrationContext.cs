@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Duber.Domain.Invoice.Persistence
 {
     /// <summary>
-    /// This context is only to creates and runs the migrations. Just to example purposes and, avoids that you have to deal running scripts before to execute the solution.
+    /// This context is only to create and run the migrations. Just to example purposes and, avoids that you have to deal with running scripts before to execute the solution.
     /// You must use <see cref="IInvoiceContext"/>
     /// </summary>
     [Obsolete("This context is only to creates and runs the migrations. Just to example purposes and, avoids that you have to deal running scripts before to execute the solution.")]
@@ -26,6 +26,7 @@ namespace Duber.Domain.Invoice.Persistence
         public DbSet<PaymentInfo> PaymentsInfo { get; set; }
     }
 
+    [Obsolete]
     public class UserContextDesignFactory : IDesignTimeDbContextFactory<InvoiceMigrationContext>
     {
         public InvoiceMigrationContext CreateDbContext(string[] args)

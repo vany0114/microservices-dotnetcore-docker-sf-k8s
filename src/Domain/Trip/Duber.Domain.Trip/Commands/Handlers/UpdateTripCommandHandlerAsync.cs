@@ -44,7 +44,6 @@ namespace Duber.Domain.Trip.Commands.Handlers
                     throw new ArgumentOutOfRangeException();
             }
 
-            await Task.CompletedTask;
             return trip;
         }
     }
