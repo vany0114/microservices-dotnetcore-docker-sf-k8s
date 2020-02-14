@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Duber.Domain.Driver.Model;
 using Duber.Domain.Driver.Repository;
 using Duber.Domain.User.Model;
 using Duber.Domain.User.Repository;
+using Duber.Infrastructure.Http;
 using Duber.Infrastructure.Resilience.Http;
 using Duber.WebSite.Extensions;
 using Duber.WebSite.Hubs;
@@ -18,7 +19,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using RestSharp;
+using Polly;
 // ReSharper disable ForCanBeConvertedToForeach
 
 namespace Duber.WebSite.Controllers
@@ -27,7 +28,7 @@ namespace Duber.WebSite.Controllers
     {
         private readonly IMemoryCache _cache;
         private readonly IUserRepository _userRepository;
-        private readonly ResilientHttpInvoker _httpInvoker;
+        private readonly ResilientHttpClient _httpClient;
         private readonly IHubContext<TripHub> _hubContext;
         private readonly IDriverRepository _driverRepository;
         private readonly IReportingRepository _reportingRepository;
@@ -37,7 +38,7 @@ namespace Duber.WebSite.Controllers
         public TripController(IUserRepository userRepository,
             IDriverRepository driverRepository,
             IMemoryCache cache,
-            ResilientHttpInvoker httpInvoker,
+            ResilientHttpClient httpClient,
             IOptions<TripApiSettings> tripApiSettings,
             IHubContext<TripHub> hubContext,
             IReportingRepository reportingRepository)
@@ -45,7 +46,7 @@ namespace Duber.WebSite.Controllers
             _userRepository = userRepository;
             _driverRepository = driverRepository;
             _cache = cache;
-            _httpInvoker = httpInvoker;
+            _httpClient = httpClient;
             _tripApiSettings = tripApiSettings;
             _hubContext = hubContext;
             _reportingRepository = reportingRepository;
@@ -98,32 +99,26 @@ namespace Duber.WebSite.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.AllErrors());
 
-            var createdTask = CreateTrip(model);
-            var createdNotificationTask = _hubContext.Clients.All.SendAsync("NotifyTrip", "Created");
-            await Task.WhenAll(createdTask, createdNotificationTask);
-            var tripID = await createdTask;
+            var tripID = await CreateTrip(model);
+            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Created");
 
-            var acceptedTask = AcceptOrStartTrip(_tripApiSettings.Value.AcceptUrl, tripID);
-            var acceptedNotificationTask = _hubContext.Clients.All.SendAsync("NotifyTrip", "Accepted");
-            await Task.WhenAll(acceptedTask, acceptedNotificationTask);
+            await AcceptOrStartTrip(_tripApiSettings.Value.AcceptUrl, tripID);
+            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Accepted");
 
-            var startedTask = AcceptOrStartTrip(_tripApiSettings.Value.StartUrl, tripID);
-            var startedNotificationTask = _hubContext.Clients.All.SendAsync("NotifyTrip", "Started");
-            await Task.WhenAll(startedTask, startedNotificationTask);
+            await AcceptOrStartTrip(_tripApiSettings.Value.StartUrl, tripID);
+            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Started");
 
-            var updatedPositionTasks = new List<Task>();
             for (var index = 0; index < model.Directions.Count; index += 5)
             {
                 var direction = model.Directions[index];
                 if (index + 5 >= model.Directions.Count)
                     direction = _originsAndDestinations.Values.SingleOrDefault(x => x.Description == model.To);
 
-                updatedPositionTasks.Add(UpdateTripLocation(tripID, direction));
-                updatedPositionTasks.Add(_hubContext.Clients.All.SendAsync("UpdateCurrentPosition", direction));
+                await UpdateTripLocation(tripID, direction);
+                await _hubContext.Clients.All.SendAsync("UpdateCurrentPosition", direction);
             }
 
-            updatedPositionTasks.Add(_hubContext.Clients.All.SendAsync("NotifyTrip", "Finished"));
-            await Task.WhenAll(updatedPositionTasks);
+            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Finished");
 
             return Ok();
         }
@@ -243,11 +238,10 @@ namespace Duber.WebSite.Controllers
             var driverInfo = drivers.SingleOrDefault(x => x.Id == int.Parse(model.Driver));
             var userInfo = users.SingleOrDefault(x => x.Id == int.Parse(model.User));
 
-            var createRequestRresponse = await _httpInvoker.InvokeAsync(async () =>
+            var uri = new Uri(new Uri(_tripApiSettings.Value.BaseUrl), _tripApiSettings.Value.CreateUrl);
+            var request = new HttpRequestMessage(HttpMethod.Post, uri)
             {
-                var client = new RestClient(_tripApiSettings.Value.BaseUrl);
-                var request = new RestRequest(_tripApiSettings.Value.CreateUrl, Method.POST);
-                request.AddJsonBody(new
+                Content = new JsonContent(new
                 {
                     userId = int.Parse(model.User),
                     driverId = int.Parse(model.Driver),
@@ -257,49 +251,41 @@ namespace Duber.WebSite.Controllers
                     brand = driverInfo?.CurrentVehicle.Brand,
                     model = driverInfo?.CurrentVehicle.Model,
                     paymentMethod = userInfo?.PaymentMethod
-                });
+                })
+            };
 
-                return await client.ExecuteTaskAsync(request);
-            });
+            var response = await _httpClient.SendAsync(request);
 
-            if (createRequestRresponse.StatusCode != HttpStatusCode.Created)
-                throw new InvalidOperationException("There was an error with Trip service", createRequestRresponse.ErrorException);
-
-            return JsonConvert.DeserializeObject<Guid>(createRequestRresponse.Content);
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<Guid>(await response.Content.ReadAsStringAsync());
         }
 
         private async Task AcceptOrStartTrip(string action, Guid tripId)
         {
-            var createRequestRresponse = await _httpInvoker.InvokeAsync(async () =>
+            var uri = new Uri(new Uri(_tripApiSettings.Value.BaseUrl), action);
+            var request = new HttpRequestMessage(HttpMethod.Put, uri)
             {
-                var client = new RestClient(_tripApiSettings.Value.BaseUrl);
-                var request = new RestRequest(action, Method.PUT);
-                request.AddJsonBody(new { id = tripId.ToString() });
+                Content = new JsonContent(new { id = tripId.ToString() })
+            };
 
-                return await client.ExecuteTaskAsync(request);
-            });
-
-            if (createRequestRresponse.StatusCode != HttpStatusCode.OK)
-                throw new InvalidOperationException("There was an error with Trip service", createRequestRresponse.ErrorException);
+            var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
         }
 
         private async Task UpdateTripLocation(Guid tripId, LocationModel location)
         {
-            var createRequestRresponse = await _httpInvoker.InvokeAsync(async () =>
+            var uri = new Uri(new Uri(_tripApiSettings.Value.BaseUrl), _tripApiSettings.Value.UpdateCurrentLocationUrl);
+            var request = new HttpRequestMessage(HttpMethod.Put, uri)
             {
-                var client = new RestClient(_tripApiSettings.Value.BaseUrl);
-                var request = new RestRequest(_tripApiSettings.Value.UpdateCurrentLocationUrl, Method.PUT);
-                request.AddJsonBody(new
+                Content = new JsonContent(new
                 {
                     id = tripId,
                     currentLocation = new { latitude = location.Latitude, longitude = location.Longitude }
-                });
+                })
+            };
 
-                return await client.ExecuteTaskAsync(request);
-            });
-
-            if (createRequestRresponse.StatusCode != HttpStatusCode.OK)
-                throw new InvalidOperationException("There was an error with Trip service", createRequestRresponse.ErrorException);
+            var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

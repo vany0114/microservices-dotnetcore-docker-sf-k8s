@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Duber.Infrastructure.DDD;
 using Duber.Infrastructure.Extensions;
-using Duber.Infrastructure.Resilience;
-using Duber.Infrastructure.Resilience.SqlServer;
+using Duber.Infrastructure.Resilience.Abstractions;
 using MediatR;
 
 namespace Duber.Domain.Invoice.Persistence
@@ -17,9 +16,9 @@ namespace Duber.Domain.Invoice.Persistence
         private readonly string _connectionString;
         private IDbConnection _connection;
         private readonly IMediator _mediator;
-        private readonly ResilientExecutor<ISqlExecutor> _resilientSqlExecutor;
+        private readonly IPolicyAsyncExecutor _resilientSqlExecutor;
 
-        public InvoiceContext(string connectionString, IMediator mediator, ResilientExecutor<ISqlExecutor> resilientSqlExecutor)
+        public InvoiceContext(string connectionString, IMediator mediator, IPolicyAsyncExecutor resilientSqlExecutor)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
                 throw new ArgumentException(nameof(connectionString));

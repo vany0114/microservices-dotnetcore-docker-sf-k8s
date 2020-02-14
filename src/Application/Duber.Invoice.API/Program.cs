@@ -4,6 +4,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+#pragma warning disable 618
 
 namespace Duber.Invoice.API
 {
@@ -12,9 +13,7 @@ namespace Duber.Invoice.API
         public static void Main(string[] args)
         {
             BuildWebHost(args)
-#pragma warning disable CS0618 // Type or member is obsolete
                 .MigrateDbContext<InvoiceMigrationContext>((_, __) => { })
-#pragma warning restore CS0618 // Type or member is obsolete
                 .Run();
         }
 

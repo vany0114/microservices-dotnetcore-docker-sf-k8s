@@ -24,7 +24,7 @@ namespace Duber.WebSite.Application.IntegrationEvents.Handlers
 
         public async Task Handle(TripCreatedIntegrationEvent @event)
         {
-            var existingTrip = _reportingRepository.GetTrip(@event.TripId);
+            var existingTrip = await _reportingRepository.GetTripAsync(@event.TripId);
             if (existingTrip != null) return;
 
             var driverTask = _driverRepository.GetDriverAsync(@event.DriverId);
