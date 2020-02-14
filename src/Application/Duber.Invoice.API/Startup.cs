@@ -58,6 +58,7 @@ namespace Duber.Invoice.API
                 .AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<CreateInvoiceRequestValidator>());
 
             services.AddOptions();
+            services.AddApplicationInsightsTelemetry();
 
             services.AddCors(options =>
             {
@@ -204,17 +205,13 @@ namespace Duber.Invoice.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddAzureWebAppDiagnostics();
-            loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Trace);
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
             app.UseCors("CorsPolicy");
-            app.UseMvc();
+            app.UseRouting();
             ConfigureEventBus(app);
 
             app.UseSwagger()

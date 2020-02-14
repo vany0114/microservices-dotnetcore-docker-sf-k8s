@@ -12,7 +12,9 @@ namespace Duber.Invoice.API
         public static void Main(string[] args)
         {
             BuildWebHost(args)
+#pragma warning disable CS0618 // Type or member is obsolete
                 .MigrateDbContext<InvoiceMigrationContext>((_, __) => { })
+#pragma warning restore CS0618 // Type or member is obsolete
                 .Run();
         }
 
@@ -28,8 +30,8 @@ namespace Duber.Invoice.API
                     builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     builder.AddConsole();
                     builder.AddDebug();
+                    builder.AddApplicationInsights();
                 })
-                .UseApplicationInsights()
                 .Build();
     }
 }

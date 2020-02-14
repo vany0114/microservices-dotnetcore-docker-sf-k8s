@@ -24,6 +24,7 @@ using Microsoft.Azure.ServiceBus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 // ReSharper disable InconsistentNaming
@@ -48,6 +49,7 @@ namespace Duber.WebSite
             services.Configure<FormOptions>(x => x.ValueCountLimit = 2048);
             services.AddMvc();
             services.AddSignalR();
+            services.AddApplicationInsightsTelemetry();
 
             services.Configure<TripApiSettings>(Configuration.GetSection("TripApiSettings"));
 
@@ -149,7 +151,7 @@ namespace Duber.WebSite
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -161,19 +163,14 @@ namespace Duber.WebSite
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseSignalR(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapHub<TripHub>("/triphub");
+                endpoints.MapHub<TripHub>("/triphub");
             });
 
             ConfigureEventBus(app);
             app.UseStaticFiles();
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseRouting();
         }
 
         private void RegisterEventBus(IServiceCollection services)

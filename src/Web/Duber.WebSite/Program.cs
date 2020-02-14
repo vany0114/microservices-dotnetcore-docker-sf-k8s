@@ -46,7 +46,6 @@ namespace Duber.WebSite
                     builder.AddConsole();
                     builder.AddDebug();
                 })
-                .UseApplicationInsights()
                 .Build();
     }
 }

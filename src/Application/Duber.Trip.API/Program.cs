@@ -29,8 +29,8 @@ namespace Duber.Trip.API
                     builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     builder.AddConsole();
                     builder.AddDebug();
+                    builder.AddApplicationInsights();
                 })
-                .UseApplicationInsights()
                 .Build();
     }
 }

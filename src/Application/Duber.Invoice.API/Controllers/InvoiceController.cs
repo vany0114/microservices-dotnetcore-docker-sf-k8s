@@ -6,7 +6,6 @@ using AutoMapper;
 using Duber.Domain.Invoice.Repository;
 using Duber.Domain.Invoice.Services;
 using Duber.Domain.SharedKernel.Model;
-using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using ViewModel = Duber.Invoice.API.Application.Model;
 
@@ -132,7 +131,7 @@ namespace Duber.Invoice.API.Controllers
             {
                 // to enable idempotency.
                 var invoice = await _invoiceRepository.GetInvoiceByTripAsync(request.TripId);
-                if (invoice != null) return Created(HttpContext.Request.GetUri().AbsoluteUri, invoice.InvoiceId);
+                if (invoice != null) return CreatedAtAction(nameof(GetInvoice), new { invoiceId = invoice.InvoiceId }, invoice.InvoiceId);
 
                 invoice = new Domain.Invoice.Model.Invoice(
                     request.PaymentMethod.Id,
@@ -149,7 +148,7 @@ namespace Duber.Invoice.API.Controllers
                     await _paymentService.PerformPayment(invoice, request.UserId);
                 }
 
-                return Created(HttpContext.Request.GetUri().AbsoluteUri, invoice.InvoiceId);
+                return CreatedAtAction(nameof(GetInvoice), new { invoiceId = invoice.InvoiceId }, invoice.InvoiceId);
             }
             finally
             {
