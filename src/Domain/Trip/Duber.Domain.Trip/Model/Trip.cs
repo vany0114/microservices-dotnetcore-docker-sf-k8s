@@ -3,7 +3,7 @@ using Duber.Domain.SharedKernel.Model;
 using Duber.Domain.Trip.Events;
 using Duber.Domain.Trip.Exceptions;
 using GeoCoordinatePortable;
-using Weapsy.Cqrs.Domain;
+using Kledex.Domain;
 using Action = Duber.Domain.Trip.Events.Action;
 // ReSharper disable ConvertToAutoProperty
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -54,7 +54,7 @@ namespace Duber.Domain.Trip.Model
 
         public double Distance => GetDistance();
 
-        // public empty constructor is required for Weapsy.CQRS
+        // public empty constructor is required for Kledex
         public Trip()
         {
         }
@@ -224,7 +224,7 @@ namespace Duber.Domain.Trip.Model
             return from.GetDistanceTo(to);
         }
 
-        // Applies events after load an object from event store. (kinda memento pattern)
+        // Applies events after load an object from event store.
         private void Apply(TripCreatedDomainEvent @event)
         {
             Id = @event.AggregateRootId;

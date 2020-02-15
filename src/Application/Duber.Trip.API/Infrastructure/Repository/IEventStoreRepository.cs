@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Weapsy.Cqrs.EventStore.CosmosDB.MongoDB.Documents;
+using Kledex.Store.Cosmos.Mongo.Documents;
 
 namespace Duber.Trip.API.Infrastructure.Repository
 {

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Duber.Domain.Trip.Exceptions;
-using Weapsy.Cqrs.Commands;
-using Weapsy.Cqrs.Domain;
+using Kledex.Commands;
+using Kledex.Domain;
 
 namespace Duber.Domain.Trip.Commands.Handlers
 {
-    public class UpdateTripCommandHandlerAsync : ICommandHandlerWithAggregateAsync<UpdateTripCommand>
+    public class UpdateTripCommandHandlerAsync : ICommandHandlerAsync<UpdateTripCommand>
     {
         private readonly IRepository<Model.Trip> _repository;
 
@@ -15,7 +15,7 @@ namespace Duber.Domain.Trip.Commands.Handlers
             _repository = repository;
         }
 
-        public async Task<IAggregateRoot> HandleAsync(UpdateTripCommand command)
+        public async Task<CommandResponse> HandleAsync(UpdateTripCommand command)
         {
             var trip = await _repository.GetByIdAsync(command.AggregateRootId);
 
@@ -44,8 +44,10 @@ namespace Duber.Domain.Trip.Commands.Handlers
                     throw new ArgumentOutOfRangeException();
             }
 
-            await Task.CompletedTask;
-            return trip;
+            return new CommandResponse
+            {
+                Events = trip.Events
+            };
         }
     }
 }

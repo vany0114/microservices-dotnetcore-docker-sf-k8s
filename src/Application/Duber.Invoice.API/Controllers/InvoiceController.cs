@@ -6,7 +6,6 @@ using AutoMapper;
 using Duber.Domain.Invoice.Repository;
 using Duber.Domain.Invoice.Services;
 using Duber.Domain.SharedKernel.Model;
-using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using ViewModel = Duber.Invoice.API.Application.Model;
 
@@ -32,8 +31,7 @@ namespace Duber.Invoice.API.Controllers
         /// <param name="invoiceId"></param>
         /// <returns>Returns an invoice that matches with the specified id</returns>
         /// <response code="200">Returns an Invoice object that matches with the specified id</response>
-        [Route("getbyid")]
-        [HttpGet]
+        [HttpGet("{invoiceId}")]
         [ProducesResponseType(typeof(ViewModel.Invoice), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -62,8 +60,7 @@ namespace Duber.Invoice.API.Controllers
         /// <param name="tripId"></param>
         /// <returns>Returns an invoice that matches with the specified trip id</returns>
         /// <response code="200">Returns an invoice that matches with the specified trip id</response>
-        [Route("getbytripid")]
-        [HttpGet]
+        [HttpGet("trip/{tripId}")]
         [ProducesResponseType(typeof(ViewModel.Invoice), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -91,7 +88,6 @@ namespace Duber.Invoice.API.Controllers
         /// </summary>
         /// <returns>Returns all of the Invoices</returns>
         /// <response code="200">Returns a list of Invoice object.</response>
-        [Route("get")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<ViewModel.Invoice>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -121,7 +117,6 @@ namespace Duber.Invoice.API.Controllers
         /// <param name="request"></param>
         /// <returns>Returns the newly created invoice identifier.</returns>
         /// <response code="201">Returns the newly created trip identifier.</response>
-        [Route("create")]
         [HttpPost]
         [ProducesResponseType(typeof(Guid), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -132,7 +127,7 @@ namespace Duber.Invoice.API.Controllers
             {
                 // to enable idempotency.
                 var invoice = await _invoiceRepository.GetInvoiceByTripAsync(request.TripId);
-                if (invoice != null) return Created(HttpContext.Request.GetUri().AbsoluteUri, invoice.InvoiceId);
+                if (invoice != null) return CreatedAtAction(nameof(GetInvoice), new { invoiceId = invoice.InvoiceId }, invoice.InvoiceId);
 
                 invoice = new Domain.Invoice.Model.Invoice(
                     request.PaymentMethod.Id,
@@ -149,7 +144,7 @@ namespace Duber.Invoice.API.Controllers
                     await _paymentService.PerformPayment(invoice, request.UserId);
                 }
 
-                return Created(HttpContext.Request.GetUri().AbsoluteUri, invoice.InvoiceId);
+                return CreatedAtAction(nameof(GetInvoice), new { invoiceId = invoice.InvoiceId }, invoice.InvoiceId);
             }
             finally
             {

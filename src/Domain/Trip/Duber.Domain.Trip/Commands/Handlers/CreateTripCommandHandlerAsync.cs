@@ -1,12 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Weapsy.Cqrs.Commands;
-using Weapsy.Cqrs.Domain;
+using Kledex.Commands;
 
 namespace Duber.Domain.Trip.Commands.Handlers
 {
-    public class CreateTripCommandHandlerAsync : ICommandHandlerWithAggregateAsync<CreateTripCommand>
+    public class CreateTripCommandHandlerAsync : ICommandHandlerAsync<CreateTripCommand>
     {
-        public async Task<IAggregateRoot> HandleAsync(CreateTripCommand command)
+        public async Task<CommandResponse> HandleAsync(CreateTripCommand command)
         {
             var trip = new Model.Trip(
                 command.AggregateRootId,
@@ -20,7 +19,10 @@ namespace Duber.Domain.Trip.Commands.Handlers
                 command.Model);
             
             await Task.CompletedTask;
-            return trip;
+            return new CommandResponse
+            {
+                Events = trip.Events
+            };
         }
     }
 }

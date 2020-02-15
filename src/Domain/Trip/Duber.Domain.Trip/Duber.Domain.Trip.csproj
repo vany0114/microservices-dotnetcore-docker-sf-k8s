@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,8 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="GeoCoordinate.NetCore" Version="1.0.0.1" />
-    <PackageReference Include="Weapsy.Cqrs" Version="2.1.2" />
-    <PackageReference Include="Weapsy.Cqrs.EventStore.CosmosDB.MongoDB" Version="2.1.2" />
+    <PackageReference Include="Kledex.Store.Cosmos.Mongo" Version="2.5.0" />
   </ItemGroup>
 
   <ItemGroup>

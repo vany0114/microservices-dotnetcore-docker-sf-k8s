@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Infrastructure\Duber.Infrastructure.Resilience\Duber.Infrastructure.Resilience.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\Duber.Infrastructure.Resilience.Abstractions\Duber.Infrastructure.Resilience.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus\Duber.Infrastructure.EventBus.csproj" />
     <ProjectReference Include="..\..\Duber.Domain.ACL\Duber.Domain.ACL.csproj" />
     <ProjectReference Include="..\..\Duber.Domain.SharedKernel\Duber.Domain.SharedKernel.csproj" />

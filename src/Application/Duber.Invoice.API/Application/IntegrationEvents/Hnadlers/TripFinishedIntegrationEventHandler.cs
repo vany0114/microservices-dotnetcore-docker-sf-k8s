@@ -43,7 +43,7 @@ namespace Duber.Invoice.API.Application.IntegrationEvents.Hnadlers
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Error trying to perform tge payment the Trip: {@event.TripId}", ex);
+                throw new InvalidOperationException($"Error trying to perform the payment the Trip: {@event.TripId}", ex);
             }
             finally
             {

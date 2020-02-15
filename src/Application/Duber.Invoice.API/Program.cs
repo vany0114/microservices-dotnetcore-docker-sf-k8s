@@ -4,6 +4,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+#pragma warning disable 618
 
 namespace Duber.Invoice.API
 {
@@ -28,8 +29,8 @@ namespace Duber.Invoice.API
                     builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     builder.AddConsole();
                     builder.AddDebug();
+                    builder.AddApplicationInsights();
                 })
-                .UseApplicationInsights()
                 .Build();
     }
 }

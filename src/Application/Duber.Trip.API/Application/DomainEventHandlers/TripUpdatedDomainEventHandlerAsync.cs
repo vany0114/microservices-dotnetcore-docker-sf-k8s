@@ -5,7 +5,7 @@ using Duber.Domain.Trip.Events;
 using Duber.Infrastructure.EventBus.Abstractions;
 using Duber.Trip.API.Application.IntegrationEvents;
 using Duber.Trip.API.Application.Model;
-using Weapsy.Cqrs.Events;
+using Kledex.Events;
 using TripStatus = Duber.Domain.SharedKernel.Model.TripStatus;
 
 namespace Duber.Trip.API.Application.DomainEventHandlers

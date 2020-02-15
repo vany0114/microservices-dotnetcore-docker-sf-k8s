@@ -6,7 +6,7 @@
         {
             public static string PerformPayment()
             {
-                return "/api/payment/performpayment?userId={userId}&reference={reference}";
+                return "/api/payment/performpayment?userId={0}&reference={1}";
             }
         }
     }

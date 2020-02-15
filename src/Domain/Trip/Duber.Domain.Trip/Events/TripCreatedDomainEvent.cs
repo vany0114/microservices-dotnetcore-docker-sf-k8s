@@ -1,6 +1,6 @@
 ﻿using Duber.Domain.SharedKernel.Model;
 using Duber.Domain.Trip.Model;
-using Weapsy.Cqrs.Domain;
+using Kledex.Domain;
 
 namespace Duber.Domain.Trip.Events
 {

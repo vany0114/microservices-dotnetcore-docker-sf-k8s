@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Duber.Trip.API.Infrastructure.Repository;
+using Kledex.Store.Cosmos.Mongo.Documents;
 using Microsoft.AspNetCore.Mvc;
-using Weapsy.Cqrs.EventStore.CosmosDB.MongoDB.Documents;
 
 namespace Duber.Trip.API.Controllers
 {
@@ -23,8 +23,7 @@ namespace Duber.Trip.API.Controllers
         /// </summary>
         /// <returns>Returns all of the Aggregates</returns>
         /// <response code="200">Returns a list of AggregateDocument object.</response>
-        [Route("aggregates")]
-        [HttpGet]
+        [HttpGet("aggregates")]
         [ProducesResponseType(typeof(IEnumerable<AggregateDocument>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -45,8 +44,7 @@ namespace Duber.Trip.API.Controllers
         /// <param name="aggregateId"></param>
         /// <returns>Returns all events that matches with the specified aggregate id.</returns>
         /// <response code="200">Returns a list of EventDocument object.</response>
-        [Route("eventsbyaggregate")]
-        [HttpGet]
+        [HttpGet("aggregates/{aggregateId}/events")]
         [ProducesResponseType(typeof(IEnumerable<EventDocument>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
