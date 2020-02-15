@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Kledex.Store.Cosmos.Mongo;
+using Kledex.Store.Cosmos.Mongo.Configuration;
+using Kledex.Store.Cosmos.Mongo.Documents;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using Weapsy.Cqrs.EventStore.CosmosDB.MongoDB;
-using Weapsy.Cqrs.EventStore.CosmosDB.MongoDB.Configuration;
-using Weapsy.Cqrs.EventStore.CosmosDB.MongoDB.Documents;
 // ReSharper disable FunctionRecursiveOnAllPaths
 
 namespace Duber.Trip.API.Infrastructure.Repository
 {
     public class EventStoreRepository : IEventStoreRepository
     {
-        private readonly EventStoreDbContext _dbContext;
+        private readonly MongoDbContext _dbContext;
 
-        public EventStoreRepository(IOptions<EventStoreConfiguration> settings)
+        public EventStoreRepository(IOptions<MongoOptions> settings)
         {
-            _dbContext = new EventStoreDbContext(settings);
+            _dbContext = new MongoDbContext(settings);
         }
 
         public async Task<IEnumerable<AggregateDocument>> GetAggregatesAsync()

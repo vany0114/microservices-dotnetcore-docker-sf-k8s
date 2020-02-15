@@ -16,6 +16,8 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
+using Microsoft.OpenApi.Models;
+
 #pragma warning disable 618
 
 namespace Duber.Invoice.API.Extensions
@@ -82,13 +84,11 @@ namespace Duber.Invoice.API.Extensions
             // swagger configuration
             services.AddSwaggerGen(options =>
             {
-                options.DescribeAllEnumsAsStrings();
-                options.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
+                options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Duber.Invoice HTTP API",
                     Version = "v1",
-                    Description = "The Duber Invoice Service HTTP API",
-                    TermsOfService = "Terms Of Service"
+                    Description = "The Duber Invoice Service HTTP API"
                 });
 
                 // Set the comments path for the Swagger JSON and UI.

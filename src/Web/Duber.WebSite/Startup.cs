@@ -74,14 +74,17 @@ namespace Duber.WebSite
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapHub<TripHub>("/triphub");
-            });
-
             ConfigureEventBusEvents(app);
             app.UseStaticFiles();
             app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<TripHub>("/triphub");
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
 
         private void RegisterEventBusHandlers(IServiceCollection services)

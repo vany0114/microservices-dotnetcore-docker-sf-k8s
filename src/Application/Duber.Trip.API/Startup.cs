@@ -1,32 +1,22 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
+using System.Collections.Generic;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
-using Duber.Domain.Trip.Commands;
-using Duber.Infrastructure.EventBus;
-using Duber.Infrastructure.EventBus.Abstractions;
-using Duber.Infrastructure.EventBus.RabbitMQ;
 using Duber.Infrastructure.EventBus.RabbitMQ.IoC;
-using Duber.Infrastructure.EventBus.ServiceBus;
 using Duber.Infrastructure.EventBus.ServiceBus.IoC;
-using Duber.Trip.API.Application.DomainEventHandlers;
+using Duber.Trip.API.Application.Mapping;
 using Duber.Trip.API.Application.Validations;
 using Duber.Trip.API.Extensions;
 using Duber.Trip.API.Infrastructure.Filters;
-using Duber.Trip.API.Infrastructure.Repository;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using RabbitMQ.Client;
-using Weapsy.Cqrs.EventStore.CosmosDB.MongoDB.Extensions;
-using Weapsy.Cqrs.Extensions;
+
 // ReSharper disable InconsistentNaming
 
 namespace Duber.Trip.API
@@ -43,17 +33,16 @@ namespace Duber.Trip.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddAutoMapper()
-                .AddApplicationInsightsTelemetry(Configuration)
-                .AddMvc(options =>
+            services.AddApplicationInsightsTelemetry(Configuration)
+                .AddControllers(options =>
                 {
                     options.Filters.Add(typeof(HttpGlobalExceptionFilter));
                     options.Filters.Add(typeof(ValidatorActionFilter));
                 })
+                .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<UpdateTripCommandValidator>());
 
             services.AddCQRS(Configuration);
-
             services.AddOptions()
                 .AddCors(options =>
                 {
@@ -61,8 +50,7 @@ namespace Duber.Trip.API
                     options.AddPolicy("CorsPolicy",
                         builder => builder.AllowAnyOrigin()
                             .AllowAnyMethod()
-                            .AllowAnyHeader()
-                            .AllowCredentials());
+                            .AllowAnyHeader());
                 });
 
             services.AddCustomSwagger();
@@ -89,9 +77,10 @@ namespace Duber.Trip.API
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseCors("CorsPolicy");
             app.UseRouting();
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             app.UseSwagger()
                 .UseSwaggerUI(c =>

@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Infrastructure\Filters\**" />
+    <Content Remove="Infrastructure\Filters\**" />
+    <EmbeddedResource Remove="Infrastructure\Filters\**" />
+    <None Remove="Infrastructure\Filters\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.2" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
@@ -34,10 +41,6 @@
     <ProjectReference Include="..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus.RabbitMQ\Duber.Infrastructure.EventBus.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus.ServiceBus\Duber.Infrastructure.EventBus.ServiceBus.csproj" />
     <ProjectReference Include="..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus\Duber.Infrastructure.EventBus.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Infrastructure\Filters\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,7 +4,7 @@ services:
   duber.invoice.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=${APP_ENVIRONMENT:-Development}
-      - ConnectionString=${AZURE_INVOICE_DB:-Server=sql.data;Database=Duber.InvoiceDb;User Id=sa;Password=Pass@word}
+      - ConnectionStrings__InvoiceDB=${AZURE_INVOICE_DB:-Server=sql.data;Database=Duber.InvoiceDb;User Id=sa;Password=Pass@word}      
       - EventBusConnection=${AZURE_SERVICE_BUS:-rabbitmq}
       - PaymentServiceBaseUrl=${PAYMENT_SERVICE_URL:-http://externalsystem.payment}
       - AzureServiceBusEnabled=${SERVICE_BUS_ENABLED:-False}
@@ -23,7 +23,7 @@ services:
   duber.website:
     environment:
       - ASPNETCORE_ENVIRONMENT=${APP_ENVIRONMENT:-Development}
-      - ConnectionString=${AZURE_WEBSITE_DB:-Server=sql.data;Database=Duber.WebSiteDb;User Id=sa;Password=Pass@word}
+      - ConnectionStrings__WebsiteDB=${AZURE_WEBSITE_DB:-Server=sql.data;Database=Duber.WebSiteDb;User Id=sa;Password=Pass@word}      
       - EventBusConnection=${AZURE_SERVICE_BUS:-rabbitmq}
       - TripApiSettings__BaseUrl=${TRIP_SERVICE_BASE_URL:-http://duber.trip.api}
       - AzureServiceBusEnabled=${SERVICE_BUS_ENABLED:-False}

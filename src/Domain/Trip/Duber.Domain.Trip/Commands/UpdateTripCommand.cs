@@ -1,9 +1,9 @@
 ﻿using Duber.Domain.Trip.Model;
-using Weapsy.Cqrs.Domain;
+using Kledex.Domain;
 
 namespace Duber.Domain.Trip.Commands
 {
-    public class UpdateTripCommand : DomainCommand
+    public class UpdateTripCommand : DomainCommand<Model.Trip>
     {
         public Action Action { get; set; }
 

@@ -38,11 +38,12 @@ namespace Duber.Invoice.API
             services
                 .AddAutoMapper()
                 .AddApplicationInsightsTelemetry(Configuration)
-                .AddMvc(options =>
+                .AddControllers(options =>
                 {
                     options.Filters.Add(typeof(HttpGlobalExceptionFilter));
                     options.Filters.Add(typeof(ValidatorActionFilter));
                 })
+                .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<CreateInvoiceRequestValidator>());
 
             services.AddOptions()
@@ -52,8 +53,7 @@ namespace Duber.Invoice.API
                     options.AddPolicy("CorsPolicy",
                         builder => builder.AllowAnyOrigin()
                             .AllowAnyMethod()
-                            .AllowAnyHeader()
-                            .AllowCredentials());
+                            .AllowAnyHeader());
                 });
 
             services.AddResilientStrategies(Configuration)
@@ -91,6 +91,7 @@ namespace Duber.Invoice.API
 
             app.UseCors("CorsPolicy");
             app.UseRouting();
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
             ConfigureEventBus(app);
 
             app.UseSwagger()

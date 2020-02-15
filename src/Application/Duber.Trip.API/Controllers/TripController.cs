@@ -3,10 +3,10 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Duber.Domain.Trip.Commands;
+using Kledex;
+using Kledex.Domain;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Weapsy.Cqrs;
-using Weapsy.Cqrs.Domain;
 using Action = Duber.Domain.Trip.Commands.Action;
 using ViewModel = Duber.Trip.API.Application.Model;
 
@@ -16,9 +16,9 @@ namespace Duber.Trip.API.Controllers
     public class TripController : Controller
     {
         private readonly IDispatcher _dispatcher;
-        private readonly IMapper _mapper;
+        private IMapper _mapper;
         private readonly IRepository<Domain.Trip.Model.Trip> _repository;
-        private readonly Guid _fakeUser = Guid.NewGuid();
+        private readonly String _fakeUser = Guid.NewGuid().ToString();
         private const string Source = "Duber.Trip.Api";
 
         public TripController(IDispatcher dispatcher, IMapper mapper, IRepository<Domain.Trip.Model.Trip> repository)
@@ -34,8 +34,7 @@ namespace Duber.Trip.API.Controllers
         /// <param name="tripId"></param>
         /// <returns>Returns a trip that matches with the specified id.</returns>
         /// <response code="200">Returns a Trip object that matches with the specified id.</response>
-        [Route("get")]
-        [HttpGet]
+        [HttpGet("{tripId}")]
         [ProducesResponseType(typeof(ViewModel.Trip), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -57,7 +56,6 @@ namespace Duber.Trip.API.Controllers
         /// <param name="command"></param>
         /// <returns>Returns the newly created trip identifier.</returns>
         /// <response code="201">Returns the newly created trip identifier.</response>
-        [Route("create")]
         [HttpPost]
         [ProducesResponseType(typeof(Guid), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -72,7 +70,7 @@ namespace Duber.Trip.API.Controllers
             domainCommand.Source = Source;
             domainCommand.UserId = _fakeUser;
 
-            await _dispatcher.SendAndPublishAsync<CreateTripCommand, Domain.Trip.Model.Trip>(domainCommand);
+            await _dispatcher.SendAsync(domainCommand);
             return Created(HttpContext.Request.GetUri().AbsoluteUri, tripId);
         }
 
@@ -81,8 +79,7 @@ namespace Duber.Trip.API.Controllers
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        [Route("accept")]
-        [HttpPut]
+        [HttpPut("accept")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -95,7 +92,7 @@ namespace Duber.Trip.API.Controllers
             domainCommand.Source = Source;
             domainCommand.UserId = _fakeUser;
 
-            await _dispatcher.SendAndPublishAsync<UpdateTripCommand, Domain.Trip.Model.Trip>(domainCommand);
+            await _dispatcher.SendAsync(domainCommand);
             return Ok();
         }
 
@@ -104,8 +101,7 @@ namespace Duber.Trip.API.Controllers
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        [Route("start")]
-        [HttpPut]
+        [HttpPut("start")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -118,7 +114,7 @@ namespace Duber.Trip.API.Controllers
             domainCommand.Source = Source;
             domainCommand.UserId = _fakeUser;
 
-            await _dispatcher.SendAndPublishAsync<UpdateTripCommand, Domain.Trip.Model.Trip>(domainCommand);
+            await _dispatcher.SendAsync(domainCommand);
             return Ok();
         }
 
@@ -127,8 +123,7 @@ namespace Duber.Trip.API.Controllers
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        [Route("cancel")]
-        [HttpPut]
+        [HttpPut("cancel")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -141,7 +136,7 @@ namespace Duber.Trip.API.Controllers
             domainCommand.Source = Source;
             domainCommand.UserId = _fakeUser;
 
-            await _dispatcher.SendAndPublishAsync<UpdateTripCommand, Domain.Trip.Model.Trip>(domainCommand);
+            await _dispatcher.SendAsync(domainCommand);
             return Ok();
         }
 
@@ -150,8 +145,7 @@ namespace Duber.Trip.API.Controllers
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        [Route("updatecurrentlocation")]
-        [HttpPut]
+        [HttpPut("update")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -164,7 +158,7 @@ namespace Duber.Trip.API.Controllers
             domainCommand.Source = Source;
             domainCommand.UserId = _fakeUser;
 
-            await _dispatcher.SendAndPublishAsync<UpdateTripCommand, Domain.Trip.Model.Trip>(domainCommand);
+            await _dispatcher.SendAsync(domainCommand);
             return Ok();
         }
     }
