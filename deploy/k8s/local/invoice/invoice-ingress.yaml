@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: invoice-ingress
+spec:
+  rules:
+  - host: orders.52.149.189.181.nip.io
+    http:
+      paths:
+      - backend:
+          serviceName: invoice-service
+          servicePort: 80
+        path: /invoice

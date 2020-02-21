@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: trip-ingress
+spec:
+  rules:
+  - host: trip.52.149.189.181.nip.io
+    http:
+      paths:
+      - backend:
+          serviceName: trip-service
+          servicePort: 80
+        path: /trip

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nosql-data
+spec:
+  selector:
+      matchLabels:
+        app: nosql-data
+  replicas: 1
+  template:
+      metadata:
+        labels:
+            app: nosql-data
+      spec:
+        containers:
+        - name: nosql-data
+          image: mongo
+          imagePullPolicy: IfNotPresent          
+          ports:
+            - name: http
+              containerPort: 27017
+              protocol: TCP
