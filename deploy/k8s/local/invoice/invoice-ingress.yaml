@@ -1,13 +1,16 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: invoice-ingress
+  name: invoice
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-  - host: orders.52.149.189.181.nip.io
+  - host: invoice.local.com
     http:
       paths:
-      - backend:
-          serviceName: invoice-service
+      - path: /
+        backend:
+          serviceName: invoice
           servicePort: 80
-        path: /invoice

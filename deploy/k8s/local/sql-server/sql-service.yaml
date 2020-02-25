@@ -6,7 +6,7 @@ spec:
   selector:
     app: sql-data
   ports:
-    - port: 5433
+    - port: 1433
       targetPort: http
       protocol: TCP
       name: http

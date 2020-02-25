@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: invoice-api
+  name: invoice
 spec:
   selector:
       matchLabels:
-        app: invoice-api
+        app: invoice
   replicas: 3
   template:
       metadata:
         labels:
-            app: invoice-api
+            app: invoice
       spec:
         containers:
-        - name: invoice-api
+        - name: invoice
           image: vany0114/duber.invoice.api
           imagePullPolicy: Always
           resources:
@@ -35,4 +35,4 @@ spec:
           - name: AzureServiceBusEnabled
             value: "False"
           ports:
-          - containerPort: 32776
+            - containerPort: 80

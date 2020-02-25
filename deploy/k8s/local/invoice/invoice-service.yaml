@@ -1,11 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: invoice-service
+  name: invoice
 spec:
   selector:
-    app: invoice-api
+    app: invoice
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 80
-    targetPort: 32776
+    targetPort: 80

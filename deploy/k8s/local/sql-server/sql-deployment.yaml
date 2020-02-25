@@ -25,5 +25,5 @@ spec:
             value: Pass@word
           ports:
             - name: http
-              containerPort: 5433
+              containerPort: 1433
               protocol: TCP
