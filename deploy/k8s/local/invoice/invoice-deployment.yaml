@@ -31,7 +31,7 @@ spec:
           - name: EventBusConnection
             value: "rabbitmq"
           - name: PaymentServiceBaseUrl
-            value: "http://payment-service"
+            value: "http://payment"
           - name: AzureServiceBusEnabled
             value: "False"
           ports:
