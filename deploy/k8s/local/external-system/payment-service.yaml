@@ -1,11 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: payment-service
+  name: payment
 spec:
   selector:
-    app: payment-service
+    app: payment
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 80
-    targetPort: 32777
+    targetPort: 80

@@ -47,4 +47,10 @@
     <None Include="..\..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\jquery-validation-unobtrusive\" />
+    <Folder Include="wwwroot\lib\jquery\" />
+    <Folder Include="wwwroot\lib\lodash.js\" />
+  </ItemGroup>
+
 </Project>

@@ -1,11 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: website-service
+  name: frontend
 spec:
   selector:
     app: frontend
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 80
-    targetPort: 32774
+    targetPort: 80

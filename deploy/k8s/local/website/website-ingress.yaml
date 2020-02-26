@@ -1,13 +1,13 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: website-ingress
+  name: frontend
 spec:
   rules:
-  - host: trip.52.149.189.181.nip.io
+  - host: duber.local.com
     http:
       paths:
-      - backend:
-          serviceName: website-service
+      - path: /
+        backend:
+          serviceName: frontend
           servicePort: 80
-        path: /

@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: trip-deployment
+  name: trip
 spec:
   selector:
       matchLabels:
-        app: trip-api
+        app: trip
   replicas: 1
   template:
       metadata:
         labels:
-            app: trip-api
+            app: trip
       spec:
         containers:
-        - name: trip-api
+        - name: trip
           image: vany0114/duber.trip.api
           imagePullPolicy: Always
           resources:
@@ -33,4 +33,4 @@ spec:
           - name: AzureServiceBusEnabled
             value: "False"
           ports:
-          - containerPort: 32775
+          - containerPort: 80

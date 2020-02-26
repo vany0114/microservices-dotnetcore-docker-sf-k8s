@@ -4,10 +4,10 @@ metadata:
   name: trip-ingress
 spec:
   rules:
-  - host: trip.52.149.189.181.nip.io
+  - host: trip.local.com
     http:
       paths:
-      - backend:
-          serviceName: trip-service
+      - path: /
+        backend:
+          serviceName: trip
           servicePort: 80
-        path: /trip

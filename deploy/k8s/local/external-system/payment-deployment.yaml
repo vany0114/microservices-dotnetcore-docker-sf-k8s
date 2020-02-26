@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: payment-deployment
+  name: payment
 spec:
   selector:
       matchLabels:
-        app: payment-service
+        app: payment
   replicas: 1
   template:
       metadata:
         labels:
-            app: payment-service
+            app: payment
       spec:
         containers:
-        - name: invoice-api
+        - name: payment
           image: vany0114/externalsystem.paymentservice
           imagePullPolicy: Always
           env:
           - name: ASPNETCORE_ENVIRONMENT
             value: "Development"         
           ports:
-          - containerPort: 32777
+          - containerPort: 80

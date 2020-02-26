@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: website-deployment
+  name: frontend
 spec:
   selector:
       matchLabels:
@@ -31,8 +31,8 @@ spec:
           - name: EventBusConnection
             value: "rabbitmq"
           - name: TripApiSettings__BaseUrl
-            value: "http://trip-service"
+            value: "http://trip"
           - name: AzureServiceBusEnabled
             value: "False"
           ports:
-          - containerPort: 32774
+          - containerPort: 80
