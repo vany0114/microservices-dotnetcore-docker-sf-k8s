@@ -8,5 +8,5 @@ spec:
     kind: Deployment
     name: frontend
   minReplicas: 3
-  maxReplicas: 10
+  maxReplicas: 5
   targetCPUUtilizationPercentage: 50

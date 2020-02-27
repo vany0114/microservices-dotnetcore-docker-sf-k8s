@@ -101,10 +101,12 @@
 
         connection.on('UpdateCurrentPosition', location => {
             DuberWebSite.updateTripPosition(location);
+            console.log("Current position", location);
         });
 
         connection.on('NotifyTrip', (message) => {
             DuberWebSite.notifyTripStatus(message);
+            console.log("Trip status", message);
         });
     </script>
 }

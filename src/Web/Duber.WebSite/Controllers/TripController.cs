@@ -98,15 +98,15 @@ namespace Duber.WebSite.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.AllErrors());
-
+            
             var tripID = await CreateTrip(model);
-            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Created");
-
+            await _hubContext.Clients.Client(model.ConnectionId).SendAsync("NotifyTrip", "Created");
+            
             await AcceptOrStartTrip(_tripApiSettings.Value.AcceptUrl, tripID);
-            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Accepted");
+            await _hubContext.Clients.Client(model.ConnectionId).SendAsync("NotifyTrip", "Accepted");
 
             await AcceptOrStartTrip(_tripApiSettings.Value.StartUrl, tripID);
-            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Started");
+            await _hubContext.Clients.Client(model.ConnectionId).SendAsync("NotifyTrip", "Started");
 
             for (var index = 0; index < model.Directions.Count; index += 5)
             {
@@ -115,10 +115,10 @@ namespace Duber.WebSite.Controllers
                     direction = _originsAndDestinations.Values.SingleOrDefault(x => x.Description == model.To);
 
                 await UpdateTripLocation(tripID, direction);
-                await _hubContext.Clients.All.SendAsync("UpdateCurrentPosition", direction);
+                await _hubContext.Clients.Client(model.ConnectionId).SendAsync("UpdateCurrentPosition", direction);
             }
 
-            await _hubContext.Clients.All.SendAsync("NotifyTrip", "Finished");
+            await _hubContext.Clients.Client(model.ConnectionId).SendAsync("NotifyTrip", "Finished");
 
             return Ok();
         }
