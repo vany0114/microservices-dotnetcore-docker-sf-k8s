@@ -23,6 +23,11 @@
       "provider": "jsdelivr",
       "library": "bootstrap@3.3.7",
       "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "@microsoft/signalr@3.1.2",
+      "destination": "wwwroot/lib/signalr"
     }
   ]
 }
