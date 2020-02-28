@@ -5,6 +5,7 @@ using Duber.Domain.Invoice.Services;
 using Duber.Domain.SharedKernel.Model;
 using Duber.Infrastructure.EventBus.Abstractions;
 using Duber.Invoice.API.Application.IntegrationEvents.Events;
+using Microsoft.Extensions.Logging;
 
 namespace Duber.Invoice.API.Application.IntegrationEvents.Hnadlers
 {
@@ -12,15 +13,19 @@ namespace Duber.Invoice.API.Application.IntegrationEvents.Hnadlers
     {
         private readonly IPaymentService _paymentService;
         private readonly IInvoiceRepository _invoiceRepository;
+        private readonly ILogger<TripCancelledIntegrationEventHandler> _logger;
 
-        public TripCancelledIntegrationEventHandler(IInvoiceRepository invoiceRepository, IPaymentService paymentService)
+        public TripCancelledIntegrationEventHandler(IInvoiceRepository invoiceRepository, IPaymentService paymentService, ILogger<TripCancelledIntegrationEventHandler> logger)
         {
             _invoiceRepository = invoiceRepository ?? throw new ArgumentNullException(nameof(invoiceRepository));
             _paymentService = paymentService ?? throw new ArgumentNullException(nameof(paymentService));
+            _logger = logger;
         }
 
         public async Task Handle(TripCancelledIntegrationEvent @event)
         {
+            _logger.LogInformation($"Trip {@event.TripId} has been cancelled.");
+
             var invoice = await _invoiceRepository.GetInvoiceByTripAsync(@event.TripId);
             if (invoice != null) return;
 
@@ -34,16 +39,18 @@ namespace Duber.Invoice.API.Application.IntegrationEvents.Hnadlers
                     TripStatus.Cancelled.Id);
 
                 await _invoiceRepository.AddInvoiceAsync(invoice);
+                _logger.LogInformation($"Invoice {invoice.Id} created.");
 
                 // integration with external payment system.
                 if (Equals(invoice.PaymentMethod, PaymentMethod.CreditCard) && invoice.Total > 0)
                 {
                     await _paymentService.PerformPayment(invoice, @event.UserId);
+                    _logger.LogInformation($"Payment for invoice {invoice.Id} has been processed.");
                 }
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Error trying to perform tge payment the Trip: {@event.TripId}", ex);
+                throw new InvalidOperationException($"Error trying to perform the paymen. Trip: {@event.TripId}", ex);
             }
             finally
             {
