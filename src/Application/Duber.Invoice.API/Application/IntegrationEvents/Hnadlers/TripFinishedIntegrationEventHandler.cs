@@ -39,13 +39,13 @@ namespace Duber.Invoice.API.Application.IntegrationEvents.Hnadlers
                     TripStatus.Finished.Id);
 
                 await _invoiceRepository.AddInvoiceAsync(invoice);
-                _logger.LogInformation($"Invoice {invoice.Id} created.");
+                _logger.LogInformation($"Invoice {invoice.InvoiceId} created.");
 
                 // integration with external payment system.
                 if (Equals(invoice.PaymentMethod, PaymentMethod.CreditCard) && invoice.Total > 0)
                 {
                     await _paymentService.PerformPayment(invoice, @event.UserId);
-                    _logger.LogInformation($"Payment for invoice {invoice.Id} has been processed.");
+                    _logger.LogInformation($"Payment for invoice {invoice.InvoiceId} has been processed.");
                 }
             }
             catch (Exception ex)
