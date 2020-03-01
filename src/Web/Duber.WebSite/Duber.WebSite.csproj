@@ -47,4 +47,15 @@
     <None Include="..\..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\jquery-validation-unobtrusive\" />
+    <Folder Include="wwwroot\lib\jquery\" />
+    <Folder Include="wwwroot\lib\lodash.js\" />
+    <Folder Include="wwwroot\lib\signalr\dist\browser\" />
+    <Folder Include="wwwroot\lib\signalr\dist\cjs\" />
+    <Folder Include="wwwroot\lib\signalr\dist\esm\" />
+    <Folder Include="wwwroot\lib\signalr\dist\webworker\" />
+    <Folder Include="wwwroot\lib\signalr\src\" />
+  </ItemGroup>
+
 </Project>

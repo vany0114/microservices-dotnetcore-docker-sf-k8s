@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trip
+spec:
+  selector:
+      matchLabels:
+        app: trip
+  replicas: 1
+  template:
+      metadata:
+        labels:
+            app: trip
+      spec:
+        containers:
+        - name: trip
+          image: vany0114/duber.trip.api
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "200m"
+            limits:
+              memory: "256Mi"
+              cpu: "600m"
+          env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Development"
+          - name: EventStoreConfiguration__ConnectionString
+            value: "mongodb://nosql-data"
+          - name: EventBusConnection
+            value: "rabbitmq"          
+          - name: AzureServiceBusEnabled
+            value: "False"
+          ports:
+          - containerPort: 80

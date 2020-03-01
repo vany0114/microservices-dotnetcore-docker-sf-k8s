@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: invoice
+spec:
+  selector:
+      matchLabels:
+        app: invoice
+  replicas: 3
+  template:
+      metadata:
+        labels:
+            app: invoice
+      spec:
+        containers:
+        - name: invoice
+          image: vany0114/duber.invoice.api
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Development"
+          - name: ConnectionStrings__InvoiceDB
+            value: "Server=sql-data;Database=Duber.InvoiceDb;User Id=sa;Password=Pass@word"
+          - name: EventBusConnection
+            value: "rabbitmq"
+          - name: PaymentServiceBaseUrl
+            value: "http://payment"
+          - name: AzureServiceBusEnabled
+            value: "False"
+          ports:
+            - containerPort: 80

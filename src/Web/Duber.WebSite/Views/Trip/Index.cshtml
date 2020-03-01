@@ -86,25 +86,32 @@
             DuberWebSite.init(@placesJson, '@Url.Action("SimulateTrip")', "@Url.Content("~/images/car-icon4.png")");
         };
 
-        let logger = new signalR.ConsoleLogger(signalR.LogLevel.Information);
-        let connection = new signalR.HubConnection(`http://${document.location.host}/triphub`, { transport: signalR.HttpTransportType.WebSockets, logger: logger });
+        let connection = new signalR.HubConnectionBuilder()
+            .withUrl("/triphub", signalR.HttpTransportType.WebSockets)
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
 
         let startConnection = () => {
-            connection.start()
-                .then(e => {
-                    console.log("Connection opened");
-                })
-                .catch(err => console.log(err));
+            connection.start().then(function() {
+                console.log("Connection opened");
+
+                connection.invoke('getConnectionId')
+                    .then(function(connectionId) {
+                        sessionStorage.setItem('conectionId', connectionId);
+                    }).catch(err => console.error(err.toString()));
+            });
         };
 
         startConnection();
 
         connection.on('UpdateCurrentPosition', location => {
             DuberWebSite.updateTripPosition(location);
+            console.log("Current position", location);
         });
 
         connection.on('NotifyTrip', (message) => {
             DuberWebSite.notifyTripStatus(message);
+            console.log("Trip status", message);
         });
     </script>
 }

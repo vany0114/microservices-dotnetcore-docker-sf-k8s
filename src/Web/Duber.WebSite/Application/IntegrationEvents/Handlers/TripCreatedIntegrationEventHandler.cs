@@ -6,6 +6,7 @@ using Duber.Infrastructure.EventBus.Abstractions;
 using Duber.WebSite.Application.IntegrationEvents.Events;
 using Duber.WebSite.Infrastructure.Repository;
 using Duber.WebSite.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Duber.WebSite.Application.IntegrationEvents.Handlers
 {
@@ -14,25 +15,25 @@ namespace Duber.WebSite.Application.IntegrationEvents.Handlers
         private readonly IReportingRepository _reportingRepository;
         private readonly IDriverRepository _driverRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ILogger<TripCreatedIntegrationEventHandler> _logger;
 
-        public TripCreatedIntegrationEventHandler(IReportingRepository reportingRepository, IDriverRepository driverRepository, IUserRepository userRepository)
+        public TripCreatedIntegrationEventHandler(IReportingRepository reportingRepository, IDriverRepository driverRepository, IUserRepository userRepository, ILogger<TripCreatedIntegrationEventHandler> logger)
         {
             _reportingRepository = reportingRepository ?? throw new ArgumentNullException(nameof(reportingRepository));
             _driverRepository = driverRepository ?? throw new ArgumentNullException(nameof(driverRepository));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _logger = logger;
         }
 
         public async Task Handle(TripCreatedIntegrationEvent @event)
         {
+            _logger.LogInformation("TripCreatedIntegrationEvent handled");
             var existingTrip = await _reportingRepository.GetTripAsync(@event.TripId);
             if (existingTrip != null) return;
 
-            var driverTask = _driverRepository.GetDriverAsync(@event.DriverId);
-            var userTask = _userRepository.GetUserAsync(@event.UserTripId);
-            await Task.WhenAll(driverTask, userTask);
-
-            var driver = await driverTask;
-            var user = await userTask;
+            _logger.LogInformation($"Trip {@event.TripId} has been created.");
+            var driver = await _driverRepository.GetDriverAsync(@event.DriverId);
+            var user = await _userRepository.GetUserAsync(@event.UserTripId);
 
             var newTrip = new Trip
             {

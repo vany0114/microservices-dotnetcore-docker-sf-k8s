@@ -74,7 +74,8 @@ var DuberWebSite = (function () {
                 Driver: $("#Driver").val(),
                 From: $("#From").val(),
                 To: $("#To").val(),
-                Directions: _directions
+                Directions: _directions,
+                ConnectionId: sessionStorage.getItem('conectionId')
             },
             () => {
                 console.log("Simulation request sent succesfully.");

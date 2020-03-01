@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+      matchLabels:
+        app: frontend
+  replicas: 1
+  template:
+      metadata:
+        labels:
+            app: frontend
+      spec:
+        containers:
+        - name: frontend
+          image: vany0114/duber.website
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "200m"
+            limits:
+              memory: "256Mi"
+              cpu: "600m"
+          env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Development"
+          - name: ConnectionStrings__WebsiteDB
+            value: "Server=sql-data;Database=Duber.WebSiteDb;User Id=sa;Password=Pass@word"
+          - name: EventBusConnection
+            value: "rabbitmq"
+          - name: TripApiSettings__BaseUrl
+            value: "http://trip"
+          - name: AzureServiceBusEnabled
+            value: "False"
+          ports:
+          - containerPort: 80

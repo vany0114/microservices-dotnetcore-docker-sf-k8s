@@ -35,8 +35,13 @@ namespace Duber.Infrastructure.EventBus
             where TH : IIntegrationEventHandler<T>
         {
             var eventName = GetEventKey<T>();
+
             DoAddSubscription(typeof(TH), eventName, isDynamic: false);
-            _eventTypes.Add(typeof(T));
+
+            if (!_eventTypes.Contains(typeof(T)))
+            {
+                _eventTypes.Add(typeof(T));
+            }
         }
 
         private void DoAddSubscription(Type handlerType, string eventName, bool isDynamic)
@@ -110,10 +115,7 @@ namespace Duber.Infrastructure.EventBus
         private void RaiseOnEventRemoved(string eventName)
         {
             var handler = OnEventRemoved;
-            if (handler != null)
-            {
-                OnEventRemoved(this, eventName);
-            }
+            handler?.Invoke(this, eventName);
         }
 
 

@@ -30,6 +30,9 @@ namespace Duber.WebSite.Models
         [Required]
         public string To { get; set; }
 
+        [Required]
+        public string ConnectionId { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (From == To)

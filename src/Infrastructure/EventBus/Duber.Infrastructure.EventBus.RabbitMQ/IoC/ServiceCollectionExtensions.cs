@@ -22,7 +22,8 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ.IoC
                 var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
                 var factory = new ConnectionFactory()
                 {
-                    HostName = configuration["EventBusConnection"]
+                    HostName = configuration["EventBusConnection"],
+                    DispatchConsumersAsync = true
                 };
 
                 return new DefaultRabbitMQPersistentConnection(factory, logger, retryCount);
@@ -34,8 +35,9 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ.IoC
                 var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
                 var logger = sp.GetRequiredService<ILogger<EventBusRabbitMQ>>();
                 var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
+                var subscriptionClientName = configuration["SubscriptionClientName"];
 
-                return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, retryCount);
+                return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
             });
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
