@@ -29,11 +29,12 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
         private string _queueName;
 
         public EventBusRabbitMQ(IRabbitMQPersistentConnection persistentConnection, ILogger<EventBusRabbitMQ> logger,
-            ILifetimeScope autofac, IEventBusSubscriptionsManager subsManager, int retryCount = 5)
+            ILifetimeScope autofac, IEventBusSubscriptionsManager subsManager, string queueName = null, int retryCount = 5)
         {
             _persistentConnection = persistentConnection ?? throw new ArgumentNullException(nameof(persistentConnection));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _subsManager = subsManager ?? new InMemoryEventBusSubscriptionsManager();
+            _queueName = queueName;
             _consumerChannel = CreateConsumerChannel();
             _autofac = autofac;
             _retryCount = retryCount;
@@ -85,15 +86,17 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
 
                 // to avoid lossing messages
                 var properties = channel.CreateBasicProperties();
-                properties.Persistent = true;
+                properties.DeliveryMode = 2; // persistent
                 properties.Expiration = "60000";
 
                 policy.Execute(() =>
                 {
-                    channel.BasicPublish(exchange: BROKER_NAME,
-                                     routingKey: eventName,
-                                     basicProperties: properties,
-                                     body: body);
+                    channel.BasicPublish(
+                        exchange: BROKER_NAME,
+                        routingKey: eventName,
+                        mandatory: true,
+                        basicProperties: properties,
+                        body: body);
                 });
             }
         }
@@ -103,6 +106,7 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
         {
             DoInternalSubscription(eventName);
             _subsManager.AddDynamicSubscription<TH>(eventName);
+            StartBasicConsume();
         }
 
         public void Subscribe<T, TH>()
@@ -112,6 +116,7 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
             var eventName = _subsManager.GetEventKey<T>();
             DoInternalSubscription(eventName);
             _subsManager.AddSubscription<T, TH>();
+            StartBasicConsume();
         }
 
         private void DoInternalSubscription(string eventName)
@@ -152,23 +157,34 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
             _subsManager.Clear();
         }
 
-        private IModel CreateConsumerChannel()
+        private void StartBasicConsume()
         {
-            if (!_persistentConnection.IsConnected)
+            _logger.LogTrace("Starting RabbitMQ basic consume");
+
+            if (_consumerChannel != null)
             {
-                _persistentConnection.TryConnect();
+                var consumer = new AsyncEventingBasicConsumer(_consumerChannel);
+
+                consumer.Received += Consumer_Received;
+
+                _consumerChannel.BasicConsume(
+                    queue: _queueName,
+                    autoAck: false,
+                    consumer: consumer);
             }
-
-            var channel = _persistentConnection.CreateModel();
-            channel.ExchangeDeclare(exchange: BROKER_NAME, type: "direct");
-            _queueName = channel.QueueDeclare().QueueName;
-
-            var consumer = new EventingBasicConsumer(channel);
-            consumer.Received += async (model, ea) =>
+            else
             {
-                var eventName = ea.RoutingKey;
-                var message = Encoding.UTF8.GetString(ea.Body);
+                _logger.LogError("StartBasicConsume can't call on _consumerChannel == null");
+            }
+        }
 
+        private async Task Consumer_Received(object sender, BasicDeliverEventArgs eventArgs)
+        {
+            var eventName = eventArgs.RoutingKey;
+            var message = Encoding.UTF8.GetString(eventArgs.Body);
+
+            try
+            {
                 var policy = Policy.Handle<InvalidOperationException>()
                     .Or<Exception>()
                     .WaitAndRetryAsync(_retryCount, retryAttempt => TimeSpan.FromSeconds(1),
@@ -177,14 +193,42 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
                 await policy.ExecuteAsync(async () => await ProcessEvent(eventName, message));
 
                 // to avoid losing messages
-                channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
-            };
+                _consumerChannel.BasicAck(deliveryTag: eventArgs.DeliveryTag, multiple: false);
+            }
+            catch (Exception ex)
+            {
+                // consider using a Dead Letter Exchange for undelivered messages.
+                _logger.LogWarning(ex, "----- ERROR Processing message \"{Message}\"", message);
+            }
+        }
 
-            channel.BasicConsume(queue: _queueName, autoAck: false, consumer: consumer);
+        private IModel CreateConsumerChannel()
+        {
+            if (!_persistentConnection.IsConnected)
+            {
+                _persistentConnection.TryConnect();
+            }
+
+            _logger.LogTrace("Creating RabbitMQ consumer channel");
+
+            var channel = _persistentConnection.CreateModel();
+
+            channel.ExchangeDeclare(exchange: BROKER_NAME,
+                type: "direct");
+
+            channel.QueueDeclare(queue: _queueName,
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null);
+
             channel.CallbackException += (sender, ea) =>
             {
+                _logger.LogWarning(ea.Exception, "Recreating RabbitMQ consumer channel");
+
                 _consumerChannel.Dispose();
                 _consumerChannel = CreateConsumerChannel();
+                StartBasicConsume();
             };
 
             return channel;
@@ -192,6 +236,8 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
 
         private async Task ProcessEvent(string eventName, string message)
         {
+            _logger.LogTrace("Processing RabbitMQ event: {EventName}", eventName);
+
             if (_subsManager.HasSubscriptionsForEvent(eventName))
             {
                 using (var scope = _autofac.BeginLifetimeScope(AUTOFAC_SCOPE_NAME))
@@ -200,21 +246,31 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
                     foreach (var subscription in subscriptions)
                     {
                         if (subscription.IsDynamic)
-                        { 
+                        {
                             var handler = scope.ResolveOptional(subscription.HandlerType) as IDynamicIntegrationEventHandler;
+                            if (handler == null) continue;
                             dynamic eventData = JObject.Parse(message);
+
+                            await Task.Yield();
                             await handler.Handle(eventData);
                         }
                         else
                         {
+                            var handler = scope.ResolveOptional(subscription.HandlerType);
+                            if (handler == null) continue;
                             var eventType = _subsManager.GetEventTypeByName(eventName);
                             var integrationEvent = JsonConvert.DeserializeObject(message, eventType);
-                            var handler = scope.ResolveOptional(subscription.HandlerType);
                             var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
+
+                            await Task.Yield();
                             await (Task)concreteType.GetMethod("Handle").Invoke(handler, new object[] { integrationEvent });
                         }
                     }
                 }
+            }
+            else
+            {
+                _logger.LogWarning("No subscription for RabbitMQ event: {EventName}", eventName);
             }
         }
     }
