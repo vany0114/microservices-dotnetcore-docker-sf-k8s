@@ -1,3 +1,18 @@
+## 2.0.1
+**Kubernetes support:**
+* Enable the solution to being deployed on a local cluster
+* Use an Nginx Ingress Controller to expose frontend (Trip and Invoice services optional if you want to expose the API's)
+* Set up Nginx LB to use Sticky sessions in order for SignalR to work properly.
+
+**Frontend client dependencies:**
+* Use Libman to manage the client dependencies. 
+* Delete static *SignalR* client dependencies, using Libman now.
+
+**General enhancement:**
+* Refactor SignalR messaging in order to send messages only tho the connected client rather than all clients.
+* Refactor RabbitMQ client in order to use named Queues and full support to async handlers.
+
+## 2.0.0
 * Upgrades to .Net Core 3.1
 * Makes Trip and Invoice API's RESTful
 * Refactors ***Duber.Infrastructure.Resilience.Sql*** project to follow the pattern proposed [here](https://github.com/vany0114/resilience-strategy-with-polly)
