@@ -10,16 +10,13 @@ using Duber.Domain.User.Repository;
 using Duber.Infrastructure.Http;
 using Duber.Infrastructure.Resilience.Http;
 using Duber.WebSite.Extensions;
-using Duber.WebSite.Hubs;
 using Duber.WebSite.Infrastructure.Repository;
 using Duber.WebSite.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Polly;
 // ReSharper disable ForCanBeConvertedToForeach
 
 namespace Duber.WebSite.Controllers
@@ -29,7 +26,6 @@ namespace Duber.WebSite.Controllers
         private readonly IMemoryCache _cache;
         private readonly IUserRepository _userRepository;
         private readonly ResilientHttpClient _httpClient;
-        private readonly IHubContext<TripHub> _hubContext;
         private readonly IDriverRepository _driverRepository;
         private readonly IReportingRepository _reportingRepository;
         private readonly IOptions<TripApiSettings> _tripApiSettings;
@@ -40,7 +36,6 @@ namespace Duber.WebSite.Controllers
             IMemoryCache cache,
             ResilientHttpClient httpClient,
             IOptions<TripApiSettings> tripApiSettings,
-            IHubContext<TripHub> hubContext,
             IReportingRepository reportingRepository)
         {
             _userRepository = userRepository;
@@ -48,7 +43,6 @@ namespace Duber.WebSite.Controllers
             _cache = cache;
             _httpClient = httpClient;
             _tripApiSettings = tripApiSettings;
-            _hubContext = hubContext;
             _reportingRepository = reportingRepository;
 
             _originsAndDestinations = new Dictionary<SelectListItem, LocationModel>
@@ -100,13 +94,8 @@ namespace Duber.WebSite.Controllers
                 return BadRequest(ModelState.AllErrors());
             
             var tripID = await CreateTrip(model);
-            await _hubContext.Clients.Client(model.ConnectionId).SendAsync("NotifyTrip", "Created");
-            
-            await AcceptOrStartTrip(_tripApiSettings.Value.AcceptUrl, tripID);
-            await _hubContext.Clients.Client(model.ConnectionId).SendAsync("NotifyTrip", "Accepted");
-
-            await AcceptOrStartTrip(_tripApiSettings.Value.StartUrl, tripID);
-            await _hubContext.Clients.Client(model.ConnectionId).SendAsync("NotifyTrip", "Started");
+            await AcceptOrStartTrip(_tripApiSettings.Value.AcceptUrl, tripID, model.ConnectionId);
+            await AcceptOrStartTrip(_tripApiSettings.Value.StartUrl, tripID, model.ConnectionId);
 
             for (var index = 0; index < model.Directions.Count; index += 5)
             {
@@ -114,11 +103,8 @@ namespace Duber.WebSite.Controllers
                 if (index + 5 >= model.Directions.Count)
                     direction = _originsAndDestinations.Values.SingleOrDefault(x => x.Description == model.To);
 
-                await UpdateTripLocation(tripID, direction);
-                await _hubContext.Clients.Client(model.ConnectionId).SendAsync("UpdateCurrentPosition", direction);
+                await UpdateTripLocation(tripID, direction, model.ConnectionId);
             }
-
-            await _hubContext.Clients.Client(model.ConnectionId).SendAsync("NotifyTrip", "Finished");
 
             return Ok();
         }
@@ -250,7 +236,8 @@ namespace Duber.WebSite.Controllers
                     plate = driverInfo?.CurrentVehicle.Plate,
                     brand = driverInfo?.CurrentVehicle.Brand,
                     model = driverInfo?.CurrentVehicle.Model,
-                    paymentMethod = userInfo?.PaymentMethod
+                    paymentMethod = userInfo?.PaymentMethod,
+                    connectionId = model.ConnectionId
                 })
             };
 
@@ -260,19 +247,19 @@ namespace Duber.WebSite.Controllers
             return JsonConvert.DeserializeObject<Guid>(await response.Content.ReadAsStringAsync());
         }
 
-        private async Task AcceptOrStartTrip(string action, Guid tripId)
+        private async Task AcceptOrStartTrip(string action, Guid tripId, string connectionId)
         {
             var uri = new Uri(new Uri(_tripApiSettings.Value.BaseUrl), action);
             var request = new HttpRequestMessage(HttpMethod.Put, uri)
             {
-                Content = new JsonContent(new { id = tripId.ToString() })
+                Content = new JsonContent(new { id = tripId.ToString(), connectionId })
             };
 
             var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
         }
 
-        private async Task UpdateTripLocation(Guid tripId, LocationModel location)
+        private async Task UpdateTripLocation(Guid tripId, LocationModel location, string connectionId)
         {
             var uri = new Uri(new Uri(_tripApiSettings.Value.BaseUrl), _tripApiSettings.Value.UpdateCurrentLocationUrl);
             var request = new HttpRequestMessage(HttpMethod.Put, uri)
@@ -280,7 +267,7 @@ namespace Duber.WebSite.Controllers
                 Content = new JsonContent(new
                 {
                     id = tripId,
-                    currentLocation = new { latitude = location.Latitude, longitude = location.Longitude }
+                    currentLocation = new { latitude = location.Latitude, longitude = location.Longitude, connectionId }
                 })
             };
 

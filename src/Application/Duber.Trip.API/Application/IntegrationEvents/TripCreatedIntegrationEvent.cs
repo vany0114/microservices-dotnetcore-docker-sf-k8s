@@ -6,7 +6,7 @@ namespace Duber.Trip.API.Application.IntegrationEvents
 {
     public class TripCreatedIntegrationEvent : IntegrationEvent
     {
-        public TripCreatedIntegrationEvent(Guid tripId, int userTripId, int driverId, Location from, Location to, VehicleInformation vehicleInformation, PaymentMethod paymentMethod)
+        public TripCreatedIntegrationEvent(Guid tripId, int userTripId, int driverId, Location from, Location to, VehicleInformation vehicleInformation, PaymentMethod paymentMethod, string connectionId)
         {
             UserTripId = userTripId;
             DriverId = driverId;
@@ -14,6 +14,7 @@ namespace Duber.Trip.API.Application.IntegrationEvents
             To = to;
             VehicleInformation = vehicleInformation;
             PaymentMethod = paymentMethod;
+            ConnectionId = connectionId;
             TripId = tripId;
         }
 
@@ -30,5 +31,7 @@ namespace Duber.Trip.API.Application.IntegrationEvents
         public VehicleInformation VehicleInformation { get; }
 
         public PaymentMethod PaymentMethod { get; }
+
+        public string ConnectionId { get; }
     }
 }

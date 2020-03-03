@@ -26,6 +26,7 @@ services:
       - ConnectionStrings__WebsiteDB=${AZURE_WEBSITE_DB:-Server=sql.data;Database=Duber.WebSiteDb;User Id=sa;Password=Pass@word}      
       - EventBusConnection=${AZURE_SERVICE_BUS:-rabbitmq}
       - TripApiSettings__BaseUrl=${TRIP_SERVICE_BASE_URL:-http://duber.trip.api}
+      - TripApiSettings__NotificationsUrl=${NOTIFICATIONS_SERVICE_URL:-http://docker.for.win.localhost:32778} #docker.for.mac.localhost / docker.for.linux.localhost (you could use the .env file to set this in a common variable, then use it here, i.g: LOCAL_DOMAIN=http://docker.for.win.localhost)
       - AzureServiceBusEnabled=${SERVICE_BUS_ENABLED:-False}
     ports:
       - "32774:80"
@@ -48,3 +49,11 @@ services:
     ports:
       - "32777:80"
 
+  duber.trip.notifications:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${APP_ENVIRONMENT:-Development}
+      - ConnectionStrings__SignalrBackPlane=${REDIS_DB:-}
+      - EventBusConnection=${AZURE_SERVICE_BUS:-rabbitmq}
+      - AzureServiceBusEnabled=${SERVICE_BUS_ENABLED:-False}
+    ports:
+      - "32778:80"

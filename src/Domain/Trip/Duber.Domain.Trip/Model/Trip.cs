@@ -25,6 +25,9 @@ namespace Duber.Domain.Trip.Model
         private VehicleInformation _vehicleInformation;
         private Rating _rating;
         private PaymentMethod _paymentMethod;
+        private string _connectionId;
+
+        public string ConnectionId => _connectionId;
 
         public int UserId => _userId;
 
@@ -59,13 +62,14 @@ namespace Duber.Domain.Trip.Model
         {
         }
 
-        public Trip(Guid id, int userId, int driverId, Location from, Location to, PaymentMethod paymentMethod, string plate, string brand, string model) : base(id)
+        public Trip(Guid id, int userId, int driverId, Location from, Location to, PaymentMethod paymentMethod, string plate, string brand, string model, string connectionId) : base(id)
         {
             if (userId <= 0) throw new TripDomainArgumentNullException(nameof(userId));
             if (driverId <= 0) throw new TripDomainArgumentNullException(nameof(driverId));
             if (string.IsNullOrWhiteSpace(plate)) throw new TripDomainArgumentNullException(nameof(plate));
             if (string.IsNullOrWhiteSpace(brand)) throw new TripDomainArgumentNullException(nameof(brand));
             if (string.IsNullOrWhiteSpace(model)) throw new TripDomainArgumentNullException(nameof(model));
+            if (string.IsNullOrWhiteSpace(connectionId)) throw new TripDomainArgumentNullException(nameof(connectionId));
             if (from == null) throw new TripDomainArgumentNullException(nameof(from));
             if (to == null) throw new TripDomainArgumentNullException(nameof(to));
 
@@ -79,6 +83,7 @@ namespace Duber.Domain.Trip.Model
             _from = from;
             _to = to;
             _vehicleInformation = new VehicleInformation(plate, brand, model);
+            _connectionId = connectionId;
 
             AddEvent(new TripCreatedDomainEvent
             {
@@ -90,7 +95,8 @@ namespace Duber.Domain.Trip.Model
                 To = _to,
                 PaymentMethod = _paymentMethod,
                 TimeStamp = _create,
-                Status = _status
+                Status = _status,
+                ConnectionId = _connectionId
             });
         }
 
@@ -104,7 +110,8 @@ namespace Duber.Domain.Trip.Model
             {
                 AggregateRootId = Id,
                 Action = Action.Accepted,
-                Status = _status
+                Status = _status,
+                ConnectionId = _connectionId
             });
         }
 
@@ -123,7 +130,8 @@ namespace Duber.Domain.Trip.Model
                 AggregateRootId = Id,
                 Action = Action.Started,
                 Status = _status,
-                Started = _start
+                Started = _start,
+                ConnectionId = _connectionId
             });
         }
 
@@ -146,7 +154,8 @@ namespace Duber.Domain.Trip.Model
                 Duration = GetDuration(),
                 Distance = GetDistance(),
                 PaymentMethod = _paymentMethod,
-                UserTripId = _userId
+                UserTripId = _userId,
+                ConnectionId = _connectionId
             });
         }
 
@@ -170,7 +179,8 @@ namespace Duber.Domain.Trip.Model
                 Ended = _end,
                 PaymentMethod = _paymentMethod,
                 Duration = GetDuration(),
-                UserTripId = _userId
+                UserTripId = _userId,
+                ConnectionId = _connectionId
             });
         }
 
@@ -199,7 +209,8 @@ namespace Duber.Domain.Trip.Model
                 Duration = GetDuration(),
                 Distance = GetDistance(),
                 PaymentMethod = _paymentMethod,
-                UserTripId = _userId
+                UserTripId = _userId,
+                ConnectionId = _connectionId
             });
         }
 
@@ -236,6 +247,7 @@ namespace Duber.Domain.Trip.Model
             _userId = @event.UserTripId;
             _vehicleInformation = @event.VehicleInformation;
             _paymentMethod = @event.PaymentMethod;
+            _connectionId = @event.ConnectionId;
         }
 
         private void Apply(TripUpdatedDomainEvent @event)
@@ -244,6 +256,7 @@ namespace Duber.Domain.Trip.Model
             _end = @event.Ended;
             _status = @event.Status;
             _currentLocation = @event.CurrentLocation;
+            _connectionId = @event.ConnectionId;
         }
     }
 }

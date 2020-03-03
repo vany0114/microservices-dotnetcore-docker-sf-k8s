@@ -48,3 +48,8 @@ services:
       context: .
       dockerfile: ExternalSystem/PaymentService/Dockerfile
 
+  duber.trip.notifications:
+    image: duber/trip.notifications:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Application/Duber.Trip.Notifications/Dockerfile

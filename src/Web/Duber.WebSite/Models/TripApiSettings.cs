@@ -13,5 +13,7 @@
         public string CancelUrl { get; set; }
 
         public string UpdateCurrentLocationUrl { get; set; }
+
+        public string NotificationsUrl { get; set; }
     }
 }

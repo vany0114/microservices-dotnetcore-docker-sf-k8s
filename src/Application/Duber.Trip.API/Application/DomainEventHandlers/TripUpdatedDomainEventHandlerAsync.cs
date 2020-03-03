@@ -44,7 +44,8 @@ namespace Duber.Trip.API.Application.DomainEventHandlers
                     @event.Distance.Value,
                     @event.Duration.Value,
                     new PaymentMethod { Id = @event.PaymentMethod.Id, Name = @event.PaymentMethod.Name },
-                    @event.UserTripId.Value));
+                    @event.UserTripId.Value,
+                    @event.ConnectionId));
             }
             else if (@event.Status.Name == TripStatus.Cancelled.Name)
             {
@@ -56,7 +57,8 @@ namespace Duber.Trip.API.Application.DomainEventHandlers
                     @event.AggregateRootId,
                     @event.Duration.Value,
                     new PaymentMethod { Id = @event.PaymentMethod.Id, Name = @event.PaymentMethod.Name },
-                    @event.UserTripId.Value));
+                    @event.UserTripId.Value,
+                    @event.ConnectionId));
             }
 
             await Task.CompletedTask;

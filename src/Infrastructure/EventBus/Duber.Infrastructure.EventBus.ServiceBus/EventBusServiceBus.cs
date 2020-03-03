@@ -21,7 +21,7 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
         private readonly SubscriptionClient _subscriptionClient;
         private readonly ILifetimeScope _autofac;
         private readonly string AUTOFAC_SCOPE_NAME = "duber_event_bus";
-        private const string INTEGRATION_EVENT_SUFIX = "IntegrationEvent";
+        private const string INTEGRATION_EVENT_SUFFIX = "IntegrationEvent";
         private readonly int _retryCount;
 
         public EventBusServiceBus(IServiceBusPersisterConnection serviceBusPersisterConnection, 
@@ -43,14 +43,14 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
 
         public void Publish(IntegrationEvent @event)
         {
-            var eventName = @event.GetType().Name.Replace(INTEGRATION_EVENT_SUFIX, "");
+            var eventName = @event.GetType().Name.Replace(INTEGRATION_EVENT_SUFFIX, "");
             var jsonMessage = JsonConvert.SerializeObject(@event);
             var body = Encoding.UTF8.GetBytes(jsonMessage);
 
             var message = new Message
             {
-                MessageId = new Guid().ToString(),
-                Body = Encoding.UTF8.GetBytes(jsonMessage),
+                MessageId = Guid.NewGuid().ToString(),
+                Body = body,
                 Label = eventName,
             };
 
@@ -80,7 +80,7 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>
         {
-            var eventName =  typeof(T).Name.Replace(INTEGRATION_EVENT_SUFIX, "");
+            var eventName =  typeof(T).Name.Replace(INTEGRATION_EVENT_SUFFIX, "");
 
             var containsKey = _subsManager.HasSubscriptionsForEvent<T>();
             if (!containsKey)
@@ -106,7 +106,7 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>
         {
-            var eventName = typeof(T).Name.Replace(INTEGRATION_EVENT_SUFIX, "");
+            var eventName = typeof(T).Name.Replace(INTEGRATION_EVENT_SUFFIX, "");
 
             try
             {
@@ -139,7 +139,7 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
             _subscriptionClient.RegisterMessageHandler(
                 async (message, token) =>
                 {
-                    var eventName = $"{message.Label}{INTEGRATION_EVENT_SUFIX}";
+                    var eventName = $"{message.Label}{INTEGRATION_EVENT_SUFFIX}";
                     var messageData = Encoding.UTF8.GetString(message.Body);
 
                     var policy = Policy.Handle<InvalidOperationException>()
@@ -178,14 +178,16 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
                         if (subscription.IsDynamic)
                         {
                             var handler = scope.ResolveOptional(subscription.HandlerType) as IDynamicIntegrationEventHandler;
+                            if (handler == null) continue;
                             dynamic eventData = JObject.Parse(message);
                             await handler.Handle(eventData);
                         }
                         else
                         {
+                            var handler = scope.ResolveOptional(subscription.HandlerType);
+                            if (handler == null) continue;
                             var eventType = _subsManager.GetEventTypeByName(eventName);
                             var integrationEvent = JsonConvert.DeserializeObject(message, eventType);
-                            var handler = scope.ResolveOptional(subscription.HandlerType);
                             var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
                             await (Task)concreteType.GetMethod("Handle").Invoke(handler, new object[] { integrationEvent });
                         }
