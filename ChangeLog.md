@@ -1,3 +1,8 @@
+## 2.0.2
+**Kubernetes support:**
+* Create an independent service to manage the notifications in order to decouple it from the frontend and to allow a better scaling out for both, frontend and notifications service.
+* Add Redis to the cluster in order for SignalR to work properly into the cluster.
+
 ## 2.0.1
 **Kubernetes support:**
 * Enable the solution to being deployed on a local cluster
