@@ -24,6 +24,8 @@ namespace Duber.Domain.Trip.Events
         public PaymentMethod PaymentMethod { get; set; }
 
         public int? UserTripId { get; set; }
+
+        public string ConnectionId { get; set; }
     }
 
     public enum Action

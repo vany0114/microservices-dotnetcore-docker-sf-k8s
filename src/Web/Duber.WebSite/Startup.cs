@@ -7,7 +7,6 @@ using Duber.Infrastructure.EventBus.ServiceBus.IoC;
 using Duber.WebSite.Application.IntegrationEvents.Events;
 using Duber.WebSite.Application.IntegrationEvents.Handlers;
 using Duber.WebSite.Extensions;
-using Duber.WebSite.Hubs;
 using Duber.WebSite.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -37,8 +36,6 @@ namespace Duber.WebSite
                 .Configure<FormOptions>(x => x.ValueCountLimit = 2048)
                 .AddApplicationInsightsTelemetry(Configuration)
                 .AddMvc();
-
-            services.AddSignalR();
 
             services.Configure<TripApiSettings>(Configuration.GetSection("TripApiSettings"))
                 .AddResilientStrategies(Configuration)
@@ -80,7 +77,6 @@ namespace Duber.WebSite
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<TripHub>("/triphub");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

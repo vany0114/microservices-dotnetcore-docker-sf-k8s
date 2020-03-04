@@ -19,5 +19,7 @@ namespace Duber.Domain.Trip.Events
         public PaymentMethod PaymentMethod { get; set; }
 
         public TripStatus Status { get; set; }
+
+        public string ConnectionId { get; set; }
     }
 }

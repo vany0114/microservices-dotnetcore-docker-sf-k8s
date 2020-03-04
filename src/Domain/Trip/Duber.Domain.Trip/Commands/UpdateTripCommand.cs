@@ -8,6 +8,8 @@ namespace Duber.Domain.Trip.Commands
         public Action Action { get; set; }
 
         public Location CurrentLocation { get; set; }
+
+        public string ConnectionId { get; set; }
     }
 
     public enum Action

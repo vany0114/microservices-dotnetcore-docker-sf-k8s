@@ -21,5 +21,7 @@ namespace Duber.Domain.Trip.Commands
         public string Model { get; set; }
 
         public PaymentMethod PaymentMethod { get; set; }
+
+        public string ConnectionId { get; set; }
     }
 }

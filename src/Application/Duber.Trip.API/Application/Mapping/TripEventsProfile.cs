@@ -18,7 +18,8 @@ namespace Duber.Trip.API.Application.Mapping
                     x.Ended,
                     x.CurrentLocation == null ? null : new Location { Latitude = x.CurrentLocation.Latitude, Longitude = x.CurrentLocation.Longitude },
                     x.Distance,
-                    x.Duration
+                    x.Duration,
+                    x.ConnectionId
                 ));
 
             CreateMap<TripCreatedDomainEvent, TripCreatedIntegrationEvent>()
@@ -34,7 +35,8 @@ namespace Duber.Trip.API.Application.Mapping
                         Model = x.VehicleInformation.Model,
                         Plate = x.VehicleInformation.Plate
                     },
-                    new PaymentMethod { Id = x.PaymentMethod.Id, Name = x.PaymentMethod.Name }
+                    new PaymentMethod { Id = x.PaymentMethod.Id, Name = x.PaymentMethod.Name },
+                    x.ConnectionId
                 ));
         }
     }

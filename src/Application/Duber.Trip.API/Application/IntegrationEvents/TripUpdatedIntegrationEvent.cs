@@ -6,7 +6,7 @@ namespace Duber.Trip.API.Application.IntegrationEvents
 {
     public class TripUpdatedIntegrationEvent : IntegrationEvent
     {
-        public TripUpdatedIntegrationEvent(Guid tripId, Action action, TripStatus status, DateTime? started, DateTime? ended, Location currentLocation, double? distance, TimeSpan? duration)
+        public TripUpdatedIntegrationEvent(Guid tripId, Action action, TripStatus status, DateTime? started, DateTime? ended, Location currentLocation, double? distance, TimeSpan? duration, string connectionId)
         {
             Action = action;
             Status = status;
@@ -15,6 +15,7 @@ namespace Duber.Trip.API.Application.IntegrationEvents
             CurrentLocation = currentLocation;
             Distance = distance;
             Duration = duration;
+            ConnectionId = connectionId;
             TripId = tripId;
         }
 
@@ -33,6 +34,8 @@ namespace Duber.Trip.API.Application.IntegrationEvents
         public double? Distance { get; }
 
         public TimeSpan? Duration { get; }
+
+        public string ConnectionId { get; }
     }
 
     public enum Action

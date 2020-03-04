@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace Duber.WebSite.Hubs
+namespace Duber.Trip.Notifications
 {
-    public class TripHub : Hub
+    public class NotificationsHub : Hub
     {
         public string GetConnectionId()
         {

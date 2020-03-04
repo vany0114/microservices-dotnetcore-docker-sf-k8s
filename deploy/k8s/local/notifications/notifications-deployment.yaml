@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifications
+spec:
+  selector:
+      matchLabels:
+        app: notifications
+  replicas: 1
+  template:
+      metadata:
+        labels:
+            app: notifications
+      spec:
+        containers:
+        - name: notifications
+          image: vany0114/duber.trip.notifications
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "200m"
+            limits:
+              memory: "256Mi"
+              cpu: "600m"
+          env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Development"
+          - name: ConnectionStrings__SignalrBackPlane
+            value: "redis"
+          - name: EventBusConnection
+            value: "rabbitmq"          
+          - name: AzureServiceBusEnabled
+            value: "False"
+          - name: IsDeployedOnCluster
+            value: "True"
+          ports:
+          - containerPort: 80

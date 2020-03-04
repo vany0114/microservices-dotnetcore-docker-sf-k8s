@@ -16,7 +16,8 @@ namespace Duber.Domain.Trip.Commands.Handlers
                 command.PaymentMethod,
                 command.Plate,
                 command.Brand,
-                command.Model);
+                command.Model,
+                command.ConnectionId);
             
             await Task.CompletedTask;
             return new CommandResponse

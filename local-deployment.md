@@ -6,9 +6,10 @@
 2. Make sure to check the opton *Enable Kubernetes* on your Docker settings.
 ![](https://github.com/vany0114/vany0114.github.io/blob/master/images/docker-desktop-k8s.png)
 3. Run `deploy-local.ps1` script (located at `\deploy\k8s\local`) to deploy the solution on your local Kubernetes cluster.
-4. Add `duber.local.com` domain to your `hosts` file. That's the host using by our Ingress in order to expose the Frontend.
+4. Add `duber.local.com` and `trip.notifications.local.com` domains to your `hosts` file. Those are the hosts using by our Ingress in order to expose the Frontend and the SignalR Trip Notifications service respectively.
 ```
 127.0.0.1 duber.local.com
+127.0.0.1 trip.notifications.local.com
 ```
 > Optionally, if you want to expose the API's you have to add `invoice.local.com` and `trip.local.com` domains too.
 ```

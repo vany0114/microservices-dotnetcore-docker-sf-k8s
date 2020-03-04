@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: trip-ingress
+  name: trip
 spec:
   rules:
   - host: trip.local.com

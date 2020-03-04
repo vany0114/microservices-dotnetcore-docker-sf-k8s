@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Html
+@using Microsoft.Extensions.Options
 @using Newtonsoft.Json
 @model TripRequestModel
 
@@ -76,6 +77,8 @@
     </div>
 </div>
 
+@inject IOptions<TripApiSettings> settings
+
 @section Scripts {
     <script>
         @{
@@ -87,8 +90,9 @@
         };
 
         let connection = new signalR.HubConnectionBuilder()
-            .withUrl("/triphub", signalR.HttpTransportType.WebSockets)
+            .withUrl('@settings.Value.NotificationsUrl/hub/notification')
             .configureLogging(signalR.LogLevel.Information)
+            .withAutomaticReconnect()
             .build();
 
         let startConnection = () => {
