@@ -1,7 +1,8 @@
 ## 2.0.2
 **Notifications service:**
 * Create an independent service to manage the notifications in order to decouple it from the frontend and to allow a better scaling out for both, frontend and notifications service.
-* Add Redis to the cluster in order for SignalR to work properly into the cluster.
+* Add Redis to the cluster in order for *SignalR* to work properly into the cluster.
+* Disable *Sticky Sessions* in frontend's Ingress to allow a better load balancing since the notifications don't depend on the frontend anymore. The notification's Ingress is the one that has *Sticky Sessions* to manage the *SignalR* connections.
 
 ## 2.0.1
 **Kubernetes support:**
