@@ -32,6 +32,8 @@ spec:
             value: "rabbitmq"
           - name: TripApiSettings__BaseUrl
             value: "http://trip"
+          - name: TripApiSettings__NotificationsUrl
+            value: "http://trip.notifications.local.com:81"
           - name: AzureServiceBusEnabled
             value: "False"
           ports:

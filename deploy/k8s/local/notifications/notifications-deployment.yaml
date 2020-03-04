@@ -1,38 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: invoice
+  name: notifications
 spec:
   selector:
       matchLabels:
-        app: invoice
-  replicas: 2
+        app: notifications
+  replicas: 1
   template:
       metadata:
         labels:
-            app: invoice
+            app: notifications
       spec:
         containers:
-        - name: invoice
-          image: vany0114/duber.invoice.api
+        - name: notifications
+          image: vany0114/duber.trip.notifications
           imagePullPolicy: Always
           resources:
             requests:
               memory: "128Mi"
-              cpu: "100m"
+              cpu: "200m"
             limits:
               memory: "256Mi"
-              cpu: "500m"
+              cpu: "600m"
           env:
           - name: ASPNETCORE_ENVIRONMENT
             value: "Development"
-          - name: ConnectionStrings__InvoiceDB
-            value: "Server=sql-data;Database=Duber.InvoiceDb;User Id=sa;Password=Pass@word"
+          - name: ConnectionStrings__SignalrBackPlane
+            value: "redis"
           - name: EventBusConnection
-            value: "rabbitmq"
-          - name: PaymentServiceBaseUrl
-            value: "http://payment"
+            value: "rabbitmq"          
           - name: AzureServiceBusEnabled
             value: "False"
+          - name: IsDeployedOnCluster
+            value: "True"
           ports:
-            - containerPort: 80
+          - containerPort: 80

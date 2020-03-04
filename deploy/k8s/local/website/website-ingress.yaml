@@ -2,8 +2,6 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: frontend
-  annotations:
-    nginx.ingress.kubernetes.io/affinity: cookie    
 spec:
   rules:
   - host: duber.local.com

@@ -11,6 +11,10 @@ kubectl apply -f mongo\mongo-admin.yaml
 kubectl apply -f mongo\mongo-deployment.yaml
 kubectl apply -f mongo\mongo-service.yaml
 
+# redis
+kubectl apply -f redis\redis-deployment.yaml
+kubectl apply -f redis\redis-service.yaml
+
 # rabbit
 kubectl apply -f rabbit\rabbit-admin.yaml
 kubectl apply -f rabbit\rabbit-deployment.yaml
@@ -41,3 +45,9 @@ kubectl apply -f website\website-deployment.yaml
 kubectl apply -f website\website-hpa.yaml
 kubectl apply -f website\website-ingress.yaml
 kubectl apply -f website\website-service.yaml
+
+#notificatiosn
+kubectl apply -f notifications\notifications-deployment.yaml
+kubectl apply -f notifications\notifications-hpa.yaml
+kubectl apply -f notifications\notifications-ingress.yaml
+kubectl apply -f notifications\notifications-service.yaml

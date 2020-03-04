@@ -16,13 +16,10 @@ namespace Duber.Trip.Notifications
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            WebHostEnvironment = webHostEnvironment;
         }
-
-        private IWebHostEnvironment WebHostEnvironment { get; }
 
         public IConfiguration Configuration { get; }
 
@@ -40,8 +37,7 @@ namespace Duber.Trip.Notifications
                             .AllowCredentials());
                 });
 
-            
-            if (WebHostEnvironment.IsProduction())
+            if (Configuration.GetValue<bool>("IsDeployedOnCluster"))
             {
                 services
                     .AddSignalR()
