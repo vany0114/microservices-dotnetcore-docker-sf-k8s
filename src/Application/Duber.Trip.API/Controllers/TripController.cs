@@ -16,10 +16,8 @@ namespace Duber.Trip.API.Controllers
     public class TripController : Controller
     {
         private readonly IDispatcher _dispatcher;
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
         private readonly IRepository<Domain.Trip.Model.Trip> _repository;
-        private readonly String _fakeUser = Guid.NewGuid().ToString();
-        private const string Source = "Duber.Trip.Api";
 
         public TripController(IDispatcher dispatcher, IMapper mapper, IRepository<Domain.Trip.Model.Trip> repository)
         {
@@ -62,15 +60,9 @@ namespace Duber.Trip.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> CreateTrip([FromBody]ViewModel.CreateTripCommand command)
         {
-            // TODO: make command immutable
             // BadRequest and InternalServerError could be throw in HttpGlobalExceptionFilter
-            var tripId = Guid.NewGuid();
             var domainCommand = _mapper.Map<CreateTripCommand>(command);
-            domainCommand.AggregateRootId = tripId;
-            domainCommand.Source = Source;
-            domainCommand.UserId = _fakeUser;
-
-            await _dispatcher.SendAsync(domainCommand);
+            var tripId = await _dispatcher.SendAsync<Guid>(domainCommand);
             return Created(HttpContext.Request.GetUri().AbsoluteUri, tripId);
         }
 
@@ -85,12 +77,9 @@ namespace Duber.Trip.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> AcceptTrip([FromBody]ViewModel.UpdateTripCommand command)
         {
-            // TODO: make command immutable
             // BadRequest and InternalServerError could be throw in HttpGlobalExceptionFilter, and also by ValidatorActionFilter due to the UpdateTripCommandValidator.
             var domainCommand = _mapper.Map<UpdateTripCommand>(command);
             domainCommand.Action = Action.Accept;
-            domainCommand.Source = Source;
-            domainCommand.UserId = _fakeUser;
 
             await _dispatcher.SendAsync(domainCommand);
             return Ok();
@@ -107,12 +96,9 @@ namespace Duber.Trip.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> StartTrip([FromBody]ViewModel.UpdateTripCommand command)
         {
-            // TODO: make command immutable
             // BadRequest and InternalServerError could be throw in HttpGlobalExceptionFilter, and also by ValidatorActionFilter due to the UpdateTripCommandValidator.
             var domainCommand = _mapper.Map<UpdateTripCommand>(command);
             domainCommand.Action = Action.Start;
-            domainCommand.Source = Source;
-            domainCommand.UserId = _fakeUser;
 
             await _dispatcher.SendAsync(domainCommand);
             return Ok();
@@ -129,12 +115,9 @@ namespace Duber.Trip.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> CancelTrip([FromBody]ViewModel.UpdateTripCommand command)
         {
-            // TODO: make command immutable
             // BadRequest and InternalServerError could be throw in HttpGlobalExceptionFilter, and also by ValidatorActionFilter due to the UpdateTripCommandValidator.
             var domainCommand = _mapper.Map<UpdateTripCommand>(command);
             domainCommand.Action = Action.Cancel;
-            domainCommand.Source = Source;
-            domainCommand.UserId = _fakeUser;
 
             await _dispatcher.SendAsync(domainCommand);
             return Ok();
@@ -151,12 +134,9 @@ namespace Duber.Trip.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> UpdateCurrentLocation([FromBody]ViewModel.UpdateCurrentLocationTripCommand command)
         {
-            // TODO: make command immutable
             // BadRequest and InternalServerError could be throw in HttpGlobalExceptionFilter, and also by ValidatorActionFilter due to the UpdateTripCommandValidator.
             var domainCommand = _mapper.Map<UpdateTripCommand>(command);
             domainCommand.Action = Action.UpdateCurrentLocation;
-            domainCommand.Source = Source;
-            domainCommand.UserId = _fakeUser;
 
             await _dispatcher.SendAsync(domainCommand);
             return Ok();
