@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Duber.Domain.Trip.Events;
 using Duber.Infrastructure.EventBus.Abstractions;
+using Duber.Infrastructure.EventBus.Idempotency;
 using Duber.Trip.API.Application.IntegrationEvents;
 using Duber.Trip.API.Application.Model;
 using Kledex.Events;
@@ -17,7 +18,8 @@ namespace Duber.Trip.API.Application.DomainEventHandlers
         private readonly IMapper _mapper;
         private readonly ILogger<TripUpdatedDomainEventHandlerAsync> _logger;
 
-        public TripUpdatedDomainEventHandlerAsync(IEventBus eventBus, IMapper mapper, ILogger<TripUpdatedDomainEventHandlerAsync> logger)
+        public TripUpdatedDomainEventHandlerAsync(IEventBus eventBus, IMapper mapper,
+            ILogger<TripUpdatedDomainEventHandlerAsync> logger)
         {
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -36,32 +38,56 @@ namespace Duber.Trip.API.Application.DomainEventHandlers
             if (@event.Status.Name == TripStatus.Finished.Name)
             {
                 if (!@event.Distance.HasValue || !@event.Duration.HasValue || !@event.UserTripId.HasValue)
-                    throw new ArgumentException("Distance, duration and user id are required to trigger a TripFinishedIntegrationEvent");
+                    throw new ArgumentException(
+                        "Distance, duration and user id are required to trigger a TripFinishedIntegrationEvent");
 
                 _logger.LogInformation($"Trip {@event.AggregateRootId} has finished.");
-                _eventBus.Publish(new TripFinishedIntegrationEvent(
+                var tripFinishedIntegrationEvent = new TripFinishedIntegrationEvent(
                     @event.AggregateRootId,
                     @event.Distance.Value,
                     @event.Duration.Value,
-                    new PaymentMethod { Id = @event.PaymentMethod.Id, Name = @event.PaymentMethod.Name },
+                    new PaymentMethod {Id = @event.PaymentMethod.Id, Name = @event.PaymentMethod.Name},
                     @event.UserTripId.Value,
-                    @event.ConnectionId));
+                    @event.ConnectionId);
+
+                _eventBus.Publish(new IdempotentIntegrationEvent<TripFinishedIntegrationEvent>(tripFinishedIntegrationEvent, @event.AggregateRootId.ToString()));
             }
             else if (@event.Status.Name == TripStatus.Cancelled.Name)
             {
                 if (!@event.Duration.HasValue || !@event.UserTripId.HasValue)
-                    throw new ArgumentException("Duration and user id are required to trigger a TripCancelledIntegrationEvent");
+                    throw new ArgumentException(
+                        "Duration and user id are required to trigger a TripCancelledIntegrationEvent");
 
                 _logger.LogInformation($"Trip {@event.AggregateRootId} has been canceled.");
-                _eventBus.Publish(new TripCancelledIntegrationEvent(
+                var tripCancelledIntegrationEvent = new TripCancelledIntegrationEvent(
                     @event.AggregateRootId,
                     @event.Duration.Value,
-                    new PaymentMethod { Id = @event.PaymentMethod.Id, Name = @event.PaymentMethod.Name },
+                    new PaymentMethod {Id = @event.PaymentMethod.Id, Name = @event.PaymentMethod.Name},
                     @event.UserTripId.Value,
-                    @event.ConnectionId));
+                    @event.ConnectionId);
+
+                _eventBus.Publish(new IdempotentIntegrationEvent<TripCancelledIntegrationEvent>(tripCancelledIntegrationEvent, @event.AggregateRootId.ToString()));
             }
 
             await Task.CompletedTask;
+        }
+    }
+
+    public class TripUpdatedIdempotentEventHandler : IdempotentIntegrationEventHandler<TripFinishedIntegrationEvent>
+    {
+        private readonly ILogger<TripUpdatedIdempotentEventHandler> _logger;
+
+        public TripUpdatedIdempotentEventHandler(IEventBus eventBus, IIdempotencyStoreProvider storeProvider,
+            ILogger<TripUpdatedIdempotentEventHandler> logger) :
+            base(eventBus, storeProvider)
+        {
+            _logger = logger;
+        }
+
+        protected override void HandleDuplicatedRequest(TripFinishedIntegrationEvent message)
+        {
+            _logger.LogInformation($"TripFinishedIntegrationEvent was already handled. Trip {message.TripId}.");
+            base.HandleDuplicatedRequest(message);
         }
     }
 }

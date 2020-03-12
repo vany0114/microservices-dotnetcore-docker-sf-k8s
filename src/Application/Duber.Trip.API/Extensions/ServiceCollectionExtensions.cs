@@ -9,6 +9,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using AutoMapper;
+using Duber.Infrastructure.EventBus.Abstractions;
+using Duber.Infrastructure.EventBus.Idempotency;
+using Duber.Trip.API.Application.IntegrationEvents;
 using Kledex;
 using Kledex.Commands;
 using Kledex.Configuration;
@@ -19,6 +22,7 @@ using Kledex.Queries;
 using Kledex.Store.Cosmos.Mongo.Configuration;
 using Microsoft.OpenApi.Models;
 using Kledex.Store.Cosmos.Mongo.Extensions;
+using Microsoft.AspNetCore.Builder;
 
 namespace Duber.Trip.API.Extensions
 {
@@ -106,6 +110,19 @@ namespace Duber.Trip.API.Extensions
 
             services.AddSingleton(sp => autoMapperConfig.CreateMapper());
             return services;
+        }
+
+        public static IServiceCollection AddIdempotency(this IServiceCollection services)
+        {
+            services.AddTransient<IIdempotencyStoreProvider, IdempotencyStoreProvider>();
+            services.RegisterIdempotentHandlers(typeof(TripUpdatedIdempotentEventHandler));
+            return services;
+        }
+
+        public static void UseIdempotency(this IApplicationBuilder app)
+        {
+            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+            eventBus.Subscribe<IdempotentIntegrationEvent<TripFinishedIntegrationEvent>, TripUpdatedIdempotentEventHandler>();
         }
     }
 }
