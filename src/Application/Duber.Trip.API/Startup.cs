@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using AutoMapper;
 using Duber.Infrastructure.EventBus.RabbitMQ.IoC;
 using Duber.Infrastructure.EventBus.ServiceBus.IoC;
-using Duber.Trip.API.Application.Mapping;
 using Duber.Trip.API.Application.Validations;
 using Duber.Trip.API.Extensions;
 using Duber.Trip.API.Infrastructure.Filters;
@@ -42,7 +39,9 @@ namespace Duber.Trip.API
                 .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<UpdateTripCommandValidator>());
 
-            services.AddCQRS(Configuration);
+            services.AddCQRS(Configuration)
+                .AddIdempotency();
+
             services.AddOptions()
                 .AddCors(options =>
                 {
@@ -81,6 +80,7 @@ namespace Duber.Trip.API
             app.UseCors("CorsPolicy");
             app.UseRouting();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseIdempotency();
 
             app.UseSwagger()
                 .UseSwaggerUI(c =>

@@ -8,7 +8,6 @@ namespace Duber.Domain.Trip.Commands.Handlers
         public async Task<CommandResponse> HandleAsync(CreateTripCommand command)
         {
             var trip = new Model.Trip(
-                command.AggregateRootId,
                 command.UserTripId,
                 command.DriverId,
                 command.From,
@@ -22,7 +21,8 @@ namespace Duber.Domain.Trip.Commands.Handlers
             await Task.CompletedTask;
             return new CommandResponse
             {
-                Events = trip.Events
+                Events = trip.Events,
+                Result = trip.Id
             };
         }
     }

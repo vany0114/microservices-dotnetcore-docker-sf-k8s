@@ -62,7 +62,7 @@ namespace Duber.Domain.Trip.Model
         {
         }
 
-        public Trip(Guid id, int userId, int driverId, Location from, Location to, PaymentMethod paymentMethod, string plate, string brand, string model, string connectionId) : base(id)
+        public Trip(int userId, int driverId, Location from, Location to, PaymentMethod paymentMethod, string plate, string brand, string model, string connectionId) : base()
         {
             if (userId <= 0) throw new TripDomainArgumentNullException(nameof(userId));
             if (driverId <= 0) throw new TripDomainArgumentNullException(nameof(driverId));
