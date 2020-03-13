@@ -23,6 +23,7 @@ using Kledex.Store.Cosmos.Mongo.Configuration;
 using Microsoft.OpenApi.Models;
 using Kledex.Store.Cosmos.Mongo.Extensions;
 using Microsoft.AspNetCore.Builder;
+using MongoDB.Bson.Serialization;
 
 namespace Duber.Trip.API.Extensions
 {
@@ -116,6 +117,13 @@ namespace Duber.Trip.API.Extensions
         {
             services.AddTransient<IIdempotencyStoreProvider, IdempotencyStoreProvider>();
             services.RegisterIdempotentHandlers(typeof(TripUpdatedIdempotentEventHandler));
+
+            BsonClassMap.RegisterClassMap<IdempotentMessage>(cm =>
+            {
+                cm.AutoMap();
+                cm.SetIgnoreExtraElements(true);
+            });
+
             return services;
         }
 

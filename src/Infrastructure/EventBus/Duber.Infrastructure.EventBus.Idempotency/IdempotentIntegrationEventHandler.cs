@@ -21,10 +21,6 @@ namespace Duber.Infrastructure.EventBus.Idempotency
             _storeProvider = storeProvider;
         }
 
-        /// <summary>
-        /// Creates the result value to return if a previous request was found
-        /// </summary>
-        /// <returns></returns>
         protected virtual void HandleDuplicatedRequest(T message)
         {
         }
