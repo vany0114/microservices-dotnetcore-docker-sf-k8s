@@ -1,3 +1,8 @@
+## 2.0.3
+**Event bus handlers idempotent:**
+* Add *Duber.Infrastructure.EventBus.Idempotency* project to handle idempotency at integration events level.
+* Make *TripFinishedIntegrationEvent* idempotent in order to avoid it can be paid more than once due to concurrency, retries, etc.
+
 ## 2.0.2
 **Notifications service:**
 * Create an independent service to manage the notifications in order to decouple it from the frontend and to allow a better scaling out for both, frontend and notifications service.
