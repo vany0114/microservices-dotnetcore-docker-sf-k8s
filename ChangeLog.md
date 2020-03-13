@@ -1,5 +1,5 @@
 ## 2.0.3
-**Event bus handlers idempotent:**
+**Event bus handlers idempotency:**
 * Add *Duber.Infrastructure.EventBus.Idempotency* project to handle idempotency at integration events level.
 * Make *TripFinishedIntegrationEvent* idempotent in order to avoid it can be paid more than once due to concurrency, retries, etc.
 
