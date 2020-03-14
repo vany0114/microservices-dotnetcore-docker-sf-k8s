@@ -25,8 +25,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=${APP_ENVIRONMENT:-Development}
       - ConnectionStrings__WebsiteDB=${AZURE_WEBSITE_DB:-Server=sql.data;Database=Duber.WebSiteDb;User Id=sa;Password=Pass@word}      
       - EventBusConnection=${AZURE_SERVICE_BUS:-rabbitmq}
+      - InvoiceApiSettings__BaseUrl=${INVOICE_SERVICE_BASE_URL:-http://duber.invoice.api}
       - TripApiSettings__BaseUrl=${TRIP_SERVICE_BASE_URL:-http://duber.trip.api}
-      - TripApiSettings__NotificationsUrl=${NOTIFICATIONS_SERVICE_URL:-http://docker.for.win.localhost:32778} #docker.for.mac.localhost / docker.for.linux.localhost (you could use the .env file to set this in a common variable, then use it here, i.g: LOCAL_DOMAIN=http://docker.for.win.localhost)
+      - TripApiSettings__NotificationsUrl=${NOTIFICATIONS_SERVICE_URL:-http://docker.for.win.localhost:32778} #docker.for.mac.localhost / docker.for.linux.localhost (you could use the .env file to set this in a common variable, then use it here, i.e: LOCAL_DOMAIN=http://docker.for.win.localhost)
       - AzureServiceBusEnabled=${SERVICE_BUS_ENABLED:-False}
       - HealthChecksUI__HealthChecks__0__Name=Invoice HTTP Check
       - HealthChecksUI__HealthChecks__0__Uri=http://duber.invoice.api/readiness

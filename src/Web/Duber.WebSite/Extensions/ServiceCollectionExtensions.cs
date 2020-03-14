@@ -152,7 +152,9 @@ namespace Duber.WebSite.Extensions
 
             hcBuilder
                 .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddUrlGroup(new Uri($"{configuration["InvoiceApiSettings:BaseUrl"]}/readiness"), name: "invoice-service-check", tags: new string[] { "invoice-service" })
                 .AddUrlGroup(new Uri($"{configuration["TripApiSettings:BaseUrl"]}/readiness"), name: "trip-service-check", tags: new string[] { "trip-service" })
+                .AddUrlGroup(new Uri($"{configuration["TripApiSettings:NotificationsUrl"]}/readiness"), name: "notifications-service-check", tags: new string[] { "notifications-service" })
                 .AddSqlServer(
                     configuration["ConnectionStrings:WebsiteDB"],
                     name: "WebsiteDB-check",
@@ -160,11 +162,11 @@ namespace Duber.WebSite.Extensions
 
             if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
             {
-                hcBuilder.AddAzureServiceBusTopic(configuration, "notifications-az-servicebus-check");
+                hcBuilder.AddAzureServiceBusTopic(configuration, "website-az-servicebus-check");
             }
             else
             {
-                hcBuilder.AddRabbitMQ(configuration, "notifications-rabbitmqbus-check");
+                hcBuilder.AddRabbitMQ(configuration, "website-rabbitmqbus-check");
             }
 
             services.AddHealthChecksUI();
