@@ -16,6 +16,10 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
+using Duber.Infrastructure.EventBus.RabbitMQ.IoC;
+using Duber.Infrastructure.EventBus.ServiceBus.IoC;
+using Duber.Invoice.API.Application.IntegrationEvents.Hnadlers;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 
 #pragma warning disable 618
@@ -135,6 +139,47 @@ namespace Duber.Invoice.API.Extensions
                     .CircuitBreakerAsync(exceptionsAllowedBeforeBreaking, TimeSpan.FromSeconds(5)));
 
             return policies;
+        }
+
+        public static IServiceCollection AddServiceBroker(this IServiceCollection services, IConfiguration configuration)
+        {
+            if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
+            {
+                services.AddServiceBus(configuration);
+            }
+            else
+            {
+                services.AddRabbitMQ(configuration);
+            }
+
+            services.AddTransient<TripCancelledIntegrationEventHandler>();
+            services.AddTransient<TripFinishedIntegrationEventHandler>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddHealthChecks(this IServiceCollection services, IConfiguration configuration)
+        {
+            var hcBuilder = services.AddHealthChecks();
+
+            hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
+
+            hcBuilder
+                .AddSqlServer(
+                    configuration["ConnectionStrings:InvoiceDB"],
+                    name: "InvoiceDB-check",
+                    tags: new string[] { "invoicedb" });
+
+            if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
+            {
+                hcBuilder.AddAzureServiceBusTopic(configuration, "invoice-az-servicebus-check");
+            }
+            else
+            {
+                hcBuilder.AddRabbitMQ(configuration, "invoice-rabbitmqbus-check");
+            }
+
+            return services;
         }
     }
 }

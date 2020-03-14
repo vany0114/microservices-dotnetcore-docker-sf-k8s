@@ -15,6 +15,10 @@ using Polly.Extensions.Http;
 using System;
 using System.Net.Http;
 using System.Reflection;
+using Duber.Infrastructure.EventBus.RabbitMQ.IoC;
+using Duber.Infrastructure.EventBus.ServiceBus.IoC;
+using Duber.WebSite.Application.IntegrationEvents.Handlers;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Duber.WebSite.Extensions
 {
@@ -121,6 +125,50 @@ namespace Duber.WebSite.Extensions
                     .CircuitBreakerAsync(exceptionsAllowedBeforeBreaking, TimeSpan.FromSeconds(5)));
 
             return policies;
+        }
+
+        public static IServiceCollection AddServiceBroker(this IServiceCollection services, IConfiguration configuration)
+        {
+            if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
+            {
+                services.AddServiceBus(configuration);
+            }
+            else
+            {
+                services.AddRabbitMQ(configuration);
+            }
+
+            services.AddTransient<TripCreatedIntegrationEventHandler>();
+            services.AddTransient<TripUpdatedIntegrationEventHandler>();
+            services.AddTransient<InvoiceCreatedIntegrationEventHandler>();
+            services.AddTransient<InvoicePaidIntegrationEventHandler>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddHealthChecks(this IServiceCollection services, IConfiguration configuration)
+        {
+            var hcBuilder = services.AddHealthChecks();
+
+            hcBuilder
+                .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddUrlGroup(new Uri($"{configuration["TripApiSettings:BaseUrl"]}/readiness"), name: "trip-service-check", tags: new string[] { "trip-service" })
+                .AddSqlServer(
+                    configuration["ConnectionStrings:WebsiteDB"],
+                    name: "WebsiteDB-check",
+                    tags: new string[] { "websitedb" });
+
+            if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
+            {
+                hcBuilder.AddAzureServiceBusTopic(configuration, "notifications-az-servicebus-check");
+            }
+            else
+            {
+                hcBuilder.AddRabbitMQ(configuration, "notifications-rabbitmqbus-check");
+            }
+
+            services.AddHealthChecksUI();
+            return services;
         }
     }
 }

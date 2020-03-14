@@ -11,7 +11,7 @@ namespace Duber.Domain.User.Persistence.EntityConfigurations
 
             builder.HasKey(o => o.Id);
             builder.Property(o => o.Id)
-                .ForSqlServerUseSequenceHiLo("userseq", UserContext.DEFAULT_SCHEMA);
+                .UseHiLo("userseq", UserContext.DEFAULT_SCHEMA);
 
             builder.Ignore(b => b.DomainEvents);
 
@@ -21,14 +21,18 @@ namespace Duber.Domain.User.Persistence.EntityConfigurations
             builder.Property(x => x.Email)
                 .IsRequired();
 
-            builder.Property<int>("PaymentMethodId").IsRequired();
+            builder
+                .Property<int>("_paymentMethodId")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("PaymentMethodId")
+                .IsRequired();
 
             builder.HasIndex(x => x.Email)
                 .IsUnique();
 
             builder.HasOne(p => p.PaymentMethod)
                 .WithMany()
-                .HasForeignKey("PaymentMethodId");
+                .HasForeignKey("_paymentMethodId");
 
             builder.Property(x =>x.NumberPhone)
                 .IsRequired(false);

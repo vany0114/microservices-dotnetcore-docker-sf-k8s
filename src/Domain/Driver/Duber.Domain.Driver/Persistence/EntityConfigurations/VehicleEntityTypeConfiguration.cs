@@ -15,7 +15,7 @@ namespace Duber.Domain.Driver.Persistence.EntityConfigurations
             builder.Ignore(b => b.DomainEvents);
 
             builder.Property(b => b.Id)
-                .ForSqlServerUseSequenceHiLo("vehicleseq", DriverContext.DEFAULT_SCHEMA);
+                .UseHiLo("vehicleseq", DriverContext.DEFAULT_SCHEMA);
 
             builder.Property(b => b.Active)
                 .IsRequired();
@@ -29,12 +29,17 @@ namespace Duber.Domain.Driver.Persistence.EntityConfigurations
             builder.Property(b => b.Plate)
                 .IsRequired();
 
-            builder.Property<int>("TypeId").IsRequired();
+            builder
+                .Property<int>("_typeId")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("TypeId")
+                .IsRequired();
+
             builder.Property<int>("DriverId").IsRequired();
 
             builder.HasOne(p => p.Type)
                 .WithMany()
-                .HasForeignKey("TypeId");
+                .HasForeignKey("_typeId");
         }
     }
 }

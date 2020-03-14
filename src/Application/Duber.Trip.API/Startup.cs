@@ -1,13 +1,13 @@
 ﻿using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Duber.Infrastructure.EventBus.RabbitMQ.IoC;
-using Duber.Infrastructure.EventBus.ServiceBus.IoC;
 using Duber.Trip.API.Application.Validations;
 using Duber.Trip.API.Extensions;
 using Duber.Trip.API.Infrastructure.Filters;
 using FluentValidation.AspNetCore;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +40,10 @@ namespace Duber.Trip.API
                 .AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<UpdateTripCommandValidator>());
 
             services.AddCQRS(Configuration)
-                .AddIdempotency();
+                .AddIdempotency()
+                .AddServiceBroker(Configuration)
+                .AddHealthChecks(Configuration)
+                .AddCustomSwagger();
 
             services.AddOptions()
                 .AddCors(options =>
@@ -51,18 +54,6 @@ namespace Duber.Trip.API
                             .AllowAnyMethod()
                             .AllowAnyHeader());
                 });
-
-            services.AddCustomSwagger();
-
-            // service bus configuration
-            if (Configuration.GetValue<bool>("AzureServiceBusEnabled"))
-            {
-                services.AddServiceBus(Configuration);
-            }
-            else
-            {
-                services.AddRabbitMQ(Configuration);
-            }
 
             var container = new ContainerBuilder();
             container.Populate(services);
@@ -76,11 +67,24 @@ namespace Duber.Trip.API
             {
                 app.UseDeveloperExceptionPage();
             }
-            
-            app.UseCors("CorsPolicy");
-            app.UseRouting();
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            app.UseIdempotency();
+
+            app.UseCors("CorsPolicy")
+                .UseRouting()
+                .UseIdempotency();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/readiness", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+                endpoints.MapHealthChecks("/liveness", new HealthCheckOptions
+                {
+                    Predicate = r => r.Name.Contains("self")
+                });
+            });
 
             app.UseSwagger()
                 .UseSwaggerUI(c =>

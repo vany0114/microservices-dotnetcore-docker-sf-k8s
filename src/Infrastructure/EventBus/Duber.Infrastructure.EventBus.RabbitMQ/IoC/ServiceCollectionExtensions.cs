@@ -43,5 +43,16 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ.IoC
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
             return services;
         }
+
+        public static IHealthChecksBuilder AddRabbitMQ(this IHealthChecksBuilder healthChecksBuilder, IConfiguration configuration, string name = "rabbitmqbus-check")
+        {
+            healthChecksBuilder
+                .AddRabbitMQ(
+                    $"amqp://{configuration["EventBusConnection"]}",
+                    name: name,
+                    tags: new string[] { "rabbitmqbus" });
+
+            return healthChecksBuilder;
+        }
     }
 }

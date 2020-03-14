@@ -1,12 +1,10 @@
 using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Duber.Infrastructure.EventBus.Abstractions;
-using Duber.Infrastructure.EventBus.RabbitMQ.IoC;
-using Duber.Infrastructure.EventBus.ServiceBus.IoC;
-using Duber.Trip.Notifications.Application.IntegrationEvents.Events;
-using Duber.Trip.Notifications.Application.IntegrationEvents.Handlers;
+using Duber.Trip.Notifications.Extensions;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,29 +35,10 @@ namespace Duber.Trip.Notifications
                             .AllowCredentials());
                 });
 
-            if (Configuration.GetValue<bool>("IsDeployedOnCluster"))
-            {
-                services
-                    .AddSignalR()
-                    .AddRedis(Configuration.GetConnectionString("SignalrBackPlane"));
-            }
-            else
-            {
-                services.AddSignalR();
-            }
+            services.AddSignalR(Configuration)
+                .AddServiceBroker(Configuration)
+                .AddHealthChecks(Configuration);
 
-            // service bus configuration
-            if (Configuration.GetValue<bool>("AzureServiceBusEnabled"))
-            {
-                services.AddServiceBus(Configuration);
-            }
-            else
-            {
-                services.AddRabbitMQ(Configuration);
-            }
-
-            RegisterEventBus(services);
-            
             var container = new ContainerBuilder();
             container.Populate(services);
 
@@ -74,31 +53,25 @@ namespace Duber.Trip.Notifications
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors("CorsPolicy");
-            app.UseRouting();
+            app.UseCors("CorsPolicy")
+                .UseRouting()
+                .UseServiceBroker();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<NotificationsHub>("/hub/notification",
                     options => options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransports.All);
+
+                endpoints.MapHealthChecks("/readiness", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+                endpoints.MapHealthChecks("/liveness", new HealthCheckOptions
+                {
+                    Predicate = r => r.Name.Contains("self")
+                });
             });
-            
-            ConfigureEventBus(app);
-        }
-
-        private void RegisterEventBus(IServiceCollection services)
-        {
-            services.AddTransient<TripCreatedIntegrationEventHandler>();
-            services.AddTransient<TripFinishedIntegrationEventHandler>();
-            services.AddTransient<TripUpdatedIntegrationEventHandler>();
-        }
-
-        private void ConfigureEventBus(IApplicationBuilder app)
-        {
-            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-            eventBus.Subscribe<TripCreatedIntegrationEvent, TripCreatedIntegrationEventHandler>();
-            eventBus.Subscribe<TripFinishedIntegrationEvent, TripFinishedIntegrationEventHandler>();
-            eventBus.Subscribe<TripUpdatedIntegrationEvent, TripUpdatedIntegrationEventHandler>();
         }
     }
 }

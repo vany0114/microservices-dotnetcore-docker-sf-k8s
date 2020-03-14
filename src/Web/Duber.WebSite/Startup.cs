@@ -1,14 +1,11 @@
 ﻿using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Duber.Infrastructure.EventBus.Abstractions;
-using Duber.Infrastructure.EventBus.RabbitMQ.IoC;
-using Duber.Infrastructure.EventBus.ServiceBus.IoC;
-using Duber.WebSite.Application.IntegrationEvents.Events;
-using Duber.WebSite.Application.IntegrationEvents.Handlers;
 using Duber.WebSite.Extensions;
 using Duber.WebSite.Models;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
@@ -39,19 +36,9 @@ namespace Duber.WebSite
 
             services.Configure<TripApiSettings>(Configuration.GetSection("TripApiSettings"))
                 .AddResilientStrategies(Configuration)
-                .AddPersistenceAndRepositories(Configuration);
-
-            // service bus configuration
-            if (Configuration.GetValue<bool>("AzureServiceBusEnabled"))
-            {
-                services.AddServiceBus(Configuration);
-            }
-            else
-            {
-                services.AddRabbitMQ(Configuration);
-            }
-            
-            RegisterEventBusHandlers(services);
+                .AddPersistenceAndRepositories(Configuration)
+                .AddServiceBroker(Configuration)
+                .AddHealthChecks(Configuration);
 
             var container = new ContainerBuilder();
             container.Populate(services);
@@ -71,33 +58,28 @@ namespace Duber.WebSite
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            ConfigureEventBusEvents(app);
-            app.UseStaticFiles();
-            app.UseRouting();
+            app.UseStaticFiles()
+                .UseRouting()
+                .UseServiceBroker();
+
+            app.UseHealthChecksUI(config => config.UIPath = "/hc-ui");
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapHealthChecks("/readiness", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+                endpoints.MapHealthChecks("/liveness", new HealthCheckOptions
+                {
+                    Predicate = r => r.Name.Contains("self")
+                });
             });
-        }
-
-        private void RegisterEventBusHandlers(IServiceCollection services)
-        {
-            services.AddTransient<TripCreatedIntegrationEventHandler>();
-            services.AddTransient<TripUpdatedIntegrationEventHandler>();
-            services.AddTransient<InvoiceCreatedIntegrationEventHandler>();
-            services.AddTransient<InvoicePaidIntegrationEventHandler>();
-        }
-
-        private void ConfigureEventBusEvents(IApplicationBuilder app)
-        {
-            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-            eventBus.Subscribe<TripCreatedIntegrationEvent, TripCreatedIntegrationEventHandler>();
-            eventBus.Subscribe<TripUpdatedIntegrationEvent, TripUpdatedIntegrationEventHandler>();
-            eventBus.Subscribe<InvoiceCreatedIntegrationEvent, InvoiceCreatedIntegrationEventHandler>();
-            eventBus.Subscribe<InvoicePaidIntegrationEvent, InvoicePaidIntegrationEventHandler>();
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Duber.Domain.Driver.Persistence.EntityConfigurations
             builder.Ignore(b => b.CurrentVehicle);
 
             builder.Property(b => b.Id)
-                .ForSqlServerUseSequenceHiLo("driverseq", DriverContext.DEFAULT_SCHEMA);
+                .UseHiLo("driverseq", DriverContext.DEFAULT_SCHEMA);
 
             builder.Property(b => b.Name)
                 .IsRequired();
@@ -33,11 +33,15 @@ namespace Duber.Domain.Driver.Persistence.EntityConfigurations
             builder.HasIndex(x => x.Email)
                 .IsUnique();
 
-            builder.Property<int>("StatusId").IsRequired();
+            builder
+                .Property<int>("_statusId")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("StatusId")
+                .IsRequired();
 
             builder.HasOne(p => p.Status)
                 .WithMany()
-                .HasForeignKey("StatusId");
+                .HasForeignKey("_statusId");
 
             builder.HasMany(b => b.Vehicles)
                 .WithOne()
@@ -45,7 +49,6 @@ namespace Duber.Domain.Driver.Persistence.EntityConfigurations
                 .OnDelete(DeleteBehavior.Cascade);
 
             var navigation = builder.Metadata.FindNavigation(nameof(Model.Driver.Vehicles));
-
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
         }
     }
