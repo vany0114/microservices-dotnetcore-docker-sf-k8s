@@ -40,3 +40,6 @@ msbuild.wrn
 src/Web/Duber.WebSite/wwwroot/lib
 node_modules
 packages/
+src/Web/Duber.WebSite/healthchecksdb-shm
+src/Web/Duber.WebSite/healthchecksdb
+src/Web/Duber.WebSite/healthchecksdb-wal

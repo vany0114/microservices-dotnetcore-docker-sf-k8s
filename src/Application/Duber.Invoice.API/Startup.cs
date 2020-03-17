@@ -3,8 +3,6 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Duber.Infrastructure.EventBus.Abstractions;
-using Duber.Infrastructure.EventBus.RabbitMQ.IoC;
-using Duber.Infrastructure.EventBus.ServiceBus.IoC;
 using Duber.Invoice.API.Application.IntegrationEvents.Events;
 using Duber.Invoice.API.Application.IntegrationEvents.Hnadlers;
 using Duber.Invoice.API.Application.Validations;
@@ -12,7 +10,9 @@ using Duber.Invoice.API.Extensions;
 using Duber.Invoice.API.Infrastructure.AutofacModules;
 using Duber.Invoice.API.Infrastructure.Filters;
 using FluentValidation.AspNetCore;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -59,19 +59,9 @@ namespace Duber.Invoice.API
             services.AddResilientStrategies(Configuration)
                 .AddPersistenceAndRepository(Configuration)
                 .AddPaymentService(Configuration)
+                .AddServiceBroker(Configuration)
+                .AddHealthChecks(Configuration)
                 .AddCustomSwagger();
-
-            // service bus configuration
-            if (Configuration.GetValue<bool>("AzureServiceBusEnabled"))
-            {
-                services.AddServiceBus(Configuration);
-            }
-            else
-            {
-                services.AddRabbitMQ(Configuration);
-            }
-                        
-            RegisterEventBus(services);
 
             //configure autofac
             var container = new ContainerBuilder();
@@ -89,10 +79,23 @@ namespace Duber.Invoice.API
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors("CorsPolicy");
-            app.UseRouting();
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            ConfigureEventBus(app);
+            app.UseCors("CorsPolicy")
+                .UseRouting()
+                .UseServiceBroker();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/readiness", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+                endpoints.MapHealthChecks("/liveness", new HealthCheckOptions
+                {
+                    Predicate = r => r.Name.Contains("self")
+                });
+            });
 
             app.UseSwagger()
                 .UseSwaggerUI(c =>
@@ -100,19 +103,6 @@ namespace Duber.Invoice.API
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Duber.Invoice V1");
                     c.RoutePrefix = string.Empty;
                 });
-        }
-
-        private void RegisterEventBus(IServiceCollection services)
-        {
-            services.AddTransient<TripCancelledIntegrationEventHandler>();
-            services.AddTransient<TripFinishedIntegrationEventHandler>();
-        }
-
-        private void ConfigureEventBus(IApplicationBuilder app)
-        {
-            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-            eventBus.Subscribe<TripCancelledIntegrationEvent, TripCancelledIntegrationEventHandler>();
-            eventBus.Subscribe<TripFinishedIntegrationEvent, TripFinishedIntegrationEventHandler>();
         }
     }
 }

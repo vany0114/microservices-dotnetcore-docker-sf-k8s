@@ -41,5 +41,17 @@ namespace Duber.Infrastructure.EventBus.ServiceBus.IoC
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
             return services;
         }
+
+        public static IHealthChecksBuilder AddAzureServiceBusTopic(this IHealthChecksBuilder healthChecksBuilder, IConfiguration configuration, string name = "az-servicebus-check")
+        {
+            healthChecksBuilder
+                .AddAzureServiceBusTopic(
+                    configuration["EventBusConnection"],
+                    topicName: "duber_event_bus",
+                    name,
+                    tags: new string[] { "az-servicebus" });
+
+            return healthChecksBuilder;
+        }
     }
 }

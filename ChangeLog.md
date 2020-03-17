@@ -1,3 +1,12 @@
+## 2.0.4
+**Health checks implementation & ConfigMap set up:**
+* Add health checks to all microservices
+* Add health checks UI add-on to frontend
+* Upgrade EF Core to `3.0.0`
+* Organize better the `Startup` files
+* Set up k8s probes
+* Move env variables to a common `ConfigMap`
+
 ## 2.0.3
 **Event bus handlers idempotency:**
 * Add *Duber.Infrastructure.EventBus.Idempotency* project to handle idempotency at integration events level.

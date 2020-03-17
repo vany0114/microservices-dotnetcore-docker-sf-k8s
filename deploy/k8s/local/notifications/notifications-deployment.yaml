@@ -23,16 +23,21 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "600m"
-          env:
-          - name: ASPNETCORE_ENVIRONMENT
-            value: "Development"
-          - name: ConnectionStrings__SignalrBackPlane
-            value: "redis"
-          - name: EventBusConnection
-            value: "rabbitmq"          
-          - name: AzureServiceBusEnabled
-            value: "False"
-          - name: IsDeployedOnCluster
-            value: "True"
+          envFrom:
+            - configMapRef:
+                name: env-config
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: /liveness
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            timeoutSeconds: 5
           ports:
           - containerPort: 80

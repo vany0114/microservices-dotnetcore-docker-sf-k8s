@@ -90,7 +90,7 @@
         };
 
         let connection = new signalR.HubConnectionBuilder()
-            .withUrl('@settings.Value.NotificationsUrl/hub/notification')
+            .withUrl('@settings.Value.NotificationsClientUrl/hub/notification')
             .configureLogging(signalR.LogLevel.Information)
             .withAutomaticReconnect()
             .build();

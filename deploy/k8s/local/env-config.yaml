@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-config
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+  ConnectionStrings__InvoiceDB: Server=sql-data;Database=Duber.InvoiceDb;User Id=sa;Password=Pass@word
+  ConnectionStrings__WebsiteDB: Server=sql-data;Database=Duber.WebSiteDb;User Id=sa;Password=Pass@word
+  ConnectionStrings__SignalrBackPlane: redis
+  EventStoreConfiguration__ConnectionString: mongodb://nosql-data
+  EventBusConnection: rabbitmq
+  PaymentServiceBaseUrl: http://payment
+  InvoiceApiSettings__BaseUrl: http://invoice
+  TripApiSettings__BaseUrl: http://trip
+  TripApiSettings__NotificationsClientUrl: http://trip.notifications.local.com:81
+  TripApiSettings__NotificationsServerUrl: http://notifications
+  AzureServiceBusEnabled: "false"
+  IsDeployedOnCluster: "true"

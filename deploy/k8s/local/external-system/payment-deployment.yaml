@@ -16,8 +16,8 @@ spec:
         - name: payment
           image: vany0114/externalsystem.paymentservice
           imagePullPolicy: Always
-          env:
-          - name: ASPNETCORE_ENVIRONMENT
-            value: "Development"         
+          envFrom:
+            - configMapRef:
+                name: env-config
           ports:
           - containerPort: 80

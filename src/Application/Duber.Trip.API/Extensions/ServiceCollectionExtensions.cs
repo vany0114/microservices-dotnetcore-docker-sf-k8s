@@ -11,6 +11,8 @@ using System.Reflection;
 using AutoMapper;
 using Duber.Infrastructure.EventBus.Abstractions;
 using Duber.Infrastructure.EventBus.Idempotency;
+using Duber.Infrastructure.EventBus.RabbitMQ.IoC;
+using Duber.Infrastructure.EventBus.ServiceBus.IoC;
 using Duber.Trip.API.Application.IntegrationEvents;
 using Kledex;
 using Kledex.Commands;
@@ -24,6 +26,7 @@ using Microsoft.OpenApi.Models;
 using Kledex.Store.Cosmos.Mongo.Extensions;
 using Microsoft.AspNetCore.Builder;
 using MongoDB.Bson.Serialization;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Duber.Trip.API.Extensions
 {
@@ -88,7 +91,7 @@ namespace Duber.Trip.API.Extensions
             return new KledexServiceBuilder(services);
         }
 
-        public static IServiceCollection AddCustomAutoMapper(this IServiceCollection services, List<Type> types)
+        private static IServiceCollection AddCustomAutoMapper(this IServiceCollection services, List<Type> types)
         {
             var autoMapperConfig = new MapperConfiguration(cfg =>
             {
@@ -113,6 +116,20 @@ namespace Duber.Trip.API.Extensions
             return services;
         }
 
+        public static IServiceCollection AddServiceBroker(this IServiceCollection services, IConfiguration configuration)
+        {
+            if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
+            {
+                services.AddServiceBus(configuration);
+            }
+            else
+            {
+                services.AddRabbitMQ(configuration);
+            }
+
+            return services;
+        }
+
         public static IServiceCollection AddIdempotency(this IServiceCollection services)
         {
             services.AddTransient<IIdempotencyStoreProvider, IdempotencyStoreProvider>();
@@ -127,10 +144,28 @@ namespace Duber.Trip.API.Extensions
             return services;
         }
 
-        public static void UseIdempotency(this IApplicationBuilder app)
+        public static IServiceCollection AddHealthChecks(this IServiceCollection services, IConfiguration configuration)
         {
-            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-            eventBus.Subscribe<IdempotentIntegrationEvent<TripFinishedIntegrationEvent>, TripUpdatedIdempotentEventHandler>();
+            var hcBuilder = services.AddHealthChecks();
+
+            hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
+
+            hcBuilder
+                .AddMongoDb(
+                    configuration["EventStoreConfiguration:ConnectionString"],
+                    name: "TripDB-check",
+                    tags: new string[] { "tripdb" });
+
+            if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
+            {
+                hcBuilder.AddAzureServiceBusTopic(configuration, "trip-az-servicebus-check");
+            }
+            else
+            {
+                hcBuilder.AddRabbitMQ(configuration, "trip-rabbitmqbus-check");
+            }
+
+            return services;
         }
     }
 }

@@ -14,6 +14,6 @@
 
         public string UpdateCurrentLocationUrl { get; set; }
 
-        public string NotificationsUrl { get; set; }
+        public string NotificationsClientUrl { get; set; }
     }
 }
