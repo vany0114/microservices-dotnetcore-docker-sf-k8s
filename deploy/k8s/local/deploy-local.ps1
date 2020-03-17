@@ -6,6 +6,9 @@ kubectl apply -f dashboard-adminuser.yaml
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/mandatory.yaml
 kubectl apply -f nginx-ingress\custom-service.yaml
 
+# configmap
+kubectl apply -f env-config.yaml
+
 # mongo
 kubectl apply -f mongo\mongo-admin.yaml
 kubectl apply -f mongo\mongo-deployment.yaml

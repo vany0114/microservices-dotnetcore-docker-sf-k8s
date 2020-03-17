@@ -1,3 +1,6 @@
+# configmap
+kubectl delete cm env-config
+
 # external system
 kubectl delete deploy payment
 kubectl delete svc payment

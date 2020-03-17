@@ -23,16 +23,21 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "500m"
-          env:
-          - name: ASPNETCORE_ENVIRONMENT
-            value: "Development"
-          - name: ConnectionStrings__InvoiceDB
-            value: "Server=sql-data;Database=Duber.InvoiceDb;User Id=sa;Password=Pass@word"
-          - name: EventBusConnection
-            value: "rabbitmq"
-          - name: PaymentServiceBaseUrl
-            value: "http://payment"
-          - name: AzureServiceBusEnabled
-            value: "False"
+          envFrom:
+            - configMapRef:
+                name: env-config
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: /liveness
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            timeoutSeconds: 5
           ports:
             - containerPort: 80

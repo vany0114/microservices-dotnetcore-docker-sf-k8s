@@ -154,7 +154,7 @@ namespace Duber.WebSite.Extensions
                 .AddCheck("self", () => HealthCheckResult.Healthy())
                 .AddUrlGroup(new Uri($"{configuration["InvoiceApiSettings:BaseUrl"]}/readiness"), name: "invoice-service-check", tags: new string[] { "invoice-service" })
                 .AddUrlGroup(new Uri($"{configuration["TripApiSettings:BaseUrl"]}/readiness"), name: "trip-service-check", tags: new string[] { "trip-service" })
-                .AddUrlGroup(new Uri($"{configuration["TripApiSettings:NotificationsUrl"]}/readiness"), name: "notifications-service-check", tags: new string[] { "notifications-service" })
+                .AddUrlGroup(new Uri($"{configuration["TripApiSettings:NotificationsServerUrl"]}/readiness"), name: "notifications-service-check", tags: new string[] { "notifications-service" })
                 .AddSqlServer(
                     configuration["ConnectionStrings:WebsiteDB"],
                     name: "WebsiteDB-check",
