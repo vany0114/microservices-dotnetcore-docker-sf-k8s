@@ -62,8 +62,9 @@ namespace Duber.Trip.API.Controllers
         {
             // BadRequest and InternalServerError could be throw in HttpGlobalExceptionFilter
             var domainCommand = _mapper.Map<CreateTripCommand>(command);
-            var tripId = await _dispatcher.SendAsync<Guid>(domainCommand);
-            return Created(HttpContext.Request.GetUri().AbsoluteUri, tripId);
+            domainCommand.AggregateRootId = Guid.NewGuid();
+            await _dispatcher.SendAsync(domainCommand);
+            return Created(HttpContext.Request.GetUri().AbsoluteUri, domainCommand.AggregateRootId);
         }
 
         /// <summary>

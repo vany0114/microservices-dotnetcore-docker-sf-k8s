@@ -62,8 +62,9 @@ namespace Duber.Domain.Trip.Model
         {
         }
 
-        public Trip(int userId, int driverId, Location from, Location to, PaymentMethod paymentMethod, string plate, string brand, string model, string connectionId) : base()
+        public Trip(Guid id, int userId, int driverId, Location from, Location to, PaymentMethod paymentMethod, string plate, string brand, string model, string connectionId) : base()
         {
+            if (id == Guid.Empty) throw new TripDomainArgumentNullException(nameof(id));
             if (userId <= 0) throw new TripDomainArgumentNullException(nameof(userId));
             if (driverId <= 0) throw new TripDomainArgumentNullException(nameof(driverId));
             if (string.IsNullOrWhiteSpace(plate)) throw new TripDomainArgumentNullException(nameof(plate));
@@ -75,6 +76,7 @@ namespace Duber.Domain.Trip.Model
 
             if (Equals(from, to)) throw new TripDomainInvalidOperationException("Destination and origin can't be the same.");
 
+            Id = id;
             _paymentMethod = paymentMethod ?? throw new TripDomainArgumentNullException(nameof(paymentMethod));
             _create = DateTime.UtcNow;
             _status = TripStatus.Created;
