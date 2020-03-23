@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-config
+data:
+  ASPNETCORE_ENVIRONMENT: Production
+  ConnectionStrings__InvoiceDB: Server=tcp:dubersql.database.windows.net,1433;Initial Catalog=Duber.InvoiceDb;Persist Security Info=False;User ID=duber_user;Password=lahostiaestepass123*;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+  ConnectionStrings__WebsiteDB: Server=tcp:dubersql.database.windows.net,1433;Initial Catalog=Duber.WebSiteDb;Persist Security Info=False;User ID=duber_user;Password=lahostiaestepass123*;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+  ConnectionStrings__SignalrBackPlane: duber-redisg6ra2olsydfx4.redis.cache.windows.net:6380,password=nB9fRUGXVSSgb9QUmyE1zRwfXdva22J5byAZjlX8MAE=,ssl=True,abortConnect=False
+  EventStoreConfiguration__ConnectionString: mongodb://duber-tripdb:nT37rhIvNi8o5JIJAThvZDWwiP3qgUPTvRa21ayPQxAXgXE2jFr43wCgpljJFmlLtB20n5PPkDZoF8Tqt6zIRA==@duber-tripdb.documents.azure.com:10255/?ssl=true&replicaSet=globaldb
+  EventBusConnection: Endpoint=sb://dubersb.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=H5VJeWuKuixo+M/W7YkmOkpKpX4j1ZPgNRQkfZmarLM=;EntityPath=duber_event_bus
+  PaymentServiceBaseUrl: https://paymentserviceexternal.azurewebsites.net
+  InvoiceApiSettings__BaseUrl: http://invoice
+  TripApiSettings__BaseUrl: http://trip
+  TripApiSettings__NotificationsClientUrl: http://35.224.181.217/notifications
+  TripApiSettings__NotificationsServerUrl: http://notifications
+  AzureServiceBusEnabled: "true"
+  IsDeployedOnCluster: "true"
