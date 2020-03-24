@@ -89,7 +89,8 @@ namespace Duber.Trip.API
             app.UseSwagger()
                 .UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Duber.Trip V1");
+                    var basePath = string.IsNullOrEmpty(Configuration.GetValue<string>("ReverseProxyPrefix")) ? string.Empty : ".";
+                    c.SwaggerEndpoint($"{basePath}/swagger/v1/swagger.json", "Duber.Trip V1");
                     c.RoutePrefix = string.Empty;
                 });
         }

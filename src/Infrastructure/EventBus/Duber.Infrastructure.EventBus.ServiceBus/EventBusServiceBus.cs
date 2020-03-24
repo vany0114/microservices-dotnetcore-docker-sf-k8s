@@ -80,7 +80,7 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>
         {
-            var eventName =  typeof(T).Name.Replace(INTEGRATION_EVENT_SUFFIX, "");
+            var eventName = GetEventName<T>();
 
             var containsKey = _subsManager.HasSubscriptionsForEvent<T>();
             if (!containsKey)
@@ -100,6 +100,19 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
             }
 
             _subsManager.AddSubscription<T, TH>();
+        }
+
+        private string GetEventName<T>()
+        {
+            var type = typeof(T);
+            var eventName =  type.Name.Replace(INTEGRATION_EVENT_SUFFIX, "");
+            if (type.GetGenericArguments().Length > 0)
+            {
+                eventName = eventName.Remove(eventName.IndexOf('`'));
+                eventName += type.GetGenericArguments()[0].Name.Replace(INTEGRATION_EVENT_SUFFIX, "");
+            }
+
+            return eventName;
         }
 
         public void Unsubscribe<T, TH>()

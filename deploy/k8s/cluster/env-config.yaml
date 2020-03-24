@@ -9,6 +9,7 @@ data:
   ConnectionStrings__SignalrBackPlane: duber-redisg6ra2olsydfx4.redis.cache.windows.net:6380,password=nB9fRUGXVSSgb9QUmyE1zRwfXdva22J5byAZjlX8MAE=,ssl=True,abortConnect=False
   EventStoreConfiguration__ConnectionString: mongodb://duber-tripdb:nT37rhIvNi8o5JIJAThvZDWwiP3qgUPTvRa21ayPQxAXgXE2jFr43wCgpljJFmlLtB20n5PPkDZoF8Tqt6zIRA==@duber-tripdb.documents.azure.com:10255/?ssl=true&replicaSet=globaldb
   EventBusConnection: Endpoint=sb://dubersb.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=H5VJeWuKuixo+M/W7YkmOkpKpX4j1ZPgNRQkfZmarLM=;EntityPath=duber_event_bus
+  EventBusConnectionHC: Endpoint=sb://dubersb.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=H5VJeWuKuixo+M/W7YkmOkpKpX4j1ZPgNRQkfZmarLM=
   PaymentServiceBaseUrl: https://paymentserviceexternal.azurewebsites.net
   InvoiceApiSettings__BaseUrl: http://invoice
   TripApiSettings__BaseUrl: http://trip

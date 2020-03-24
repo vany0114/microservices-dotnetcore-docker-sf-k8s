@@ -26,6 +26,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: env-config
+          env:          
+          - name: ReverseProxyPrefix
+            value: "trip"
           livenessProbe:
             httpGet:
               port: 80
