@@ -32,8 +32,7 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
             _logger = logger;
             _subsManager = subsManager ?? new InMemoryEventBusSubscriptionsManager();
 
-            _subscriptionClient = new SubscriptionClient(serviceBusPersisterConnection.ServiceBusConnectionStringBuilder, 
-                subscriptionClientName);
+            _subscriptionClient = new SubscriptionClient(serviceBusPersisterConnection.ServiceBusConnectionStringBuilder, subscriptionClientName);
             _autofac = autofac;
             _retryCount = retryCount;
 
@@ -93,9 +92,9 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
                         Name = eventName
                     }).GetAwaiter().GetResult();
                 }
-                catch(ServiceBusException)
+                catch(ServiceBusException ex)
                 {
-                    _logger.LogInformation($"The messaging entity {eventName} already exists.");
+                    _logger.LogInformation($"The messaging entity {eventName} already exists.", ex);
                 }
             }
 

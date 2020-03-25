@@ -7,6 +7,7 @@ kubectl apply -f default-ingress.yaml
 # invoice
 kubectl apply -f invoice\invoice-deployment.yaml
 kubectl apply -f invoice\invoice-service.yaml
+kubectl apply -f invoice\invoice-hpa.yaml
 
 # trip
 kubectl apply -f trip\trip-deployment.yaml

@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: fanout-ingress
+  name: default-ingress
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/rewrite-target: /$1
@@ -17,3 +17,7 @@ spec:
           serviceName: invoice
           servicePort: 80
         path: /invoice/(.*)
+      - backend:
+          serviceName: frontend
+          servicePort: 80
+        path: /(.*)

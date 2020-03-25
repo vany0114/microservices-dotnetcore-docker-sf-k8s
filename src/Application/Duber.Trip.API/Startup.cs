@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Duber.Trip.API.Application.Validations;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 
 // ReSharper disable InconsistentNaming
 
@@ -86,11 +88,20 @@ namespace Duber.Trip.API
                 });
             });
 
-            app.UseSwagger()
+            app.UseSwagger(x =>
+                {
+                    var reverseProxyPrefix = Configuration.GetValue<string>("ReverseProxyPrefix");
+                    if (!string.IsNullOrEmpty(reverseProxyPrefix))
+                    {
+                        x.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Servers = new List<OpenApiServer>
+                        {
+                            new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}/{reverseProxyPrefix}" }
+                        });
+                    }
+                })
                 .UseSwaggerUI(c =>
                 {
-                    var basePath = string.IsNullOrEmpty(Configuration.GetValue<string>("ReverseProxyPrefix")) ? string.Empty : ".";
-                    c.SwaggerEndpoint($"{basePath}/swagger/v1/swagger.json", "Duber.Trip V1");
+                    c.SwaggerEndpoint("./swagger/v1/swagger.json", "Duber.Trip V1");
                     c.RoutePrefix = string.Empty;
                 });
         }

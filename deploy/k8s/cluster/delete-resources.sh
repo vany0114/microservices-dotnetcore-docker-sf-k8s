@@ -7,6 +7,7 @@ kubectl delete ing fanout-ingress
 # invoice
 kubectl delete deploy invoice
 kubectl delete svc invoice
+kubectl delete hpa invoice
 
 # trip
 kubectl delete deploy trip
