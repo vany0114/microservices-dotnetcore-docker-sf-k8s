@@ -12,11 +12,11 @@ spec:
       - backend:
           serviceName: trip
           servicePort: 80
-        path: /trip/(.*)
+        path: /services/trip/(.*)
       - backend:
           serviceName: invoice
           servicePort: 80
-        path: /invoice/(.*)
+        path: /services/invoice/(.*)
       - backend:
           serviceName: frontend
           servicePort: 80

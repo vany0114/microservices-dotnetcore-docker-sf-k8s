@@ -28,7 +28,7 @@ spec:
                 name: env-config
           env:          
           - name: ReverseProxyPrefix
-            value: "invoice"
+            value: "services/invoice"
           livenessProbe:
             httpGet:
               port: 80
