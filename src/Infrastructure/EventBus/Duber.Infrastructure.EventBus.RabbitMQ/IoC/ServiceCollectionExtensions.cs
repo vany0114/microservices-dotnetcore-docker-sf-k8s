@@ -26,6 +26,16 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ.IoC
                     DispatchConsumersAsync = true
                 };
 
+                if (!string.IsNullOrEmpty(configuration["EventBusUserName"]))
+                {
+                    factory.UserName = configuration["EventBusUserName"];
+                }
+
+                if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
+                {
+                    factory.Password = configuration["EventBusPassword"];
+                }
+
                 return new DefaultRabbitMQPersistentConnection(factory, logger, retryCount);
             });
 

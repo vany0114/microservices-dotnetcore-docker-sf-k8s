@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-config
+data:
+  ASPNETCORE_ENVIRONMENT: Production
+  ConnectionStrings__InvoiceDB: {your invoice db connection string}
+  ConnectionStrings__WebsiteDB: {your website db connection string}
+  ConnectionStrings__SignalrBackPlane: {your redis connection string}
+  EventStoreConfiguration__ConnectionString: {your mongo db connection string}
+  EventBusConnection: {your service bus connection string}
+  EventBusUserName: {your rabbitmq user}
+  EventBusPassword: {your rabbitmq password}
+  PaymentServiceBaseUrl: {your payment service url}
+  InvoiceApiSettings__BaseUrl: http://invoice
+  TripApiSettings__BaseUrl: http://trip
+  TripApiSettings__NotificationsClientUrl: http://{your load balancer ip}/notifications
+  TripApiSettings__NotificationsServerUrl: http://notifications
+  AzureServiceBusEnabled: "false"
+  IsDeployedOnCluster: "true"
