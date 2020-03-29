@@ -17,24 +17,28 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ.IoC
                 retryCount = int.Parse(configuration["EventBusRetryCount"]);
             }
 
+            var connectionFactory = new ConnectionFactory()
+            {
+                HostName = configuration["EventBusConnection"],
+                DispatchConsumersAsync = true,
+                AutomaticRecoveryEnabled = true
+            };
+
+            if (!string.IsNullOrEmpty(configuration["EventBusUserName"]))
+            {
+                connectionFactory.UserName = configuration["EventBusUserName"];
+            }
+
+            if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
+            {
+                connectionFactory.Password = configuration["EventBusPassword"];
+            }
+
+            services.AddSingleton<IConnectionFactory>(connectionFactory);
             services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
             {
                 var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
-                var factory = new ConnectionFactory()
-                {
-                    HostName = configuration["EventBusConnection"],
-                    DispatchConsumersAsync = true
-                };
-
-                if (!string.IsNullOrEmpty(configuration["EventBusUserName"]))
-                {
-                    factory.UserName = configuration["EventBusUserName"];
-                }
-
-                if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
-                {
-                    factory.Password = configuration["EventBusPassword"];
-                }
+                var factory = sp.GetRequiredService<IConnectionFactory>();
 
                 return new DefaultRabbitMQPersistentConnection(factory, logger, retryCount);
             });
@@ -57,8 +61,7 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ.IoC
         public static IHealthChecksBuilder AddRabbitMQ(this IHealthChecksBuilder healthChecksBuilder, IConfiguration configuration, string name = "rabbitmqbus-check")
         {
             healthChecksBuilder
-                .AddRabbitMQ(
-                    $"amqp://{configuration["EventBusConnection"]}",
+                .AddRabbitMQ((sp) => sp.GetRequiredService<IConnectionFactory>().CreateConnection(),
                     name: name,
                     tags: new string[] { "rabbitmqbus" });
 
