@@ -2,7 +2,7 @@
 kubectl delete cm env-config
 
 # common ingress
-kubectl delete ing fanout-ingress
+kubectl delete ing default-ingress
 
 # invoice
 kubectl delete deploy invoice
