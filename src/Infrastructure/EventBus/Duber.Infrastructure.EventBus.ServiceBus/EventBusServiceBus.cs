@@ -32,8 +32,7 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
             _logger = logger;
             _subsManager = subsManager ?? new InMemoryEventBusSubscriptionsManager();
 
-            _subscriptionClient = new SubscriptionClient(serviceBusPersisterConnection.ServiceBusConnectionStringBuilder, 
-                subscriptionClientName);
+            _subscriptionClient = new SubscriptionClient(serviceBusPersisterConnection.ServiceBusConnectionStringBuilder, subscriptionClientName);
             _autofac = autofac;
             _retryCount = retryCount;
 
@@ -80,7 +79,7 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>
         {
-            var eventName =  typeof(T).Name.Replace(INTEGRATION_EVENT_SUFFIX, "");
+            var eventName = GetEventName<T>();
 
             var containsKey = _subsManager.HasSubscriptionsForEvent<T>();
             if (!containsKey)
@@ -93,13 +92,26 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
                         Name = eventName
                     }).GetAwaiter().GetResult();
                 }
-                catch(ServiceBusException)
+                catch(ServiceBusException ex)
                 {
-                    _logger.LogInformation($"The messaging entity {eventName} already exists.");
+                    _logger.LogInformation($"The messaging entity {eventName} already exists.", ex);
                 }
             }
 
             _subsManager.AddSubscription<T, TH>();
+        }
+
+        private string GetEventName<T>()
+        {
+            var type = typeof(T);
+            var eventName =  type.Name.Replace(INTEGRATION_EVENT_SUFFIX, "");
+            if (type.GetGenericArguments().Length > 0)
+            {
+                eventName = eventName.Remove(eventName.IndexOf('`'));
+                eventName += type.GetGenericArguments()[0].Name.Replace(INTEGRATION_EVENT_SUFFIX, "");
+            }
+
+            return eventName;
         }
 
         public void Unsubscribe<T, TH>()

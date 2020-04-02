@@ -1,10 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
-using Duber.Infrastructure.EventBus.Abstractions;
-using Duber.Invoice.API.Application.IntegrationEvents.Events;
-using Duber.Invoice.API.Application.IntegrationEvents.Hnadlers;
 using Duber.Invoice.API.Application.Validations;
 using Duber.Invoice.API.Extensions;
 using Duber.Invoice.API.Infrastructure.AutofacModules;
@@ -17,6 +15,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+
 // ReSharper disable InconsistentNaming
 // ReSharper disable AssignNullToNotNullAttribute
 #pragma warning disable 618
@@ -97,10 +97,20 @@ namespace Duber.Invoice.API
                 });
             });
 
-            app.UseSwagger()
+            app.UseSwagger(x =>
+                {
+                    var reverseProxyPrefix = Configuration.GetValue<string>("ReverseProxyPrefix");
+                    if (!string.IsNullOrEmpty(reverseProxyPrefix))
+                    {
+                        x.PreSerializeFilters.Add((swaggerDoc, httpReq) => swaggerDoc.Servers = new List<OpenApiServer>
+                        {
+                            new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}/{reverseProxyPrefix}" }
+                        });
+                    }
+                })
                 .UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Duber.Invoice V1");
+                    c.SwaggerEndpoint("./swagger/v1/swagger.json", "Duber.Invoice V1");
                     c.RoutePrefix = string.Empty;
                 });
         }

@@ -1,3 +1,8 @@
+## 2.1.0
+**Support to deploy on Cloud K8s cluter:**
+* Adjust manifests to deploy in a cloud cluster as a cloud native solution
+* Deployed, ran and tested on Google Kubernetes Engine (GKE)
+
 ## 2.0.4
 **Health checks implementation & ConfigMap set up:**
 * Add health checks to all microservices

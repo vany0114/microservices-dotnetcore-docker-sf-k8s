@@ -46,7 +46,7 @@ namespace Duber.Infrastructure.EventBus.ServiceBus.IoC
         {
             healthChecksBuilder
                 .AddAzureServiceBusTopic(
-                    configuration["EventBusConnection"],
+                    configuration["EventBusConnectionHC"], // this connection string can't contains the EntityPath (topic name)
                     topicName: "duber_event_bus",
                     name,
                     tags: new string[] { "az-servicebus" });
