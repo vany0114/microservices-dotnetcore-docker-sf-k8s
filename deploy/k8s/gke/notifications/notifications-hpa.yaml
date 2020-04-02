@@ -8,5 +8,5 @@ spec:
     kind: Deployment
     name: notifications
   minReplicas: 4
-  maxReplicas: 10
+  maxReplicas: 5
   targetCPUUtilizationPercentage: 50

@@ -150,6 +150,7 @@ namespace Duber.Trip.API.Extensions
             hcBuilder
                 .AddMongoDb(
                     configuration["EventStoreConfiguration:ConnectionString"],
+                    mongoDatabaseName: string.Empty,
                     name: "TripDB-check",
                     tags: new string[] { "tripdb" });
 
