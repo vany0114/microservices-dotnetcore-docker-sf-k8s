@@ -1,4 +1,4 @@
-# Microservices with .Net Core, Docker and Azure Service Fabric/Kubernetes
+# Microservices w/ .Net Core, Docker and Service Fabric/Kubernetes
 
 ## Prerequisites and Installation Requirements (only for development)
 
@@ -11,7 +11,7 @@
 7. Press F5 and that's it!
 
 ## Architecture and Deployment 
-* [Local deployment](https://github.com/vany0114/microservices-dotnetcore-docker-sf-k8s/blob/master/local-deployment.md)
+* [Local deployment w/ Kubernetes](https://github.com/vany0114/microservices-dotnetcore-docker-sf-k8s/blob/master/local-deployment.md)
 * [Service Fabric Architecture and Deployment](https://github.com/vany0114/microservices-dotnetcore-docker-sf-k8s/blob/master/SF-architecture.md)
 * [Kubernetes Architecture and Deployment](https://github.com/vany0114/microservices-dotnetcore-docker-sf-k8s/blob/master/k8s-architecture.md)
 
