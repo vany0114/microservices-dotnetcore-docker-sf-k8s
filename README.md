@@ -13,7 +13,7 @@
 ## Architecture and Deployment 
 * [Local deployment w/ Kubernetes](https://github.com/vany0114/microservices-dotnetcore-docker-sf-k8s/blob/master/local-deployment.md)
 * [Service Fabric Architecture and Deployment](https://github.com/vany0114/microservices-dotnetcore-docker-sf-k8s/blob/master/SF-architecture.md)
-* [Kubernetes Native Cloud Architecture and Deployment](https://github.com/vany0114/microservices-dotnetcore-docker-sf-k8s/blob/master/k8s-architecture.md)
+* [Kubernetes Cloud Native Architecture and Deployment](https://github.com/vany0114/microservices-dotnetcore-docker-sf-k8s/blob/master/k8s-architecture.md)
 
 ## Screenshots
 ### Website
