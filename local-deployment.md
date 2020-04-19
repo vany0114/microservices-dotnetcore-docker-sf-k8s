@@ -23,3 +23,6 @@ To be able to access to our SQL or Mongo databases through an IDE, or to RabbitM
 * SQL Server: `31433`, connection example: `tcp:127.0.0.1,31433`
 * Mongo: `31434`, connection example: `mongodb://0.0.0.0:31434/`
 * RabbitMQ: `31672`, connection example: `http://localhost:31672/#/`
+
+## Architecture
+![](https://github.com/vany0114/vany0114.github.io/blob/master/images/Duber_Kubernetes_Local_Environment_Architecture.png)
