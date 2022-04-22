@@ -1,0 +1,72 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "clusterName": {
+            "value": "prod-duber-sflinux-cluster"
+        },
+        "clusterLocation": {
+            "value": "eastus"
+        },
+        "computeLocation": {
+            "value": "eastus"
+        },
+        "adminUserName": {
+            "value": "duber"
+        },
+        "adminPassword": {
+            "value": "lahostiaestepass123*"
+        },
+        "nicName": {
+            "value": "NIC-duberonsflin"
+        },
+        "publicIPAddressName": {
+            "value": "duberonsflin-PubIP"
+        },
+        "dnsName": {
+            "value": "prod-duber-sflinux-cluster"
+        },
+        "virtualNetworkName": {
+            "value": "VNet-duberonsflin"
+        },
+        "lbName": {
+            "value": "LB-duberonsflin"
+        },
+        "lbIPName": {
+            "value": "LBIP-duberonsflin"
+        },
+        "vmImageSku": {
+            "value": "16.04-LTS"
+        },
+        "vmImageVersion": {
+            "value": "latest"
+        },
+        "vmImagePublisher": {
+            "value": "Canonical"
+        },
+        "nt0ephemeralStartPort": {
+            "value": 49152
+        },
+        "nt0ephemeralEndPort": {
+            "value": 65534
+        },
+        "nt0applicationStartPort": {
+            "value": 20000
+        },
+        "nt0applicationEndPort": {
+            "value": 30000
+        },
+        "nt0fabricTcpGatewayPort": {
+            "value": 19000
+        },
+        "nt0fabricHttpGatewayPort": {
+            "value": 19080
+        },
+        "tripApiHttpRule": {
+            "value": 5103
+        },
+        "invoiceApiHttpRule": {
+            "value": 5101
+        }
+    }
+}

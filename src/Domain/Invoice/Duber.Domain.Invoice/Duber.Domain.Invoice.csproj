@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Infrastructure\Duber.Infrastructure.Resilience.Abstractions\Duber.Infrastructure.Resilience.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus\Duber.Infrastructure.EventBus.csproj" />
+    <ProjectReference Include="..\..\Duber.Domain.ACL\Duber.Domain.ACL.csproj" />
+    <ProjectReference Include="..\..\Duber.Domain.SharedKernel\Duber.Domain.SharedKernel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.2" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,121 @@
+﻿@using Microsoft.AspNetCore.Html
+@using Microsoft.Extensions.Options
+@using Newtonsoft.Json
+@model TripRequestModel
+
+@{
+    ViewBag.Title = "Simulate a Trip";
+}
+
+<h2>Simulate a Trip</h2>
+
+<div id="errors" class="alert alert-danger hidden">
+    <strong>Check out the following errors to continue:</strong>
+    <ul id="errors-body"></ul>
+</div>
+
+<div id="info" class="alert alert-info hidden">
+    <strong id="info-text"></strong>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Configure your trip</div>
+    <div class="panel-body">
+
+        <div class="row">
+            <div class="col-md-6">
+                <label asp-for="User"></label>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="Driver"></label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <select style="width: 100%" asp-for="User" asp-items="Model.Users"></select>
+            </div>
+            <div class="col-md-6">
+                <select style="width: 100%" asp-for="Driver" asp-items="Model.Drivers"></select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <label asp-for="From"></label>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="To"></label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <select style="width: 100%" class="trip-from" asp-for="From" asp-items="Model.Origins"></select>
+            </div>
+            <div class="col-md-6">
+                <select style="width: 100%" class="trip-to" asp-for="To" asp-items="Model.Destinations"></select>
+            </div>
+        </div>
+
+        <br />
+
+        <div class="row">
+            <div class="col-md-12">
+                <button id="simulate" class="btn btn-primary">Simulate</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Track your trip</div>
+    <div class="panel-body">
+        @{
+            await Html.RenderPartialAsync("_Map");
+        }
+    </div>
+</div>
+
+@inject IOptions<TripApiSettings> settings
+
+@section Scripts {
+    <script>
+        @{
+            var placesJson = new HtmlString(JsonConvert.SerializeObject(Model.Places));
+        }
+
+        window.onload = function () {
+            DuberWebSite.init(@placesJson, '@Url.Action("SimulateTrip")', "@Url.Content("~/images/car-icon4.png")");
+        };
+
+        let connection = new signalR.HubConnectionBuilder()
+            .withUrl('@settings.Value.NotificationsClientUrl/hub/notification')
+            .configureLogging(signalR.LogLevel.Information)
+            .withAutomaticReconnect()
+            .build();
+
+        let startConnection = () => {
+            connection.start().then(function() {
+                console.log("Connection opened");
+
+                connection.invoke('getConnectionId')
+                    .then(function(connectionId) {
+                        sessionStorage.setItem('conectionId', connectionId);
+                    }).catch(err => console.error(err.toString()));
+            });
+        };
+
+        startConnection();
+
+        connection.on('UpdateCurrentPosition', location => {
+            DuberWebSite.updateTripPosition(location);
+            console.log("Current position", location);
+        });
+
+        connection.on('NotifyTrip', (message) => {
+            DuberWebSite.notifyTripStatus(message);
+            console.log("Trip status", message);
+        });
+    </script>
+}

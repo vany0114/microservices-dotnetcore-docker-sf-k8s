@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+      matchLabels:
+        app: frontend
+  replicas: 1
+  template:
+      metadata:
+        labels:
+            app: frontend
+      spec:
+        containers:
+        - name: frontend
+          image: vany0114/duber.website
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+          envFrom:
+            - configMapRef:
+                name: env-config
+          env:          
+          - name: HealthChecksUI__HealthChecks__0__Name
+            value: "Invoice HTTP Check"
+          - name: HealthChecksUI__HealthChecks__0__Uri
+            value: $(InvoiceApiSettings__BaseUrl)/readiness
+          - name: HealthChecksUI__HealthChecks__1__Name
+            value: "Trip HTTP Check"
+          - name: HealthChecksUI__HealthChecks__1__Uri
+            value: $(TripApiSettings__BaseUrl)/readiness
+          - name: HealthChecksUI__HealthChecks__2__Name
+            value: "Notifications HTTP Check"
+          - name: HealthChecksUI__HealthChecks__2__Uri
+            value: $(TripApiSettings__NotificationsServerUrl)/readiness
+          - name: HealthChecksUI__HealthChecks__3__Name
+            value: "Frontend HTTP Check"
+          - name: HealthChecksUI__HealthChecks__3__Uri
+            value: "http://frontend/readiness"
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: /liveness
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            timeoutSeconds: 5
+          ports:
+          - containerPort: 80

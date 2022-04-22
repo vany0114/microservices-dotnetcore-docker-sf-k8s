@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: notifications
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: cookie    
+spec:
+  rules:
+  - host: trip.notifications.local.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: notifications
+          servicePort: 80

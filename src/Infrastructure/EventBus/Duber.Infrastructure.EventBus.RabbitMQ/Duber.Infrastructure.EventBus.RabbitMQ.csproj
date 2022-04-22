@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.0-preview1-final" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+    <PackageReference Include="Polly" Version="7.1.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="5.1.1" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="3.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Duber.Infrastructure.EventBus\Duber.Infrastructure.EventBus.csproj" />
+  </ItemGroup>
+
+</Project>

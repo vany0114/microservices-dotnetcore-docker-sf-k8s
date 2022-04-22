@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceManifest Name="InvoicePkg"
+                 Version="1.0.0"
+                 xmlns="http://schemas.microsoft.com/2011/01/fabric"
+                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ServiceTypes>
+    <!-- This is the name of your ServiceType.
+         The UseImplicitHost attribute indicates this is a guest service. -->
+    <StatelessServiceType ServiceTypeName="InvoiceType" UseImplicitHost="true" />
+  </ServiceTypes>
+
+  <!-- Code package is your service executable. -->
+  <CodePackage Name="Code" Version="1.0.0">
+    <EntryPoint>
+      <!-- Follow this link for more information about deploying Windows containers to Service Fabric: https://aka.ms/sfguestcontainers -->
+      <ContainerHost>
+        <ImageName>vany0114/duber.invoice.api:prod</ImageName>
+      </ContainerHost>
+    </EntryPoint>
+    <!-- Pass environment variables to your container: -->
+    <EnvironmentVariables>
+      <EnvironmentVariable Name="ASPNETCORE_ENVIRONMENT" Value="Production"/>
+      <EnvironmentVariable Name="ASPNETCORE_URLS" Value="http://0.0.0.0:80"/>
+      <EnvironmentVariable Name="ConnectionString" Value="Server=tcp:dubersql.database.windows.net,1433;Initial Catalog=Duber.InvoiceDb;Persist Security Info=False;User ID=duber_user;Password=lahostiaestepass123*;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"/>
+      <EnvironmentVariable Name="EventBusConnection" Value="Endpoint=sb://dubersb.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=tM2nmf3mooYFUjsVNrXds2Ki4mnGC8B7bxz8hWSsfoM=;EntityPath=duber_event_bus"/>
+      <EnvironmentVariable Name="AzureServiceBusEnabled" Value="True"/>
+      <EnvironmentVariable Name="PaymentServiceBaseUrl" Value="http://paymentappservice.azurewebsites.net"/>
+    </EnvironmentVariables>
+  </CodePackage>
+
+  <!-- Config package is the contents of the Config directoy under PackageRoot that contains an 
+       independently-updateable and versioned set of custom configuration settings for your service. -->
+  <ConfigPackage Name="Config" Version="1.0.0" />
+
+  <Resources>
+    <Endpoints>
+      <!-- This endpoint is used by the communication listener to obtain the port on which to 
+           listen. Please note that if your service is partitioned, this port is shared with 
+           replicas of different partitions that are placed in your code. -->
+      <Endpoint Name="InvoiceTypeEndpoint" Port="5101" />
+    </Endpoints>
+  </Resources>
+</ServiceManifest>

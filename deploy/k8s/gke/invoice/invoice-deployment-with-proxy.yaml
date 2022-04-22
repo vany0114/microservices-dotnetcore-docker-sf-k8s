@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: invoice
+spec:
+  selector:
+      matchLabels:
+        app: invoice
+  replicas: 1
+  template:
+      metadata:
+        labels:
+            app: invoice
+      spec:
+        containers:
+        - name: invoice
+          image: vany0114/duber.invoice.api
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          envFrom:
+            - configMapRef:
+                name: env-config
+          env:          
+          - name: ReverseProxyPrefix
+            value: "services/invoice"          
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: /liveness
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            timeoutSeconds: 5
+          ports:
+            - containerPort: 80
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.16
+          command: ["/cloud_sql_proxy",
+                    "-instances=<replace for your GC instance SQL name>=tcp:3306",
+                    "-credential_file=/secrets/cloudsql/creadentials.json"]
+          securityContext:
+            runAsUser: 2  # non-root user
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: cloudsql-instance-credentials
+              mountPath: /secrets/cloudsql
+              readOnly: true
+        volumes:
+            - name: cloudsql-instance-credentials
+              secret:
+                secretName: cloudsql-instance-credentials

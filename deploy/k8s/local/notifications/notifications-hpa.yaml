@@ -1,0 +1,12 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: notifications
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: notifications
+  minReplicas: 4
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 50

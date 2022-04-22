@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceManifest Name="TripPkg"
+                 Version="1.0.0"
+                 xmlns="http://schemas.microsoft.com/2011/01/fabric"
+                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ServiceTypes>
+    <!-- This is the name of your ServiceType.
+         The UseImplicitHost attribute indicates this is a guest service. -->
+    <StatelessServiceType ServiceTypeName="TripType" UseImplicitHost="true" />
+  </ServiceTypes>
+
+  <!-- Code package is your service executable. -->
+  <CodePackage Name="Code" Version="1.0.0">
+    <EntryPoint>
+      <!-- Follow this link for more information about deploying Windows containers to Service Fabric: https://aka.ms/sfguestcontainers -->
+      <ContainerHost>
+        <ImageName>vany0114/duber.trip.api:prod</ImageName>
+      </ContainerHost>
+    </EntryPoint>
+    <!-- Pass environment variables to your container: -->
+    <EnvironmentVariables>
+      <EnvironmentVariable Name="ASPNETCORE_ENVIRONMENT" Value="Production"/>
+      <EnvironmentVariable Name="ASPNETCORE_URLS" Value="http://0.0.0.0:80"/>
+      <EnvironmentVariable Name="EventStoreConfiguration__ConnectionString" Value="mongodb://duber-tripdb:KCHAqzT6Zez4GR1CODY4460wXvrg4xOv53r6FQ5vdCIj1TGGBJFLPEfWQvHgIuXR9B57UyfFXQM3KegJfRrW2Q==@duber-tripdb.documents.azure.com:10255/?ssl=true&amp;replicaSet=globaldb"/>
+      <EnvironmentVariable Name="EventBusConnection" Value="Endpoint=sb://dubersb.servicebus.windows.net/;SharedAccessKeyName=Root;SharedAccessKey=tM2nmf3mooYFUjsVNrXds2Ki4mnGC8B7bxz8hWSsfoM=;EntityPath=duber_event_bus"/>
+      <EnvironmentVariable Name="AzureServiceBusEnabled" Value="True"/>
+    </EnvironmentVariables>
+  </CodePackage>
+
+  <!-- Config package is the contents of the Config directoy under PackageRoot that contains an 
+       independently-updateable and versioned set of custom configuration settings for your service. -->
+  <ConfigPackage Name="Config" Version="1.0.0" />
+
+  <Resources>
+    <Endpoints>
+      <!-- This endpoint is used by the communication listener to obtain the port on which to 
+           listen. Please note that if your service is partitioned, this port is shared with 
+           replicas of different partitions that are placed in your code. -->
+      <Endpoint Name="TripTypeEndpoint" Port="5103" />
+    </Endpoints>
+  </Resources>
+</ServiceManifest>

@@ -1,0 +1,45 @@
+﻿@model List<DriverModel>
+
+@{
+    ViewBag.Title = "Trips by Driver";
+}
+
+<h2>Trips by Driver</h2>
+
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Number Phone
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.Count(); i++)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => m[i].Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => m[i].Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => m[i].NumberPhone)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Trips", "TripsByDriverId", new { id = Model[i].Id })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

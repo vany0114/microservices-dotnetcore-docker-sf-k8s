@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\Duber.Infrastructure.Resilience.Http\Duber.Infrastructure.Resilience.Http.csproj" />
+    <ProjectReference Include="..\Duber.Domain.SharedKernel\Duber.Domain.SharedKernel.csproj" />
+  </ItemGroup>
+
+</Project>

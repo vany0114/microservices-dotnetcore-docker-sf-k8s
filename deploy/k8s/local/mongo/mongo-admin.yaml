@@ -1,0 +1,14 @@
+# to expose the port in order to connect with an IDE such as Studio 3T, etc
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: mongo-service
+spec:
+  type: NodePort
+  selector:
+    app: nosql-data
+  ports:
+    - port: 27017
+      nodePort: 31434
+      name: mongo-port

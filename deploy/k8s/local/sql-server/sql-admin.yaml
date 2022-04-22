@@ -1,0 +1,14 @@
+# to expose the port in order to connect with an IDE such as SQL MS, etc
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: sql-service
+spec:
+  type: NodePort
+  selector:
+    app: sql-data
+  ports:
+    - port: 1433
+      nodePort: 31433
+      name: sql-port

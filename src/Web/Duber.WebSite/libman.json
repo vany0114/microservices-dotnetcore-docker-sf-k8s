@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "jquery@2.2.0",
+      "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "jquery-validation@1.14.0",
+      "destination": "wwwroot/lib/jquery-validation/"
+    },
+    {
+      "library": "jquery-validation-unobtrusive@3.2.6",
+      "destination": "wwwroot/lib/jquery-validation-unobtrusive/"
+    },
+    {
+      "library": "lodash.js@4.17.5",
+      "destination": "wwwroot/lib/lodash.js/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "bootstrap@3.3.7",
+      "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "@microsoft/signalr@3.1.2",
+      "destination": "wwwroot/lib/signalr"
+    }
+  ]
+}

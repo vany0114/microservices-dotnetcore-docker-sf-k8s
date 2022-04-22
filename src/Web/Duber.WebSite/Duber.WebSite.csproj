@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <DockerComposeProjectPath>..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Infrastructure\Filters\**" />
+    <Content Remove="Infrastructure\Filters\**" />
+    <EmbeddedResource Remove="Infrastructure\Filters\**" />
+    <None Remove="Infrastructure\Filters\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.2" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="3.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="3.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.Uris" Version="3.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI" Version="3.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Domain\Driver\Duber.Domain.Driver\Duber.Domain.Driver.csproj" />
+    <ProjectReference Include="..\..\Domain\User\Duber.Domain.User\Duber.Domain.User.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Duber.Infrastructure.Resilience.Abstractions\Duber.Infrastructure.Resilience.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Duber.Infrastructure.Resilience.Http\Duber.Infrastructure.Resilience.Http.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Duber.Infrastructure.Resilience.Sql\Duber.Infrastructure.Resilience.Sql.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Duber.Infrastructure.WebHost\Duber.Infrastructure.WebHost.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus.RabbitMQ\Duber.Infrastructure.EventBus.RabbitMQ.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus.ServiceBus\Duber.Infrastructure.EventBus.ServiceBus.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\EventBus\Duber.Infrastructure.EventBus\Duber.Infrastructure.EventBus.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\jquery-validation-unobtrusive\" />
+    <Folder Include="wwwroot\lib\jquery\" />
+    <Folder Include="wwwroot\lib\lodash.js\" />
+    <Folder Include="wwwroot\lib\signalr\dist\browser\" />
+    <Folder Include="wwwroot\lib\signalr\dist\cjs\" />
+    <Folder Include="wwwroot\lib\signalr\dist\esm\" />
+    <Folder Include="wwwroot\lib\signalr\dist\webworker\" />
+    <Folder Include="wwwroot\lib\signalr\src\" />
+  </ItemGroup>
+
+</Project>
