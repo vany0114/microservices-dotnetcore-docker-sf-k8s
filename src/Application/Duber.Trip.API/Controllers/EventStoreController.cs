@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Duber.Trip.API.Infrastructure.Repository;
-using Kledex.Store.Cosmos.Mongo.Documents;
+using OpenCqrs.Store.Cosmos.Mongo.Documents;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Duber.Trip.API.Controllers

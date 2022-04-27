@@ -4,7 +4,7 @@ using AutoMapper;
 using Duber.Domain.Trip.Events;
 using Duber.Infrastructure.EventBus.Abstractions;
 using Duber.Trip.API.Application.IntegrationEvents;
-using Kledex.Events;
+using OpenCqrs.Events;
 using Microsoft.Extensions.Logging;
 
 namespace Duber.Trip.API.Application.DomainEventHandlers

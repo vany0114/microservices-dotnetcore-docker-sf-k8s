@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using Autofac;
+﻿using Autofac;
 using Duber.Invoice.API.Application.DomainEventHandlers;
 using MediatR;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Duber.Invoice.API.Infrastructure.AutofacModules
 {
@@ -10,29 +10,33 @@ namespace Duber.Invoice.API.Infrastructure.AutofacModules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterAssemblyTypes(typeof(IMediator).GetTypeInfo().Assembly)
-                .AsImplementedInterfaces();
 
-            // Register all the event classes (they implement IAsyncNotificationHandler) in assembly holding the Commands
+            Autofac.Builder.IRegistrationBuilder<Mediator, Autofac.Builder.ConcreteReflectionActivatorData, Autofac.Builder.SingleRegistrationStyle> registrationBuilder2 = builder.RegisterType<Mediator>().As<IMediator>();
+
+            // Register all the event classes (they implement INotificationHandler) in assembly holding the Commands
             builder.RegisterAssemblyTypes(typeof(InvoiceCreatedDomainEventHandler).GetTypeInfo().Assembly)
-                .AsClosedTypesOf(typeof(IAsyncNotificationHandler<>));
+                .AsClosedTypesOf(typeof(INotificationHandler<>)).AsImplementedInterfaces().InstancePerRequest();
 
-            builder.Register<SingleInstanceFactory>(context =>
+            Autofac.Builder.IRegistrationBuilder<ServiceFactory, Autofac.Builder.SimpleActivatorData, Autofac.Builder.SingleRegistrationStyle> registrationBuilder1 = builder.Register<ServiceFactory>(context =>
             {
-                var componentContext = context.Resolve<IComponentContext>();
-                return t => { object o; return componentContext.TryResolve(t, out o) ? o : null; };
-            });
-
-            builder.Register<MultiInstanceFactory>(context =>
-            {
-                var componentContext = context.Resolve<IComponentContext>();
-
+                IComponentContext componentContext = context.Resolve<IComponentContext>();
                 return t =>
                 {
-                    var resolved = (IEnumerable<object>)componentContext.Resolve(typeof(IEnumerable<>).MakeGenericType(t));
+                    ServiceFactory p = t => { return componentContext.TryResolve(t, out object o) ? o : null; };
+                    return t;
+                };
+            });
+
+            Autofac.Builder.IRegistrationBuilder<ServiceFactory, Autofac.Builder.SimpleActivatorData, Autofac.Builder.SingleRegistrationStyle> registrationBuilder = builder.Register<ServiceFactory>(context =>
+            {
+                IComponentContext componentContext = context.Resolve<IComponentContext>();
+                return t =>
+                {
+                    IEnumerable<object> resolved = (IEnumerable<object>)componentContext.Resolve(typeof(IEnumerable<>).MakeGenericType(t));
                     return resolved;
                 };
             });
         }
+
     }
 }

@@ -12,16 +12,16 @@ using AutoMapper;
 using Duber.Infrastructure.EventBus.Idempotency;
 using Duber.Infrastructure.EventBus.RabbitMQ.IoC;
 using Duber.Infrastructure.EventBus.ServiceBus.IoC;
-using Kledex;
-using Kledex.Commands;
-using Kledex.Configuration;
-using Kledex.Domain;
-using Kledex.Events;
-using Kledex.Extensions;
-using Kledex.Queries;
-using Kledex.Store.Cosmos.Mongo.Configuration;
+using OpenCqrs;
+using OpenCqrs.Commands;
+using OpenCqrs.Configuration;
+using OpenCqrs.Domain;
+using OpenCqrs.Events;
+using OpenCqrs.Extensions;
+using OpenCqrs.Queries;
+using OpenCqrs.Store.Cosmos.Mongo.Configuration;
 using Microsoft.OpenApi.Models;
-using Kledex.Store.Cosmos.Mongo.Extensions;
+using OpenCqrs.Store.Cosmos.Mongo.Extensions;
 using MongoDB.Bson.Serialization;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -72,7 +72,7 @@ namespace Duber.Trip.API.Extensions
         /// <param name="setupAction"></param>
         /// <param name="types"></param>
         /// <returns></returns>
-        public static IKledexServiceBuilder AddCustomKledex(this IServiceCollection services, Action<MainOptions> setupAction, params Type[] types)
+        public static IOpenCqrsServiceBuilder AddCustomKledex(this IServiceCollection services, Action<MainOptions> setupAction, params Type[] types)
         {
             var typeList = types.ToList();
             typeList.Add(typeof(IDispatcher));
@@ -85,7 +85,7 @@ namespace Duber.Trip.API.Extensions
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddCustomAutoMapper(typeList);
             services.Configure(setupAction);
-            return new KledexServiceBuilder(services);
+            return new OpenCqrsServiceBuilder(services);
         }
 
         private static IServiceCollection AddCustomAutoMapper(this IServiceCollection services, List<Type> types)

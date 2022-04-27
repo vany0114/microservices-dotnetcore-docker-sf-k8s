@@ -3,7 +3,7 @@ using Duber.Domain.SharedKernel.Model;
 using Duber.Domain.Trip.Events;
 using Duber.Domain.Trip.Exceptions;
 using GeoCoordinatePortable;
-using Kledex.Domain;
+using OpenCqrs.Domain;
 using Action = Duber.Domain.Trip.Events.Action;
 // ReSharper disable ConvertToAutoProperty
 // ReSharper disable UnusedAutoPropertyAccessor.Local

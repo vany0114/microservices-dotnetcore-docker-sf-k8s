@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Autofac;
 using Duber.Infrastructure.EventBus.Abstractions;
 using Duber.Infrastructure.EventBus.Events;
-using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Polly;
+using Microsoft.Azure.ServiceBus;
 
 namespace Duber.Infrastructure.EventBus.ServiceBus
 {
@@ -146,9 +146,7 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
             _subsManager.Clear();
         }
 
-        private void RegisterSubscriptionClientMessageHandler()
-        {
-            _subscriptionClient.RegisterMessageHandler(
+        private void RegisterSubscriptionClientMessageHandler() => _subscriptionClient.RegisterMessageHandler(
                 async (message, token) =>
                 {
                     var eventName = $"{message.Label}{INTEGRATION_EVENT_SUFFIX}";
@@ -164,8 +162,7 @@ namespace Duber.Infrastructure.EventBus.ServiceBus
                     // Complete the message so that it is not received again.
                     await _subscriptionClient.CompleteAsync(message.SystemProperties.LockToken);
                 },
-               new MessageHandlerOptions(ExceptionReceivedHandler) { MaxConcurrentCalls = 10, AutoComplete = false });
-        }
+               messageHandlerOptions: new MessageHandlerOptions(ExceptionReceivedHandler) { MaxConcurrentCalls = 10, AutoComplete = false });
 
         private static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
         {
