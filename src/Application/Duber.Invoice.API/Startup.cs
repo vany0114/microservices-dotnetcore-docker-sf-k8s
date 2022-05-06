@@ -36,7 +36,7 @@ namespace Duber.Invoice.API
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services
-                .AddAutoMapper()
+                .AddAutoMapper(typeof(Startup))
                 .AddApplicationInsightsTelemetry(Configuration)
                 .AddControllers(options =>
                 {
@@ -72,7 +72,7 @@ namespace Duber.Invoice.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {

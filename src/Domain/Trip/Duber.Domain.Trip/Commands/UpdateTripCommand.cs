@@ -1,5 +1,5 @@
 ﻿using Duber.Domain.Trip.Model;
-using Kledex.Domain;
+using OpenCqrs.Domain;
 
 namespace Duber.Domain.Trip.Commands
 {

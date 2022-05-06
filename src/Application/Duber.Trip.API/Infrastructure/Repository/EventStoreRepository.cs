@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Kledex.Store.Cosmos.Mongo;
-using Kledex.Store.Cosmos.Mongo.Configuration;
-using Kledex.Store.Cosmos.Mongo.Documents;
+using OpenCqrs.Store.Cosmos.Mongo;
+using OpenCqrs.Store.Cosmos.Mongo.Configuration;
+using OpenCqrs.Store.Cosmos.Mongo.Documents;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 // ReSharper disable FunctionRecursiveOnAllPaths
