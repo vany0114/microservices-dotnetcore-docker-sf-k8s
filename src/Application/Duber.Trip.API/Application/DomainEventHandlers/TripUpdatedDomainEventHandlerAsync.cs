@@ -6,7 +6,7 @@ using Duber.Infrastructure.EventBus.Abstractions;
 using Duber.Infrastructure.EventBus.Idempotency;
 using Duber.Trip.API.Application.IntegrationEvents;
 using Duber.Trip.API.Application.Model;
-using Kledex.Events;
+using OpenCqrs.Events;
 using Microsoft.Extensions.Logging;
 using TripStatus = Duber.Domain.SharedKernel.Model.TripStatus;
 

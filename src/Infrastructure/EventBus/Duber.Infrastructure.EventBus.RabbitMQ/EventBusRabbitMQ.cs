@@ -48,17 +48,16 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
                 _persistentConnection.TryConnect();
             }
 
-            using (var channel = _persistentConnection.CreateModel())
-            {
-                channel.QueueUnbind(queue: _queueName,
-                    exchange: BROKER_NAME,
-                    routingKey: eventName);
+            IModel model = _persistentConnection.CreateModel();
+            using IModel channel = model;
+            channel.QueueUnbind(queue: _queueName,
+                exchange: BROKER_NAME,
+                routingKey: eventName);
 
-                if (_subsManager.IsEmpty)
-                {
-                    _queueName = string.Empty;
-                    _consumerChannel.Close();
-                }
+            if (_subsManager.IsEmpty)
+            {
+                _queueName = string.Empty;
+                _consumerChannel.Close();
             }
         }
 
@@ -73,32 +72,30 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
                 .Or<SocketException>()
                 .WaitAndRetry(_retryCount, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (ex, time) =>
                 {
-                    _logger.LogWarning(ex.ToString());
+                    _logger.LogWarning(message: ex.ToString());
                 });
 
-            using (var channel = _persistentConnection.CreateModel())
+            using var channel = _persistentConnection.CreateModel();
+            var eventName = @event.GetType().Name;
+            channel.ExchangeDeclare(exchange: BROKER_NAME, type: "direct");
+
+            var message = JsonConvert.SerializeObject(@event);
+            var body = Encoding.UTF8.GetBytes(message);
+
+            // to avoid lossing messages
+            var properties = channel.CreateBasicProperties();
+            properties.DeliveryMode = 2; // persistent
+            properties.Expiration = "60000";
+
+            policy.Execute(() =>
             {
-                var eventName = @event.GetType().Name;
-                channel.ExchangeDeclare(exchange: BROKER_NAME, type: "direct");
-
-                var message = JsonConvert.SerializeObject(@event);
-                var body = Encoding.UTF8.GetBytes(message);
-
-                // to avoid lossing messages
-                var properties = channel.CreateBasicProperties();
-                properties.DeliveryMode = 2; // persistent
-                properties.Expiration = "60000";
-
-                policy.Execute(() =>
-                {
-                    channel.BasicPublish(
-                        exchange: BROKER_NAME,
-                        routingKey: eventName,
-                        mandatory: true,
-                        basicProperties: properties,
-                        body: body);
-                });
-            }
+                channel.BasicPublish(
+                    exchange: BROKER_NAME,
+                    routingKey: eventName,
+                    mandatory: true,
+                    basicProperties: properties,
+                    body: body);
+            });
         }
 
         public void SubscribeDynamic<TH>(string eventName)
@@ -129,12 +126,10 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
                     _persistentConnection.TryConnect();
                 }
 
-                using (var channel = _persistentConnection.CreateModel())
-                {
-                    channel.QueueBind(queue: _queueName,
-                                      exchange: BROKER_NAME,
-                                      routingKey: eventName);
-                }
+                using var channel = _persistentConnection.CreateModel();
+                channel.QueueBind(queue: _queueName,
+                                  exchange: BROKER_NAME,
+                                  routingKey: eventName);
             }
         }
 
@@ -181,14 +176,23 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
         private async Task Consumer_Received(object sender, BasicDeliverEventArgs eventArgs)
         {
             var eventName = eventArgs.RoutingKey;
-            var message = Encoding.UTF8.GetString(eventArgs.Body);
+            string message = Encoding.UTF8.GetString(eventArgs.Body.ToArray());
 
             try
             {
+                void onRetry(Exception ex, TimeSpan time)
+                {
+                    if (ex is null)
+                    {
+                        throw new ArgumentNullException(nameof(ex));
+                    }
+
+                    _logger.LogWarning(message: ex.ToString());
+                }
                 var policy = Policy.Handle<InvalidOperationException>()
                     .Or<Exception>()
                     .WaitAndRetryAsync(_retryCount, retryAttempt => TimeSpan.FromSeconds(1),
-                        (ex, time) => { _logger.LogWarning(ex.ToString()); });
+                        onRetry);
 
                 await policy.ExecuteAsync(async () => await ProcessEvent(eventName, message));
 
@@ -240,31 +244,28 @@ namespace Duber.Infrastructure.EventBus.RabbitMQ
 
             if (_subsManager.HasSubscriptionsForEvent(eventName))
             {
-                using (var scope = _autofac.BeginLifetimeScope(AUTOFAC_SCOPE_NAME))
+                using var scope = _autofac.BeginLifetimeScope(AUTOFAC_SCOPE_NAME);
+                var subscriptions = _subsManager.GetHandlersForEvent(eventName);
+                foreach (var subscription in subscriptions)
                 {
-                    var subscriptions = _subsManager.GetHandlersForEvent(eventName);
-                    foreach (var subscription in subscriptions)
+                    if (subscription.IsDynamic)
                     {
-                        if (subscription.IsDynamic)
-                        {
-                            var handler = scope.ResolveOptional(subscription.HandlerType) as IDynamicIntegrationEventHandler;
-                            if (handler == null) continue;
-                            dynamic eventData = JObject.Parse(message);
+                        if (scope.ResolveOptional(subscription.HandlerType) is not IDynamicIntegrationEventHandler handler) continue;
+                        dynamic eventData = JObject.Parse(message);
 
-                            await Task.Yield();
-                            await handler.Handle(eventData);
-                        }
-                        else
-                        {
-                            var handler = scope.ResolveOptional(subscription.HandlerType);
-                            if (handler == null) continue;
-                            var eventType = _subsManager.GetEventTypeByName(eventName);
-                            var integrationEvent = JsonConvert.DeserializeObject(message, eventType);
-                            var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
+                        await Task.Yield();
+                        await handler.Handle(eventData);
+                    }
+                    else
+                    {
+                        var handler = scope.ResolveOptional(subscription.HandlerType);
+                        if (handler == null) continue;
+                        var eventType = _subsManager.GetEventTypeByName(eventName);
+                        var integrationEvent = JsonConvert.DeserializeObject(message, eventType);
+                        var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
 
-                            await Task.Yield();
-                            await (Task)concreteType.GetMethod("Handle").Invoke(handler, new object[] { integrationEvent });
-                        }
+                        await Task.Yield();
+                        await (Task)concreteType.GetMethod("Handle").Invoke(handler, new object[] { integrationEvent });
                     }
                 }
             }

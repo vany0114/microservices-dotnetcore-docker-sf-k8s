@@ -1,7 +1,7 @@
 ﻿using System;
 using Duber.Domain.SharedKernel.Model;
 using Duber.Domain.Trip.Model;
-using Kledex.Domain;
+using OpenCqrs.Domain;
 
 namespace Duber.Domain.Trip.Events
 {

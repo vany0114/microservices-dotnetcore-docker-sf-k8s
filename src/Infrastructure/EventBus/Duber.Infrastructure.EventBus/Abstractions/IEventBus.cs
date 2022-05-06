@@ -18,5 +18,6 @@ namespace Duber.Infrastructure.EventBus.Abstractions
             where T : IntegrationEvent;
 
         void Publish(IntegrationEvent @event);
+        void Dispose();
     }
 }

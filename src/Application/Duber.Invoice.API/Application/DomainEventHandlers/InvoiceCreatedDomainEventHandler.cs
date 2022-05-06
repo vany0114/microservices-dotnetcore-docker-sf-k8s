@@ -5,10 +5,11 @@ using AutoMapper;
 using Duber.Infrastructure.EventBus.Abstractions;
 using Duber.Invoice.API.Application.IntegrationEvents.Events;
 using MediatR;
+using System.Threading;
 
 namespace Duber.Invoice.API.Application.DomainEventHandlers
 {
-    public class InvoiceCreatedDomainEventHandler : IAsyncNotificationHandler<InvoiceCreatedDomainEvent>
+    public class InvoiceCreatedDomainEventHandler : INotificationHandler<InvoiceCreatedDomainEvent>
     {
         private readonly IEventBus _eventBus;
         private readonly IMapper _mapper;
@@ -19,7 +20,7 @@ namespace Duber.Invoice.API.Application.DomainEventHandlers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task Handle(InvoiceCreatedDomainEvent notification)
+        public async Task Handle(InvoiceCreatedDomainEvent notification, CancellationToken cancellationToken)
         {
             // to update the query side (materialized view)
             var integrationEvent = _mapper.Map<InvoiceCreatedIntegrationEvent>(notification);

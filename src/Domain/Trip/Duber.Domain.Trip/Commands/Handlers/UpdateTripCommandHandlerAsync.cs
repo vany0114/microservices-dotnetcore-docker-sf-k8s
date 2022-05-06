@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Duber.Domain.Trip.Exceptions;
-using Kledex.Commands;
-using Kledex.Domain;
+using OpenCqrs.Commands;
+using OpenCqrs.Domain;
 
 namespace Duber.Domain.Trip.Commands.Handlers
 {

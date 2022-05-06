@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Duber.Infrastructure.EventBus.Idempotency;
-using Kledex.Store.Cosmos.Mongo.Configuration;
+using OpenCqrs.Store.Cosmos.Mongo.Configuration;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 

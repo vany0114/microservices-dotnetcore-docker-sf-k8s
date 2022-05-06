@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Kledex.Commands;
+using OpenCqrs.Commands;
 
 namespace Duber.Domain.Trip.Commands.Handlers
 {
