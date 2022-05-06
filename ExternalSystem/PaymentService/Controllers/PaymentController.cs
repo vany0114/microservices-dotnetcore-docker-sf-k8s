@@ -8,8 +8,9 @@ namespace PaymentService.Controllers
     [Route("api/[controller]")]
     public class PaymentController : Controller
     {
-        private readonly List<string> _paymentStatuses = new List<string> { "Accepted", "Rejected" };
-        private readonly List<string> _cardTypes = new List<string> { "Visa", "Master Card", "American Express" };
+        public List<string> CardTypes { get; } = new() { "Visa", "Master Card", "American Express" };
+
+        public List<string> PaymentStatuses { get; } = new() { "Accepted", "Rejected" };
 
         [HttpPost]
         [Route("performpayment")]
@@ -22,8 +23,8 @@ namespace PaymentService.Controllers
             // the payment system returns the response in a list of string like this: payment status, card type, card number, user and reference
             return new[]
             {
-                _paymentStatuses[new Random().Next(0, 2)],
-                _cardTypes[new Random().Next(0, 3)],
+                PaymentStatuses[new Random().Next(0, 2)],
+                CardTypes[new Random().Next(0, 3)],
                 Guid.NewGuid().ToString(),
                 userId.ToString(),
                 reference
